@@ -10,6 +10,7 @@
     "build:data": "tsx scripts/build-tilsyn-geojson.ts"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.6.1",
     "maplibre-gl": "^5.15.0",
     "next": "16.1.1",
     "papaparse": "^5.5.3",
