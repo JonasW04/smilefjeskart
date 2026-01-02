@@ -39,6 +39,18 @@ type ClusterProps = {
 };
 
 type ClickFeature = GeoJSON.Feature<GeoJSON.Point, Props | ClusterProps>;
+
+// Source interface for clustered GeoJSON sources (Mapbox/MapLibre + supercluster)
+type ClusterSource = maplibregl.GeoJSONSource & {
+  getClusterExpansionZoom?: (clusterId: number, cb: (err: unknown, zoom: number) => void) => void;
+  getClusterLeaves?: (
+    clusterId: number,
+    limit: number,
+    offset: number,
+    cb: (err: unknown, features: Array<GeoJSON.Feature<GeoJSON.Point, Props>>) => void
+  ) => void;
+};
+
 type FilterMode = "all" | "smil" | "strek" | "sur";
 
 function toLngLatTuple(coords: GeoJSON.Position): [number, number] | null {
@@ -265,8 +277,14 @@ export default function Home() {
         const clusterId = Number((f.properties as ClusterProps).cluster_id);
         if (!Number.isFinite(clusterId)) return;
 
-        const src = map.getSource("tilsyn") as any;
+        const src = map.getSource("tilsyn") as ClusterSource | undefined;
         const maxZoom = Math.min(typeof map.getMaxZoom === "function" ? map.getMaxZoom() : 16, 16);
+
+        if (!src) {
+          // No clustered source available — do a simple incremental zoom
+          map.easeTo({ center: coords, zoom: Math.min(map.getZoom() + 2, maxZoom) });
+          return;
+        }
 
         function finalFallback() {
           if (!coords) return;
@@ -286,16 +304,22 @@ export default function Home() {
             });
             return;
           }
-        } catch (err) {
+        } catch {
           // continue to next fallback
         }
 
         // 2) Fallback: get a set of leaves and fit bounds around them
         function tryFitLeaves() {
           try {
-            if (typeof src.getClusterLeaves === "function") {
+            const s = src;
+            if (!s) {
+              finalFallback();
+              return;
+            }
+
+            if (typeof s.getClusterLeaves === "function") {
               // ask for up to 200 leaves to compute a reliable bounding box
-              src.getClusterLeaves(clusterId, 200, 0, (_err: unknown, leaves: Array<GeoJSON.Feature<GeoJSON.Point, Props>>) => {
+              s.getClusterLeaves(clusterId, 200, 0, (_err: unknown, leaves: Array<GeoJSON.Feature<GeoJSON.Point, Props>>) => {
                 if (!leaves || leaves.length === 0) {
                   finalFallback();
                   return;
@@ -332,7 +356,7 @@ export default function Home() {
               });
               return;
             }
-          } catch (err) {
+          } catch {
             // ignore and final fallback
           }
 
