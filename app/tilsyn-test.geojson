@@ -1,0 +1,133 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import maplibregl from "maplibre-gl";
+
+export default function Home() {
+  const mapContainer = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!mapContainer.current) return;
+
+    const map = new maplibregl.Map({
+      container: mapContainer.current,
+      style: {
+        version: 8,
+        sources: {
+          osm: {
+            type: "raster",
+            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+            tileSize: 256,
+            attribution: "© OpenStreetMap contributors",
+          },
+        },
+        layers: [{ id: "osm", type: "raster", source: "osm" }],
+      },
+      center: [10.75, 59.91],
+      zoom: 12,
+    });
+
+    map.addControl(new maplibregl.NavigationControl(), "top-right");
+
+    map.on("load", async () => {
+      const res = await fetch("/tilsyn-test.geojson");
+      const geojson = await res.json();
+
+      // ✅ Source med clustering
+      map.addSource("tilsyn", {
+        type: "geojson",
+        data: geojson,
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50,
+      });
+
+      // 1) Cluster-bobler
+      map.addLayer({
+        id: "clusters",
+        type: "circle",
+        source: "tilsyn",
+        filter: ["has", "point_count"],
+        paint: {
+          "circle-radius": ["step", ["get", "point_count"], 16, 20, 22, 50, 28],
+          "circle-opacity": 0.7,
+        },
+      });
+
+      // 2) Cluster-tekst (antall)
+      map.addLayer({
+        id: "cluster-count",
+        type: "symbol",
+        source: "tilsyn",
+        filter: ["has", "point_count"],
+        layout: {
+          "text-field": "{point_count_abbreviated}",
+          "text-size": 12,
+        },
+      });
+
+      // 3) Enkeltpunkter (ikke cluster)
+      map.addLayer({
+        id: "unclustered-point",
+        type: "circle",
+        source: "tilsyn",
+        filter: ["!", ["has", "point_count"]],
+        paint: {
+          "circle-radius": 7,
+          "circle-stroke-width": 1,
+          "circle-opacity": 0.85,
+        },
+      });
+
+      // Klikk cluster => zoom inn
+      map.on("click", "clusters", (e) => {
+        const f = e.features?.[0];
+        if (!f) return;
+
+        const clusterId = (f.properties as any).cluster_id;
+        const coords = (f.geometry as any).coordinates as [number, number];
+        const source = map.getSource("tilsyn") as maplibregl.GeoJSONSource;
+
+        (source as any).getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
+          if (err) return;
+          map.easeTo({ center: coords, zoom });
+        });
+      });
+
+      // Klikk punkt => popup
+      map.on("click", "unclustered-point", (e) => {
+        const f = e.features?.[0];
+        if (!f) return;
+
+        const props = (f.properties ?? {}) as any;
+        const coords = (f.geometry as any).coordinates as [number, number];
+
+        const name = props.name ?? "Ukjent";
+        const adresse = props.adresse ?? "";
+        const dato = props.dato ?? "";
+        const karakter = props.karakter ?? "";
+
+        new maplibregl.Popup({ offset: 20 })
+          .setLngLat(coords)
+          .setHTML(
+            `<strong>${name}</strong><br/>${adresse}<br/>Dato: ${dato}<br/>Karakter: ${karakter}`
+          )
+          .addTo(map);
+      });
+
+      // Cursor feedback
+      map.on("mouseenter", "clusters", () => (map.getCanvas().style.cursor = "pointer"));
+      map.on("mouseleave", "clusters", () => (map.getCanvas().style.cursor = ""));
+      map.on("mouseenter", "unclustered-point", () => (map.getCanvas().style.cursor = "pointer"));
+      map.on("mouseleave", "unclustered-point", () => (map.getCanvas().style.cursor = ""));
+    });
+
+    return () => map.remove();
+  }, []);
+
+  return (
+    <main style={{ height: "100vh" }}>
+      <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
+    </main>
+  );
+}

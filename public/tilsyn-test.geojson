@@ -1,0 +1,35 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7461, 59.9127] },
+      "properties": {
+        "name": "Testrestaurant A",
+        "dato": "01012026",
+        "karakter": 0,
+        "adresse": "Oslo sentrum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7587, 59.9139] },
+      "properties": {
+        "name": "Testkafé B",
+        "dato": "15122025",
+        "karakter": 1,
+        "adresse": "Oslo"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7695, 59.9070] },
+      "properties": {
+        "name": "Testburger C",
+        "dato": "20112025",
+        "karakter": 2,
+        "adresse": "Oslo"
+      }
+    }
+  ]
+}
