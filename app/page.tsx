@@ -31,26 +31,6 @@ type Props = {
   status: string | null;
 };
 
-type ClusterProps = {
-  cluster: true;
-  cluster_id: number | string;
-  point_count: number;
-  point_count_abbreviated: string;
-};
-
-type ClickFeature = GeoJSON.Feature<GeoJSON.Point, Props | ClusterProps>;
-
-// Source interface for clustered GeoJSON sources (Mapbox/MapLibre + supercluster)
-type ClusterSource = maplibregl.GeoJSONSource & {
-  getClusterExpansionZoom?: (clusterId: number, cb: (err: unknown, zoom: number) => void) => void;
-  getClusterLeaves?: (
-    clusterId: number,
-    limit: number,
-    offset: number,
-    cb: (err: unknown, features: Array<GeoJSON.Feature<GeoJSON.Point, Props>>) => void
-  ) => void;
-};
-
 type FilterMode = "all" | "smil" | "strek" | "sur";
 
 function toLngLatTuple(coords: GeoJSON.Position): [number, number] | null {
@@ -314,6 +294,27 @@ export default function Home() {
         },
       });
 
+      // unclustered labels (names shown when zoomed in)
+      map.addLayer({
+        id: "unclustered-labels",
+        type: "symbol",
+        source: "tilsyn",
+        filter: ["!", ["has", "point_count"]],
+        layout: {
+          "text-field": ["get", "navn"],
+          "text-size": 20,
+          "text-offset": [0, -2],
+          "text-anchor": "top",
+          "text-max-width": 50,
+        },
+        paint: {
+          "text-color": "#1d1d1dff",
+          "text-halo-color": "#fff",
+          "text-halo-width": 1.2,
+        },
+        minzoom: 14,
+      });
+
       // cluster click => zoom
       map.on("click", "clusters", (e) => {
         const eventCoords: [number, number] = [e.lngLat.lng, e.lngLat.lat];
@@ -500,7 +501,7 @@ export default function Home() {
         setLocating(false);
         alert("Kunne ikke hente posisjon: " + err.message);
       },
-      { enableHighAccuracy: true, maximumAge: 60_000, timeout: 10_000 }
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 30_000 }
     );
   };
 
@@ -606,20 +607,6 @@ export default function Home() {
             Om
           </button>
 
-          <button
-            onClick={centerOnUser}
-            title="Sentrer kartet på min posisjon"
-            style={{
-              padding: "8px 12px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              background: "white",
-              cursor: "pointer",
-            }}
-          >
-            {locating ? "…" : "📍 Nær meg"}
-          </button>
-
           {showInfo && (
             <div
               ref={infoRef}
@@ -673,6 +660,25 @@ export default function Home() {
       </header>
 
       <Legend />
+
+      <button
+        onClick={centerOnUser}
+        title="Sentrer kartet på min posisjon"
+        style={{
+          position: "absolute",
+          bottom: 40,
+          right: 20,
+          padding: "10px 14px",
+          borderRadius: 8,
+          border: "1px solid #ddd",
+          background: "white",
+          cursor: "pointer",
+          zIndex: 3,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+        }}
+      >
+        {locating ? "…" : "📍 Nær meg"}
+      </button>
 
       <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
     </main>
