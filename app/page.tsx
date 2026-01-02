@@ -519,10 +519,9 @@ export default function Home() {
           zIndex: 2,
         }}
       >
-        <strong>Smilefjeskartet</strong>
 
         <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          Filter:
+          <strong>Filter:</strong>
           <select
             value={filterMode}
             onChange={(e) => {
@@ -604,7 +603,7 @@ export default function Home() {
             }}
             title="Om denne nettsiden"
           >
-            Om
+            Info
           </button>
 
           {showInfo && (
