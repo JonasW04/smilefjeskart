@@ -7,7 +7,7 @@ export default function Legend() {
       aria-label="Kartforklaring"
       style={{
         position: "absolute",
-        top: 12,
+        top: 72, // move below header to avoid overlapping controls
         left: 12,
         zIndex: 3,
         background: "white",
