@@ -158,6 +158,10 @@ export default function Home() {
   const [showInfo, setShowInfo] = useState(false);
   const infoRef = useRef<HTMLDivElement | null>(null);
 
+  // Geolocation / near-me
+  const [locating, setLocating] = useState(false);
+  const userMarkerRef = useRef<maplibregl.Marker | null>(null);
+
   const sourceUrl = useMemo(() => "/tilsyn.geojson", []);
 
   // Init map
@@ -441,6 +445,38 @@ export default function Home() {
       .addTo(map);
   };
 
+  // Center map on user's current location
+  const centerOnUser = () => {
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      alert("Geolocation ikke støttet i denne nettleseren.");
+      return;
+    }
+
+    setLocating(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocating(false);
+        const coords: [number, number] = [pos.coords.longitude, pos.coords.latitude];
+        const map = mapRef.current;
+        if (!map) return;
+
+        map.easeTo({ center: coords, zoom: Math.max(map.getZoom(), 14) });
+
+        if (userMarkerRef.current) {
+          userMarkerRef.current.setLngLat(coords);
+        } else {
+          userMarkerRef.current = new maplibregl.Marker({ color: "#0077ff" }).setLngLat(coords).addTo(map);
+        }
+      },
+      (err) => {
+        setLocating(false);
+        alert("Kunne ikke hente posisjon: " + err.message);
+      },
+      { enableHighAccuracy: true, maximumAge: 60_000, timeout: 10_000 }
+    );
+  };
+
   return (
     <main style={{ height: "100vh", display: "grid", gridTemplateRows: "auto 1fr" }}>
       <header
@@ -527,7 +563,7 @@ export default function Home() {
           )}
         </div>
 
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative", display: "flex", gap: 8, alignItems: "center" }}>
           <button
             aria-expanded={showInfo}
             onClick={() => setShowInfo((s) => !s)}
@@ -541,6 +577,20 @@ export default function Home() {
             title="Om denne nettsiden"
           >
             Om
+          </button>
+
+          <button
+            onClick={centerOnUser}
+            title="Sentrer kartet på min posisjon"
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              background: "white",
+              cursor: "pointer",
+            }}
+          >
+            {locating ? "…" : "📍 Nær meg"}
           </button>
 
           {showInfo && (
