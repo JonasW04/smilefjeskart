@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import maplibregl, { GeoJSONSource } from "maplibre-gl";
+import Legend from "./legend";
 
 // Data fra GeoJSON. Vi støtter både:
 /// - "karakter" (tidligere beregnet)
@@ -593,6 +594,8 @@ export default function Home() {
           )}
         </div>
       </header>
+
+      <Legend />
 
       <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
     </main>
