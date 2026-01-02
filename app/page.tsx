@@ -254,7 +254,7 @@ export default function Home() {
         },
       });
 
-      // cluster click => zoom
+      // cluster click => zoom (try expansion zoom; fallback to fitting bounds of cluster leaves)
       map.on("click", "clusters", (e) => {
         const f = e.features?.[0] as ClickFeature | undefined;
         if (!f?.properties || !("cluster_id" in f.properties)) return;
@@ -265,34 +265,82 @@ export default function Home() {
         const clusterId = Number((f.properties as ClusterProps).cluster_id);
         if (!Number.isFinite(clusterId)) return;
 
-        const src = map.getSource("tilsyn") as unknown as {
-          getClusterExpansionZoom?: (clusterId: number, cb: (err: unknown, zoom: number) => void) => void;
-          getClusterLeaves?: (
-            clusterId: number,
-            limit: number,
-            offset: number,
-            cb: (err: unknown, features: Array<GeoJSON.Feature<GeoJSON.Point, Props>>) => void
-          ) => void;
-        };
+        const src = map.getSource("tilsyn") as any;
+        const maxZoom = Math.min(typeof map.getMaxZoom === "function" ? map.getMaxZoom() : 16, 16);
 
-        if (src.getClusterExpansionZoom) {
-          src.getClusterExpansionZoom(clusterId, (err, zoom) => {
-            if (err) return;
-            map.easeTo({ center: coords, zoom });
-          });
-          return;
+        function finalFallback() {
+          if (!coords) return;
+          map.easeTo({ center: coords, zoom: Math.min(map.getZoom() + 2, maxZoom) });
         }
 
-        map.easeTo({ center: coords, zoom: Math.min(map.getZoom() + 2, 16) });
-
-        if (src.getClusterLeaves) {
-          src.getClusterLeaves(clusterId, 1, 0, (_err, leaves) => {
-            if (!leaves?.length) return;
-            const leafCoords = toLngLatTuple(leaves[0].geometry.coordinates);
-            if (!leafCoords) return;
-            map.easeTo({ center: leafCoords, zoom: Math.min(map.getZoom() + 1, 16) });
-          });
+        // 1) Try getClusterExpansionZoom
+        try {
+          if (typeof src.getClusterExpansionZoom === "function") {
+            src.getClusterExpansionZoom(clusterId, (err: unknown, zoom: number) => {
+              if (!err && typeof zoom === "number") {
+                map.easeTo({ center: coords, zoom: Math.min(zoom, maxZoom) });
+              } else {
+                // if expansion zoom fails, fall back to leaves
+                tryFitLeaves();
+              }
+            });
+            return;
+          }
+        } catch (err) {
+          // continue to next fallback
         }
+
+        // 2) Fallback: get a set of leaves and fit bounds around them
+        function tryFitLeaves() {
+          try {
+            if (typeof src.getClusterLeaves === "function") {
+              // ask for up to 200 leaves to compute a reliable bounding box
+              src.getClusterLeaves(clusterId, 200, 0, (_err: unknown, leaves: Array<GeoJSON.Feature<GeoJSON.Point, Props>>) => {
+                if (!leaves || leaves.length === 0) {
+                  finalFallback();
+                  return;
+                }
+
+                let minLng = Infinity,
+                  minLat = Infinity,
+                  maxLng = -Infinity,
+                  maxLat = -Infinity;
+
+                for (const leaf of leaves) {
+                  const c = toLngLatTuple(leaf.geometry.coordinates);
+                  if (!c) continue;
+                  const [lng, lat] = c;
+                  if (lng < minLng) minLng = lng;
+                  if (lng > maxLng) maxLng = lng;
+                  if (lat < minLat) minLat = lat;
+                  if (lat > maxLat) maxLat = lat;
+                }
+
+                if (minLng === Infinity) {
+                  finalFallback();
+                  return;
+                }
+
+                // Add a small padding and fit bounds
+                map.fitBounds(
+                  [
+                    [minLng, minLat],
+                    [maxLng, maxLat],
+                  ],
+                  { padding: 40, maxZoom }
+                );
+              });
+              return;
+            }
+          } catch (err) {
+            // ignore and final fallback
+          }
+
+          // 3) final fallback
+          finalFallback();
+        }
+
+        tryFitLeaves();
       });
 
       // point click => popup (uten adressekilde)
