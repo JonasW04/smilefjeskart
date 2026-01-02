@@ -80,10 +80,33 @@ function parseDato(ddmmyyyy: string): number {
 
 function normalizeQuery(s: string): string {
   return s
-    .replace(/['’`]/g, "")
-    .replace(/[(),]/g, " ")
+    // Remove extra punctuation and quotes
+    .replace(/[''`´]/g, "")
+    .replace(/[()]/g, " ")
+    // Normalize whitespace
     .replace(/\s+/g, " ")
     .trim();
+}
+
+// Improve address by standardizing common Norwegian patterns
+function improveAddress(s: string): string {
+  let addr = s;
+  
+  // Standardize common abbreviations to full forms (helps Kartverket matching)
+  addr = addr.replace(/\bv\./gi, "vei");
+  addr = addr.replace(/\bveg\b/gi, "vei");
+  addr = addr.replace(/\bgt\./gi, "gate");
+  addr = addr.replace(/\bgata\b/gi, "gate");
+  addr = addr.replace(/\bstr\.\b/gi, "stradde");
+  addr = addr.replace(/\ballé\b/gi, "allé");
+  addr = addr.replace(/\bpl\.\b/gi, "plass");
+  addr = addr.replace(/\bvn\.\b/gi, "veien");
+  
+  // Remove extra commas and normalize spacing
+  addr = addr.replace(/,+/g, " ");
+  addr = addr.replace(/\s+/g, " ").trim();
+  
+  return addr;
 }
 
 function isValidOrgnr(orgnr?: string): orgnr is string {
@@ -157,7 +180,7 @@ async function geocodeKartverket(query: string): Promise<LngLat | null> {
     `${KARTVERKET_SOK_URL}?` +
     new URLSearchParams({
       sok: query,
-      treffPerSide: "1",
+      treffPerSide: "5",
       side: "0",
       filtrer: "adresser.representasjonspunkt",
     }).toString();
@@ -169,7 +192,44 @@ async function geocodeKartverket(query: string): Promise<LngLat | null> {
     return null;
   }
   const data = (await res.json()) as unknown;
-  return extractLngLatFromKartverket(data);
+  
+  // Try first hit
+  const result = extractLngLatFromKartverket(data);
+  if (result) return result;
+  
+  return null;
+}
+
+// Fallback: Nominatim (OpenStreetMap)
+async function geocodeNominatim(query: string): Promise<LngLat | null> {
+  const url = `https://nominatim.openstreetmap.org/search?` + 
+    new URLSearchParams({
+      q: query,
+      country: "NO",
+      format: "json",
+      limit: "1",
+    }).toString();
+
+  try {
+    const res = await fetch(url, { 
+      headers: { "User-Agent": "smilefjeskart-builder" }
+    });
+    if (!res.ok) return null;
+    
+    const data = (await res.json()) as unknown;
+    if (!Array.isArray(data) || data.length === 0) return null;
+    
+    const first = data[0] as Record<string, unknown>;
+    const lat = first["lat"];
+    const lon = first["lon"];
+    
+    if (typeof lat === "string" && typeof lon === "string") {
+      return { lat: Number(lat), lon: Number(lon) };
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 async function main() {
@@ -221,6 +281,7 @@ async function main() {
   let brregHits = 0;
   let geocodeAttempts = 0;
   let geocodeHits = 0;
+  const failedAddresses: Array<{ navn: string; adresse: string; source: "BRREG" | "MAT" }> = [];
 
   for (const r of limited) {
     const orgnr = isValidOrgnr(r.orgnummer) ? r.orgnummer.trim() : null;
@@ -253,20 +314,35 @@ async function main() {
 
     if (!bestAdresse) continue;
 
-    // 4b) Geokoding (cache på adressetekst)
+    // 4b) Geokoding – prefer specific addresses only (no postal fallback)
     const geocodeKey = bestAdresse;
     let geo: LngLat | null = geocodeCache[geocodeKey] ?? null;
 
     if (!geo) {
       geocodeAttempts++;
 
-      // Kartverket fritekstsøk – vi normaliserer litt
-      const query = normalizeQuery(bestAdresse);
+      // Improve address format and normalize for better matching
+      const improvedAddr = improveAddress(bestAdresse);
+      const query = normalizeQuery(improvedAddr);
       geo = await geocodeKartverket(query);
+
+      // Strategy 2: Nominatim (OpenStreetMap) – fallback for specific addresses
+      if (!geo) {
+        geo = await geocodeNominatim(query);
+        if (geo) console.log(`  [Nominatim] ${r.navn}`);
+      }
+
+      // No postal code fallback – skip if both fail (better than showing at general area)
 
       if (geo) {
         geocodeCache[geocodeKey] = geo;
         geocodeHits++;
+      } else {
+        failedAddresses.push({
+          navn: r.navn,
+          adresse: bestAdresse,
+          source: adresseKilde,
+        });
       }
 
       await sleep(GEOCODE_DELAY_MS);
@@ -296,6 +372,21 @@ async function main() {
   fs.writeFileSync(BRREG_CACHE_PATH, JSON.stringify(brregCache, null, 2), "utf8");
   fs.writeFileSync(GEOCODE_CACHE_PATH, JSON.stringify(geocodeCache, null, 2), "utf8");
 
+  // Write failed addresses for analysis
+  const FAILED_ADDRESSES_PATH = path.join(DATA_DIR, "failed-addresses.json");
+  fs.writeFileSync(
+    FAILED_ADDRESSES_PATH,
+    JSON.stringify(
+      {
+        count: failedAddresses.length,
+        addresses: failedAddresses,
+      },
+      null,
+      2
+    ),
+    "utf8"
+  );
+
   const fc: GeoJSON.FeatureCollection<GeoJSON.Point, TilsynProperties> = {
     type: "FeatureCollection",
     features,
@@ -305,10 +396,11 @@ async function main() {
   fs.writeFileSync(OUT_PATH, JSON.stringify(fc), "utf8");
 
   console.log(`BRREG lookups: ${brregLookups}, BRREG addr hits: ${brregHits}`);
-  console.log(`Geocode attempts: ${geocodeAttempts}, geocode hits: ${geocodeHits}`);
+  console.log(`Geocode attempts: ${geocodeAttempts}, geocode hits: ${geocodeHits}, failed: ${failedAddresses.length}`);
   console.log(`✅ Skrev ${features.length} punkter til ${OUT_PATH}`);
   console.log(`ℹ️ BRREG cache: ${BRREG_CACHE_PATH}`);
   console.log(`ℹ️ Geocode cache: ${GEOCODE_CACHE_PATH}`);
+  console.log(`ℹ️ Failed addresses: ${FAILED_ADDRESSES_PATH}`);
 }
 
 main().catch((e) => {

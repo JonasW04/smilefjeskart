@@ -176,6 +176,49 @@ export default function Home() {
 
   const sourceUrl = useMemo(() => "/tilsyn.geojson", []);
 
+  // Spread out features that share the same coordinates (e.g., multiple restaurants in a mall)
+  const spreadFeatures = (
+    features: GeoJSON.Feature<GeoJSON.Point, Props & { smileScore: number }>[]
+  ): GeoJSON.Feature<GeoJSON.Point, Props & { smileScore: number }>[] => {
+    const coordMap = new Map<string, GeoJSON.Feature<GeoJSON.Point, Props & { smileScore: number }>[]>();
+
+    // Group features by coordinates
+    for (const f of features) {
+      const [lng, lat] = f.geometry.coordinates;
+      const key = `${lng},${lat}`;
+      if (!coordMap.has(key)) coordMap.set(key, []);
+      coordMap.get(key)!.push(f);
+    }
+
+    // Apply slight offsets to duplicates
+    const result: GeoJSON.Feature<GeoJSON.Point, Props & { smileScore: number }>[] = [];
+    for (const group of coordMap.values()) {
+      if (group.length === 1) {
+        result.push(group[0]);
+      } else {
+        // Multiple features at same location: spread them in a circle
+        const [baseLng, baseLat] = group[0].geometry.coordinates;
+        const radiusDegrees = 0.0003; // ~30 meters at equator, varies by latitude
+
+        for (let i = 0; i < group.length; i++) {
+          const angle = (i / group.length) * Math.PI * 2;
+          const offsetLng = baseLng + radiusDegrees * Math.cos(angle);
+          const offsetLat = baseLat + radiusDegrees * Math.sin(angle);
+
+          result.push({
+            ...group[i],
+            geometry: {
+              type: "Point",
+              coordinates: [offsetLng, offsetLat],
+            },
+          });
+        }
+      }
+    }
+
+    return result;
+  };
+
   // Init map
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
@@ -205,12 +248,17 @@ export default function Home() {
       const raw = (await res.json()) as GeoJSON.FeatureCollection<GeoJSON.Point, Props>;
 
       // ✅ legg på computed smileScore i properties (front-end only)
+      let features = raw.features.map((f) => ({
+        ...f,
+        properties: { ...f.properties, smileScore: computeSmileScore(f.properties) },
+      }));
+
+      // ✅ spread features that share the same coordinates
+      features = spreadFeatures(features);
+
       const enriched: GeoJSON.FeatureCollection<GeoJSON.Point, Props & { smileScore: number }> = {
         type: "FeatureCollection",
-        features: raw.features.map((f) => ({
-          ...f,
-          properties: { ...f.properties, smileScore: computeSmileScore(f.properties) },
-        })),
+        features,
       };
 
       fullDataRef.current = enriched;

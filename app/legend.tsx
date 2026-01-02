@@ -50,8 +50,11 @@ export default function Legend() {
         </li>
       </ul>
 
-      <div style={{ marginTop: 8, fontSize: 12, color: "#555" }}>
-        Farger suppleres av symboler/tekst for bedre tilgjengelighet.
+      <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #eee", fontSize: 12, color: "#666", lineHeight: 1.5 }}>
+        <strong style={{ display: "block", marginBottom: 4, color: "#333" }}>Flere steder på samme adresse?</strong>
+        <p style={{ margin: 0 }}>
+          Når flere restauranter deler samme adresse (f.eks. i kjøpesentre), vises de spread ut rundt senterlokasjon for bedre oversikt.
+        </p>
       </div>
     </div>
   );
