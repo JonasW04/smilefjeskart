@@ -358,7 +358,8 @@ export default function Home() {
 
     const q = normalize(query);
     if (q.length < 2) {
-      setHits([]);
+      // Schedule clearing of hits to avoid sync setState in effect
+      setTimeout(() => setHits([]), 0);
       return;
     }
 
@@ -394,7 +395,8 @@ export default function Home() {
       if (next.length >= 10) break;
     }
 
-    setHits(next);
+    // Schedule to avoid synchronous setState inside effect
+    setTimeout(() => setHits(next), 0);
   }, [query, filterMode]);
 
   // Lukk info-popup ved klikk utenfor eller Escape

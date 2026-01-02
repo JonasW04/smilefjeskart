@@ -17,8 +17,6 @@ export default function Legend() {
         boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
         fontSize: 13,
         maxWidth: 240,
-      // Place legend below header to avoid overlapping header controls
-      top: 72,
     }}
     >
       <strong style={{ display: "block", marginBottom: 8 }}>Forklaring</strong>
