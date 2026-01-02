@@ -148,7 +148,7 @@ export default function Home() {
 
   // Info-popup
   const [showInfo, setShowInfo] = useState(false);
-  const infoRef = useRef<HTMLDivElement | null>(null);
+  const infoWrapRef = useRef<HTMLDivElement | null>(null);  
 
   // Geolocation / near-me
   const [locating, setLocating] = useState(false);
@@ -437,7 +437,7 @@ export default function Home() {
     if (!showInfo) return;
 
     function onDocClick(e: MouseEvent) {
-      if (infoRef.current && !infoRef.current.contains(e.target as Node)) {
+      if (infoWrapRef.current && !infoWrapRef.current.contains(e.target as Node)) {
         setShowInfo(false);
       }
     }
@@ -446,10 +446,10 @@ export default function Home() {
       if (e.key === "Escape") setShowInfo(false);
     }
 
-    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("click", onDocClick);
     document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("click", onDocClick);
       document.removeEventListener("keydown", onKey);
     };
   }, [showInfo]);
@@ -590,7 +590,10 @@ export default function Home() {
           )}
         </div>
 
-        <div style={{ position: "relative", display: "flex", gap: 8, alignItems: "center" }}>
+        <div
+        ref={infoWrapRef}
+        style={{ position: "relative", display: "flex", gap: 8, alignItems: "center" }}
+        > 
           <button
             aria-expanded={showInfo}
             onClick={() => setShowInfo((s) => !s)}
@@ -608,7 +611,7 @@ export default function Home() {
 
           {showInfo && (
             <div
-              ref={infoRef}
+              ref={infoWrapRef}
               role="dialog"
               aria-label="Om smilefjeskart"
               style={{
