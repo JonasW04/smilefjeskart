@@ -153,6 +153,10 @@ export default function Home() {
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  // Info-popup
+  const [showInfo, setShowInfo] = useState(false);
+  const infoRef = useRef<HTMLDivElement | null>(null);
+
   const sourceUrl = useMemo(() => "/tilsyn.geojson", []);
 
   // Init map
@@ -393,6 +397,28 @@ export default function Home() {
     setHits(next);
   }, [query, filterMode]);
 
+  // Lukk info-popup ved klikk utenfor eller Escape
+  useEffect(() => {
+    if (!showInfo) return;
+
+    function onDocClick(e: MouseEvent) {
+      if (infoRef.current && !infoRef.current.contains(e.target as Node)) {
+        setShowInfo(false);
+      }
+    }
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setShowInfo(false);
+    }
+
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [showInfo]);
+
   const flyToHit = (hit: SearchHit) => {
     const map = mapRef.current;
     if (!map) return;
@@ -426,7 +452,7 @@ export default function Home() {
           zIndex: 2,
         }}
       >
-        <strong>Smilefjeskart (MVP)</strong>
+        <strong>Smilefjeskartet</strong>
 
         <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
           Filter:
@@ -494,6 +520,73 @@ export default function Home() {
                   </div>
                 </button>
               ))}
+            </div>
+          )}
+        </div>
+
+        <div style={{ position: "relative" }}>
+          <button
+            aria-expanded={showInfo}
+            onClick={() => setShowInfo((s) => !s)}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              background: "white",
+              cursor: "pointer",
+            }}
+            title="Om denne nettsiden"
+          >
+            Om
+          </button>
+
+          {showInfo && (
+            <div
+              ref={infoRef}
+              role="dialog"
+              aria-label="Om smilefjeskart"
+              style={{
+                position: "absolute",
+                top: 44,
+                right: 0,
+                width: 320,
+                background: "white",
+                border: "1px solid #ddd",
+                borderRadius: 8,
+                padding: 12,
+                boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                zIndex: 10,
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                <strong>Om dette kartet</strong>
+                <button
+                  onClick={() => setShowInfo(false)}
+                  aria-label="Lukk"
+                  style={{ border: "none", background: "transparent", cursor: "pointer", fontSize: 14 }}
+                >
+                  ✕
+                </button>
+              </div>
+              <div style={{ marginTop: 8, fontSize: 14, lineHeight: 1.4 }}>
+                <p style={{ margin: 0 }}>
+                  <strong>Smilefjeskartet</strong> viser resultatene fra <strong>Mattilsynet</strong> sine restaurantkontroller i <strong>Norge</strong>. Alle dataene er basert på offentlig tilgjengelige tilsynsdata.
+                </p>
+
+                <p style={{ margin: "8px 0 6px", fontWeight: 600 }}>Fargeforklaring:</p>
+
+                <ul style={{ margin: 0, paddingLeft: 18, marginBottom: 0 }}>
+                  <li>
+                    <span style={{ color: "#2ecc71", fontWeight: 700 }}>Grønn</span> — Smil (ingen eller små avvik)
+                  </li>
+                  <li>
+                    <span style={{ color: "#f1c40f", fontWeight: 700 }}>Gul</span> — Strek (avvik som må følges opp)
+                  </li>
+                  <li>
+                    <span style={{ color: "#e74c3c", fontWeight: 700 }}>Rød</span> — Sur munn (alvorlige brudd)
+                  </li>
+                </ul>
+              </div>
             </div>
           )}
         </div>
