@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Smilefjeskartet – Restaurantkontroller fra Mattilsynet",
+  title: "Smilefjeskartet – Kart for Restaurantkontroller fra Mattilsynet",
   description:
     "Se Mattilsynets smilefjeskontroller på restaurantene i Norge. Kart med smil, strek og sur munn – basert på offentlig data.",
   keywords: [
