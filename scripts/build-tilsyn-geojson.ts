@@ -8,20 +8,20 @@ import Papa from "papaparse";
 
 type TilsynRow = {
   tilsynsobjektid: string;
-  orgnummer: string;
+  orgnummer?: string;
   navn: string;
-  adrlinje1: string;
-  adrlinje2: string;
-  postnr: string;
-  poststed: string;
-  tilsynid: string;
-  tilsynsbesoektype: string;
+  adrlinje1?: string;
+  adrlinje2?: string;
+  postnr?: string;
+  poststed?: string;
+  tilsynid?: string;
+  tilsynsbesoektype?: string;
   dato: string; // ddmmyyyy
-  total_karakter: string;
-  karakter1: string;
-  karakter2: string;
-  karakter3: string;
-  karakter4: string;
+  total_karakter?: string;
+  karakter1?: string;
+  karakter2?: string;
+  karakter3?: string;
+  karakter4?: string;
 };
 
 type LngLat = { lon: number; lat: number };
@@ -96,6 +96,12 @@ function buildGeocodeQuery(r: TilsynRow): string {
     .map((s) => s?.trim())
     .filter(Boolean);
   return parts.join(" ").replace(/\s+/g, " ").trim();
+}
+
+/** Check if a string is a valid 9-digit Norwegian org number. */
+function isValidOrgnr(orgnr?: string): orgnr is string {
+  if (!orgnr) return false;
+  return /^\d{9}$/.test(orgnr.trim());
 }
 
 // ---------------------------------------------------------------------------
@@ -233,7 +239,7 @@ async function main() {
       geometry: { type: "Point", coordinates: [geo.lon, geo.lat] },
       properties: {
         tilsynsobjektid: r.tilsynsobjektid,
-        orgnummer: orgnr && /^\d{9}$/.test(orgnr) ? orgnr : null,
+        orgnummer: isValidOrgnr(orgnr) ? orgnr : null,
         navn: r.navn.trim(),
         adresse,
         dato: r.dato,
@@ -242,7 +248,7 @@ async function main() {
         karakter2: parseKarakter(r.karakter2),
         karakter3: parseKarakter(r.karakter3),
         karakter4: parseKarakter(r.karakter4),
-        status: r.total_karakter ?? null,
+        status: r.tilsynsbesoektype ?? null,
       },
     });
   }
