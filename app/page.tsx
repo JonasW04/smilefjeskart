@@ -511,6 +511,7 @@ export default function Home() {
         style={{
           padding: 12,
           display: "flex",
+          flexWrap: "wrap",
           gap: 12,
           alignItems: "center",
           borderBottom: "1px solid #eee",
@@ -538,7 +539,7 @@ export default function Home() {
           </select>
         </label>
 
-        <div style={{ position: "relative", flex: 1, maxWidth: 520 }}>
+        <div style={{ position: "relative", flex: 1, maxWidth: 520, minWidth: 200 }}>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
