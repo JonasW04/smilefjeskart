@@ -72,6 +72,70 @@ function normalize(s: string): string {
   return s.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
+/**
+ * Draw a smiley-face icon on an off-screen canvas and return its ImageData.
+ * `mouth` controls the expression:
+ *   "smile" → upward curve  (green / happy)
+ *   "neutral" → straight line (yellow / neutral)
+ *   "frown" → downward curve (red / sad)
+ */
+function createSmileyImage(
+  fillColor: string,
+  mouth: "smile" | "neutral" | "frown",
+  size = 40
+): ImageData {
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas 2D context not available");
+
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = size / 2 - 2; // leave room for stroke
+
+  // Filled circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = fillColor;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#222";
+  ctx.stroke();
+
+  // Eyes
+  const eyeR = size * 0.065;
+  const eyeY = cy - r * 0.18;
+  const eyeSpread = r * 0.35;
+  ctx.fillStyle = "#222";
+  ctx.beginPath();
+  ctx.arc(cx - eyeSpread, eyeY, eyeR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(cx + eyeSpread, eyeY, eyeR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Mouth
+  ctx.beginPath();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#222";
+  const mouthWidth = r * 0.55;
+  const mouthY = cy + r * 0.3;
+
+  if (mouth === "smile") {
+    ctx.arc(cx, mouthY - r * 0.05, mouthWidth, 0.15 * Math.PI, 0.85 * Math.PI);
+  } else if (mouth === "frown") {
+    ctx.arc(cx, mouthY + r * 0.35, mouthWidth, 1.15 * Math.PI, 1.85 * Math.PI);
+  } else {
+    // neutral — straight line
+    ctx.moveTo(cx - mouthWidth, mouthY);
+    ctx.lineTo(cx + mouthWidth, mouthY);
+  }
+  ctx.stroke();
+
+  return ctx.getImageData(0, 0, size, size);
+}
+
 function toNumberMaybe(v: unknown): number | null {
   if (typeof v === "number") return Number.isFinite(v) ? v : null;
   if (typeof v === "string") {
@@ -224,6 +288,13 @@ export default function Home() {
     map.addControl(new maplibregl.NavigationControl(), "top-right");
 
     map.on("load", async () => {
+      // Register smiley-face icons for map markers
+      const iconSize = 40;
+      map.addImage("smiley-green", createSmileyImage("#2ecc71", "smile", iconSize), { pixelRatio: 2 });
+      map.addImage("smiley-yellow", createSmileyImage("#f1c40f", "neutral", iconSize), { pixelRatio: 2 });
+      map.addImage("smiley-red", createSmileyImage("#e74c3c", "frown", iconSize), { pixelRatio: 2 });
+      map.addImage("smiley-gray", createSmileyImage("#7f8c8d", "neutral", iconSize), { pixelRatio: 2 });
+
       const res = await fetch(sourceUrl);
       const raw = (await res.json()) as GeoJSON.FeatureCollection<GeoJSON.Point, Props>;
 
@@ -271,26 +342,25 @@ export default function Home() {
         layout: { "text-field": "{point_count_abbreviated}", "text-size": 12 },
       });
 
-      // unclustered circles colored by smileScore
+      // unclustered smiley-face icons colored by smileScore
       map.addLayer({
         id: "unclustered",
-        type: "circle",
+        type: "symbol",
         source: "tilsyn",
         filter: ["!", ["has", "point_count"]],
-        paint: {
-          "circle-radius": 6,
-          "circle-stroke-width": 1,
-          "circle-opacity": 0.9,
-          "circle-color": [
+        layout: {
+          "icon-image": [
             "case",
             ["any", ["==", ["get", "smileScore"], 0], ["==", ["get", "smileScore"], 1]],
-            "#2ecc71", // Smil
+            "smiley-green",
             ["==", ["get", "smileScore"], 2],
-            "#f1c40f", // Strek
+            "smiley-yellow",
             ["==", ["get", "smileScore"], 3],
-            "#e74c3c", // Sur
-            "#7f8c8d", // ukjent
+            "smiley-red",
+            "smiley-gray",
           ],
+          "icon-size": 1,
+          "icon-allow-overlap": true,
         },
       });
 
