@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Smilefjeskartet – Kart for Restaurantkontroller fra Mattilsynet",
   description:
     "Se Mattilsynets smilefjeskontroller på restaurantene i Norge. Kart med smil, strek og sur munn – basert på offentlig data.",
@@ -25,10 +25,42 @@ export const metadata = {
     "smilefjeskartet",
     "restaurant hygiene",
     "matkontroll norge",
+    "mattilsynet kart",
+    "mattilsynet smilefjes",
+    "hygienekontroll",
+    "restauranttilsyn",
   ],
   metadataBase: new URL("https://smilefjeskartet.no"),
+  openGraph: {
+    title: "Smilefjeskartet – Restaurantkontroller fra Mattilsynet",
+    description:
+      "Se Mattilsynets smilefjeskontroller på restaurantene i Norge. Kart med smil, strek og sur munn – basert på offentlig data.",
+    url: "https://smilefjeskartet.no",
+    siteName: "Smilefjeskartet",
+    locale: "nb_NO",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Smilefjeskartet – Restaurantkontroller fra Mattilsynet",
+    description:
+      "Se Mattilsynets smilefjeskontroller på restaurantene i Norge. Kart med smil, strek og sur munn – basert på offentlig data.",
+  },
+  alternates: {
+    canonical: "https://smilefjeskartet.no",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
-
 
 export default function RootLayout({
   children,
@@ -36,10 +68,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="no">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "Smilefjeskartet",
+              url: "https://smilefjeskartet.no",
+              description:
+                "Se Mattilsynets smilefjeskontroller på restaurantene i Norge. Kart med smil, strek og sur munn – basert på offentlig data.",
+              applicationCategory: "UtilitiesApplication",
+              operatingSystem: "All",
+              inLanguage: "nb",
+              provider: {
+                "@type": "Organization",
+                name: "Smilefjeskartet",
+                url: "https://smilefjeskartet.no",
+              },
+            }),
+          }}
+        />
         {children}
         <VercelAnalytics />
       </body>
