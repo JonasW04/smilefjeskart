@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "build:data": "tsx scripts/build-tilsyn-geojson.ts"
+    "build:data": "tsx scripts/build-tilsyn-geojson.ts",
+    "test:data": "tsx scripts/generate-test-data.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
