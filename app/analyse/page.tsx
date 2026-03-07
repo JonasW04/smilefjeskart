@@ -165,27 +165,34 @@ function drawBarChart(
   const maxVal = Math.max(...values, 1);
   const total = values.reduce((a, b) => a + b, 0);
   const chartTop = 42;
-  const chartBottom = h - 40;
+  // Use more label space when there are many bars (rotated labels need more room)
+  const useRotatedLabels = labels.length > 5;
+  const labelAreaHeight = useRotatedLabels ? 80 : 50;
+  const chartBottom = h - labelAreaHeight;
   const chartHeight = chartBottom - chartTop;
-  const gap = 16;
-  const maxBarWidth = 100;
-  const barWidth = Math.min(maxBarWidth, (w - 60) / labels.length - gap);
-  const totalBarsWidth = labels.length * (barWidth + gap) - gap;
-  const startX = (w - totalBarsWidth) / 2;
+
+  // Calculate bar layout: evenly divide the chart width
+  const sidePadding = useRotatedLabels ? 20 : 40;
+  const availableWidth = w - sidePadding * 2;
+  const slotWidth = availableWidth / labels.length;
+  const barWidth = Math.min(80, slotWidth * 0.7);
 
   // Y-axis grid lines
   ctx.strokeStyle = "#f0f0f0";
   ctx.lineWidth = 1;
+  const gridLeft = sidePadding;
+  const gridRight = w - sidePadding;
   for (let i = 0; i <= 4; i++) {
     const y = chartTop + (chartHeight / 4) * i;
     ctx.beginPath();
-    ctx.moveTo(startX - 10, y);
-    ctx.lineTo(startX + totalBarsWidth + 10, y);
+    ctx.moveTo(gridLeft, y);
+    ctx.lineTo(gridRight, y);
     ctx.stroke();
   }
 
   for (let i = 0; i < labels.length; i++) {
-    const x = startX + i * (barWidth + gap);
+    const slotCenter = sidePadding + slotWidth * i + slotWidth / 2;
+    const x = slotCenter - barWidth / 2;
     const barH = Math.max(2, (values[i] / maxVal) * chartHeight);
     const y = chartBottom - barH;
 
@@ -194,20 +201,37 @@ function drawBarChart(
     ctx.roundRect(x, y, barWidth, barH, 6);
     ctx.fill();
 
-    // Value + percentage
+    // Value on top of bar (skip percentage for many bars to avoid clutter)
     ctx.fillStyle = "#333";
-    ctx.font = "bold 13px sans-serif";
     ctx.textAlign = "center";
-    const pct = total > 0 ? ((values[i] / total) * 100).toFixed(1) : "0";
-    ctx.fillText(`${values[i]}`, x + barWidth / 2, y - 16);
-    ctx.font = "11px sans-serif";
-    ctx.fillStyle = "#888";
-    ctx.fillText(`${pct}%`, x + barWidth / 2, y - 3);
+    if (useRotatedLabels) {
+      ctx.font = "bold 10px sans-serif";
+      ctx.fillText(`${values[i]}`, slotCenter, y - 4);
+    } else {
+      ctx.font = "bold 13px sans-serif";
+      const pct = total > 0 ? ((values[i] / total) * 100).toFixed(1) : "0";
+      ctx.fillText(`${values[i]}`, slotCenter, y - 16);
+      ctx.font = "11px sans-serif";
+      ctx.fillStyle = "#888";
+      ctx.fillText(`${pct}%`, slotCenter, y - 3);
+    }
 
     // Label
     ctx.fillStyle = "#555";
-    ctx.font = "12px sans-serif";
-    ctx.fillText(labels[i], x + barWidth / 2, chartBottom + 18);
+    if (useRotatedLabels) {
+      // Rotated labels at -45° to prevent overlap
+      ctx.save();
+      ctx.translate(slotCenter, chartBottom + 8);
+      ctx.rotate(-Math.PI / 4);
+      ctx.font = "11px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText(labels[i], 0, 0);
+      ctx.restore();
+    } else {
+      ctx.font = "12px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(labels[i], slotCenter, chartBottom + 20);
+    }
   }
 }
 
