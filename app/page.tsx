@@ -194,6 +194,13 @@ type SearchHit = {
   coords: [number, number];
 };
 
+function smileEmoji(score: number): string {
+  if (score === 0 || score === 1) return "😊";
+  if (score === 2) return "😐";
+  if (score === 3) return "😠";
+  return "❓";
+}
+
 export default function Home() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -579,9 +586,10 @@ export default function Home() {
     <main style={{ height: "100vh", display: "grid", gridTemplateRows: "auto 1fr" }}>
       <header
         style={{
-          padding: 12,
+          padding: "10px 12px",
           display: "flex",
-          gap: 12,
+          flexWrap: "wrap",
+          gap: 10,
           alignItems: "center",
           borderBottom: "1px solid #eee",
           fontFamily: "system-ui",
@@ -589,6 +597,7 @@ export default function Home() {
           zIndex: 2,
         }}
       >
+        <strong style={{ fontSize: 16, whiteSpace: "nowrap" }}>🍽️ Smilefjeskartet</strong>
 
         <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <strong>Filter:</strong>
@@ -651,7 +660,7 @@ export default function Home() {
                 >
                   <div style={{ fontWeight: 600 }}>{h.navn}</div>
                   <div style={{ fontSize: 12, opacity: 0.8 }}>
-                    {h.adresse} • Smilefjes {h.smileScore}
+                    {h.adresse} • {smileEmoji(h.smileScore)}
                     {h.orgnummer ? ` • Orgnr ${h.orgnummer}` : ""}
                   </div>
                 </button>
@@ -688,11 +697,11 @@ export default function Home() {
                 position: "absolute",
                 top: 44,
                 right: 0,
-                width: 320,
+                width: 340,
                 background: "white",
                 border: "1px solid #ddd",
                 borderRadius: 8,
-                padding: 12,
+                padding: 14,
                 boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
                 zIndex: 10,
               }}
@@ -707,24 +716,31 @@ export default function Home() {
                   ✕
                 </button>
               </div>
-              <div style={{ marginTop: 8, fontSize: 14, lineHeight: 1.4 }}>
+              <div style={{ marginTop: 8, fontSize: 14, lineHeight: 1.5 }}>
                 <p style={{ margin: 0 }}>
-                  <strong>Smilefjeskartet</strong> viser resultatene fra <strong>Mattilsynet</strong> sine restaurantkontroller i <strong>Norge</strong>. Alle dataene er basert på offentlig tilgjengelige tilsynsdata.
+                  <strong>Smilefjeskartet</strong> viser resultatene fra Mattilsynets
+                  restaurantkontroller i Norge. Se forklaringen til venstre for hva
+                  fargene betyr.
                 </p>
 
-                <p style={{ margin: "8px 0 6px", fontWeight: 600 }}>Fargeforklaring:</p>
-
-                <ul style={{ margin: 0, paddingLeft: 18, marginBottom: 0 }}>
+                <p style={{ margin: "12px 0 6px", fontWeight: 600 }}>Datakilder:</p>
+                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.6 }}>
                   <li>
-                    <span style={{ color: "#2ecc71", fontWeight: 700 }}>Grønn</span> — Smil (ingen eller små avvik)
+                    Tilsynsdata: <a href="https://data.norge.no/datasets/288aa74c-e3d3-492e-9ede-e71503b3bfd9" target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8", textDecoration: "underline" }}>Mattilsynet – Smilefjesordningen</a>
+                    <br />
+                    <span style={{ fontSize: 12, opacity: 0.7 }}>Lisensiert under <a href="https://data.norge.no/nlod/no/2.0" target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8", textDecoration: "underline" }}>NLOD 2.0</a></span>
                   </li>
                   <li>
-                    <span style={{ color: "#f1c40f", fontWeight: 700 }}>Gul</span> — Strek (avvik som må følges opp)
+                    Kart: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8", textDecoration: "underline" }}>© OpenStreetMap</a>
                   </li>
                   <li>
-                    <span style={{ color: "#e74c3c", fontWeight: 700 }}>Rød</span> — Sur munn (alvorlige brudd)
+                    Adresseoppslag: <a href="https://kartverket.no/" target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8", textDecoration: "underline" }}>Kartverket</a>
                   </li>
                 </ul>
+
+                <p style={{ margin: "12px 0 0", fontSize: 12, color: "#666" }}>
+                  Denne nettsiden er ikke tilknyttet Mattilsynet. Dataene oppdateres jevnlig fra offentlig tilgjengelige kilder.
+                </p>
               </div>
             </div>
           )}
@@ -753,6 +769,49 @@ export default function Home() {
       </button>
 
       <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
+
+      <div
+        style={{
+          position: "absolute",
+          bottom: 2,
+          left: 4,
+          zIndex: 2,
+          fontSize: 11,
+          color: "#555",
+          background: "rgba(255,255,255,0.75)",
+          padding: "2px 6px",
+          borderRadius: 4,
+          pointerEvents: "auto",
+        }}
+      >
+        Data:{" "}
+        <a
+          href="https://data.norge.no/datasets/288aa74c-e3d3-492e-9ede-e71503b3bfd9"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "#1d4ed8", textDecoration: "none" }}
+        >
+          Mattilsynet
+        </a>
+        {" ("}
+        <a
+          href="https://data.norge.no/nlod/no/2.0"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "#1d4ed8", textDecoration: "none" }}
+        >
+          NLOD
+        </a>
+        {") · "}
+        <a
+          href="https://www.openstreetmap.org/copyright"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "#1d4ed8", textDecoration: "none" }}
+        >
+          © OpenStreetMap
+        </a>
+      </div>
     </main>
   );
 }
