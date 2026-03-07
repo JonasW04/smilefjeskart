@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     const { email, address, lat, lon, radiusKm } = body;
 
     // Validate input
-    if (!email || typeof email !== "string" || !email.includes("@")) {
+    if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
         { error: "Ugyldig e-postadresse" },
         { status: 400 }
@@ -67,9 +67,12 @@ export async function POST(request: NextRequest) {
 
     const subs = loadSubscriptions();
 
-    // Check for duplicate
+    // Check for duplicate (use rounded coords to avoid floating-point mismatch)
+    const roundCoord = (v: number) => Math.round(v * 1e6) / 1e6;
     const existing = subs.find(
-      s => s.email === sanitizedEmail && s.lat === lat && s.lon === lon
+      s => s.email === sanitizedEmail &&
+        roundCoord(s.lat) === roundCoord(lat) &&
+        roundCoord(s.lon) === roundCoord(lon)
     );
     if (existing) {
       // Update existing subscription
