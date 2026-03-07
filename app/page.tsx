@@ -87,7 +87,8 @@ function createSmileyImage(
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas 2D context not available");
 
   const cx = size / 2;
   const cy = size / 2;
