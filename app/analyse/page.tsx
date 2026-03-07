@@ -73,7 +73,46 @@ function parseDatoToDate(ddmmyyyy: string): Date | null {
   return new Date(year, month, day);
 }
 
-function smileLabel(k: number): string {
+/** Same logic as map page: max of karakter1-4 (only 0-3 count), fallback to karakter */
+function computeSmileScore(p: TilsynProperties): number {
+  const candidates: number[] = [];
+  const raws = [p.karakter1, p.karakter2, p.karakter3, p.karakter4];
+  for (const r of raws) {
+    const n = typeof r === "number" && Number.isFinite(r) ? r : null;
+    if (n !== null && n >= 0 && n <= 3) candidates.push(n);
+  }
+  if (candidates.length > 0) return Math.max(...candidates);
+  const k = p.karakter;
+  if (typeof k === "number" && Number.isFinite(k) && k >= 0 && k <= 3) return k;
+  return -1;
+}
+
+type SmileGroup = "smil" | "strek" | "sur";
+
+function smileGroupFromScore(score: number): SmileGroup | null {
+  if (score === 0 || score === 1) return "smil";
+  if (score === 2) return "strek";
+  if (score === 3) return "sur";
+  return null;
+}
+
+function smileGroupLabel(g: SmileGroup): string {
+  switch (g) {
+    case "smil": return "Smil 😊";
+    case "strek": return "Strekmunn 😐";
+    case "sur": return "Sur munn 😠";
+  }
+}
+
+function smileGroupColor(g: SmileGroup): string {
+  switch (g) {
+    case "smil": return "#2ecc71";
+    case "strek": return "#f1c40f";
+    case "sur": return "#e74c3c";
+  }
+}
+
+function scoreLabel(k: number): string {
   switch (k) {
     case 0: return "Ingen brudd 😊";
     case 1: return "Små brudd 😊";
@@ -83,7 +122,7 @@ function smileLabel(k: number): string {
   }
 }
 
-function smileColor(k: number): string {
+function scoreColor(k: number): string {
   switch (k) {
     case 0: return "#2ecc71";
     case 1: return "#27ae60";
@@ -119,38 +158,56 @@ function drawBarChart(
 
   // Title
   ctx.fillStyle = "#333";
-  ctx.font = "bold 14px sans-serif";
+  ctx.font = "bold 15px sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(title, w / 2, 20);
+  ctx.fillText(title, w / 2, 22);
 
   const maxVal = Math.max(...values, 1);
-  const chartTop = 35;
-  const chartBottom = h - 30;
+  const total = values.reduce((a, b) => a + b, 0);
+  const chartTop = 42;
+  const chartBottom = h - 40;
   const chartHeight = chartBottom - chartTop;
-  const barWidth = Math.min(60, (w - 40) / labels.length - 10);
-  const totalBarsWidth = labels.length * (barWidth + 10) - 10;
+  const gap = 16;
+  const maxBarWidth = 100;
+  const barWidth = Math.min(maxBarWidth, (w - 60) / labels.length - gap);
+  const totalBarsWidth = labels.length * (barWidth + gap) - gap;
   const startX = (w - totalBarsWidth) / 2;
 
+  // Y-axis grid lines
+  ctx.strokeStyle = "#f0f0f0";
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = chartTop + (chartHeight / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(startX - 10, y);
+    ctx.lineTo(startX + totalBarsWidth + 10, y);
+    ctx.stroke();
+  }
+
   for (let i = 0; i < labels.length; i++) {
-    const x = startX + i * (barWidth + 10);
-    const barH = (values[i] / maxVal) * chartHeight;
+    const x = startX + i * (barWidth + gap);
+    const barH = Math.max(2, (values[i] / maxVal) * chartHeight);
     const y = chartBottom - barH;
 
     ctx.fillStyle = colors[i] || "#4a90d9";
     ctx.beginPath();
-    ctx.roundRect(x, y, barWidth, barH, 4);
+    ctx.roundRect(x, y, barWidth, barH, 6);
     ctx.fill();
 
-    // Value
+    // Value + percentage
     ctx.fillStyle = "#333";
-    ctx.font = "bold 12px sans-serif";
+    ctx.font = "bold 13px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(String(values[i]), x + barWidth / 2, y - 5);
+    const pct = total > 0 ? ((values[i] / total) * 100).toFixed(1) : "0";
+    ctx.fillText(`${values[i]}`, x + barWidth / 2, y - 16);
+    ctx.font = "11px sans-serif";
+    ctx.fillStyle = "#888";
+    ctx.fillText(`${pct}%`, x + barWidth / 2, y - 3);
 
     // Label
-    ctx.fillStyle = "#666";
-    ctx.font = "11px sans-serif";
-    ctx.fillText(labels[i], x + barWidth / 2, chartBottom + 16);
+    ctx.fillStyle = "#555";
+    ctx.font = "12px sans-serif";
+    ctx.fillText(labels[i], x + barWidth / 2, chartBottom + 18);
   }
 }
 
@@ -279,14 +336,24 @@ export default function AnalysePage() {
     });
   }, []);
 
-  // Score distribution
+  // Score distribution using same logic as map (max of karakter1-4)
   const scoreDist = useCallback(() => {
     const dist: Record<number, number> = { 0: 0, 1: 0, 2: 0, 3: 0 };
     for (const f of features) {
-      const k = f.properties.karakter;
+      const k = computeSmileScore(f.properties);
       if (k >= 0 && k <= 3) dist[k]++;
     }
     return dist;
+  }, [features]);
+
+  // Grouped distribution: smil (0+1), strek (2), sur (3) – matches map colors
+  const groupedDist = useCallback(() => {
+    const groups: Record<SmileGroup, number> = { smil: 0, strek: 0, sur: 0 };
+    for (const f of features) {
+      const g = smileGroupFromScore(computeSmileScore(f.properties));
+      if (g) groups[g]++;
+    }
+    return groups;
   }, [features]);
 
   // Monthly inspection counts
@@ -322,13 +389,14 @@ export default function AnalysePage() {
     if (loading || features.length === 0) return;
 
     if (activeTab === "oversikt" && scoreChartRef.current) {
-      const dist = scoreDist();
+      const groups = groupedDist();
+      const groupKeys: SmileGroup[] = ["smil", "strek", "sur"];
       drawBarChart(
         scoreChartRef.current,
-        ["Ingen brudd (0)", "Små brudd (1)", "Strekmunn (2)", "Sur munn (3)"],
-        [dist[0], dist[1], dist[2], dist[3]],
-        ["#2ecc71", "#27ae60", "#f1c40f", "#e74c3c"],
-        "Fordeling av tilsynskarakterer"
+        groupKeys.map(g => smileGroupLabel(g)),
+        groupKeys.map(g => groups[g]),
+        groupKeys.map(g => smileGroupColor(g)),
+        "Fordeling av smilefjesresultater"
       );
     }
 
@@ -344,7 +412,7 @@ export default function AnalysePage() {
       const regions = regionData();
       drawBarChart(
         regionChartRef.current,
-        regions.map(([name]) => name.length > 10 ? name.slice(0, 9) + "…" : name),
+        regions.map(([name]) => name.length > 12 ? name.slice(0, 11) + "…" : name),
         regions.map(([, count]) => count),
         regions.map(() => "#4a90d9"),
         "Topp 15 områder med flest kontroller"
@@ -360,7 +428,7 @@ export default function AnalysePage() {
         drawTimelineChart(downloadChartRef.current, histData, "Nye kontroller per nedlasting");
       }
     }
-  }, [loading, features, activeTab, scoreDist, monthlyData, regionData, meta]);
+  }, [loading, features, activeTab, scoreDist, groupedDist, monthlyData, regionData, meta]);
 
   if (loading) {
     return (
@@ -371,6 +439,7 @@ export default function AnalysePage() {
   }
 
   const dist = scoreDist();
+  const groups = groupedDist();
 
   return (
     <main style={{ fontFamily: "sans-serif", maxWidth: 1000, margin: "0 auto", padding: "20px 16px" }}>
@@ -438,34 +507,61 @@ export default function AnalysePage() {
       {/* ---- OVERSIKT TAB ---- */}
       {activeTab === "oversikt" && (
         <div>
-          {/* Summary cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
+          {/* Summary cards – grouped as on map (smil/strek/sur) */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 16 }}>
             <div style={{ background: "#f8f9fa", border: "1px solid #e9ecef", borderRadius: 8, padding: 16, textAlign: "center" }}>
-              <div style={{ fontSize: 28, fontWeight: 700 }}>{features.length}</div>
+              <div style={{ fontSize: 32, fontWeight: 700 }}>{features.length}</div>
               <div style={{ fontSize: 13, color: "#666" }}>Totalt antall tilsyn</div>
             </div>
-            {[0, 1, 2, 3].map(k => (
-              <div key={k} style={{
-                background: `${smileColor(k)}15`,
-                border: `1px solid ${smileColor(k)}40`,
+            {(["smil", "strek", "sur"] as const).map(g => (
+              <div key={g} style={{
+                background: `${smileGroupColor(g)}15`,
+                border: `1px solid ${smileGroupColor(g)}40`,
                 borderRadius: 8,
                 padding: 16,
                 textAlign: "center",
               }}>
-                <div style={{ fontSize: 28, fontWeight: 700 }}>{dist[k]}</div>
-                <div style={{ fontSize: 13, color: "#666" }}>{smileLabel(k)}</div>
-                <div style={{ fontSize: 12, color: "#999" }}>
-                  {((dist[k] / features.length) * 100).toFixed(1)}%
+                <div style={{ fontSize: 32, fontWeight: 700 }}>{groups[g]}</div>
+                <div style={{ fontSize: 14, color: "#444" }}>{smileGroupLabel(g)}</div>
+                <div style={{ fontSize: 12, color: "#999", marginTop: 2 }}>
+                  {((groups[g] / features.length) * 100).toFixed(1)}%
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Detailed breakdown */}
+          <div style={{
+            background: "#f8f9fa",
+            border: "1px solid #e9ecef",
+            borderRadius: 8,
+            padding: "12px 16px",
+            marginBottom: 24,
+          }}>
+            <strong style={{ fontSize: 13, color: "#555" }}>Detaljert fordeling (beregnet fra delkarakterer, som på kartet):</strong>
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginTop: 8 }}>
+              {[0, 1, 2, 3].map(k => (
+                <div key={k} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{
+                    display: "inline-block",
+                    width: 10,
+                    height: 10,
+                    borderRadius: "50%",
+                    background: scoreColor(k),
+                  }} />
+                  <span style={{ fontSize: 13 }}>
+                    <strong>{dist[k]}</strong> {scoreLabel(k)}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Score chart */}
           <div style={{ background: "white", border: "1px solid #e9ecef", borderRadius: 8, padding: 16, marginBottom: 20 }}>
             <canvas
               ref={scoreChartRef}
-              style={{ width: "100%", height: 250 }}
+              style={{ width: "100%", height: 280 }}
             />
           </div>
 
@@ -549,16 +645,22 @@ export default function AnalysePage() {
                             <td style={{ padding: "8px 10px", color: "#666" }}>{item.adresse}</td>
                             <td style={{ padding: "8px 10px" }}>{formatDato(item.dato)}</td>
                             <td style={{ padding: "8px 10px", textAlign: "center" }}>
-                              <span style={{
-                                background: smileColor(item.karakter),
-                                color: "white",
-                                borderRadius: 4,
-                                padding: "2px 8px",
-                                fontSize: 12,
-                                fontWeight: 600,
-                              }}>
-                                {item.karakter}
-                              </span>
+                              {(() => {
+                                const score = computeSmileScore(item);
+                                const group = smileGroupFromScore(score);
+                                return (
+                                  <span style={{
+                                    background: group ? smileGroupColor(group) : "#999",
+                                    color: "white",
+                                    borderRadius: 4,
+                                    padding: "2px 8px",
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                  }}>
+                                    {group ? smileGroupLabel(group) : "Ukjent"}
+                                  </span>
+                                );
+                              })()}
                             </td>
                           </tr>
                         ))}
@@ -590,16 +692,22 @@ export default function AnalysePage() {
                             <td style={{ padding: "8px 10px", color: "#666" }}>{item.adresse}</td>
                             <td style={{ padding: "8px 10px" }}>{formatDato(item.dato)}</td>
                             <td style={{ padding: "8px 10px", textAlign: "center" }}>
-                              <span style={{
-                                background: smileColor(item.karakter),
-                                color: "white",
-                                borderRadius: 4,
-                                padding: "2px 8px",
-                                fontSize: 12,
-                                fontWeight: 600,
-                              }}>
-                                {item.karakter}
-                              </span>
+                              {(() => {
+                                const score = computeSmileScore(item);
+                                const group = smileGroupFromScore(score);
+                                return (
+                                  <span style={{
+                                    background: group ? smileGroupColor(group) : "#999",
+                                    color: "white",
+                                    borderRadius: 4,
+                                    padding: "2px 8px",
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                  }}>
+                                    {group ? smileGroupLabel(group) : "Ukjent"}
+                                  </span>
+                                );
+                              })()}
                             </td>
                           </tr>
                         ))}
