@@ -597,7 +597,7 @@ export default function Home() {
           zIndex: 2,
         }}
       >
-        <h1 style={{ fontSize: 16, whiteSpace: "nowrap", margin: 0, fontWeight: 700 }}>🍽️ Smilefjeskartet</h1>
+        <h1 style={{ fontSize: 16, whiteSpace: "nowrap", margin: 0, fontWeight: 700 }} aria-label="Smilefjeskartet">🍽️ Smilefjeskartet</h1>
 
         <nav aria-label="Filter og søk" style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", flex: 1 }}>
         <label style={{ display: "flex", gap: 8, alignItems: "center" }}>

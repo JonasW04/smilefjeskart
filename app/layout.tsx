@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     "matkontroll norge",
     "mattilsynet kart",
     "mattilsynet restaurantkontroll",
-    "hygienekontroll restaurant",
+    "hygienekontroll",
     "restauranttilsyn",
     "mattilsynet tilsyn",
     "smilefjes restaurant",
