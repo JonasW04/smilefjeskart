@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import Papa from "papaparse";
+import type * as GeoJSON from "geojson";
 
 // ---------------------------------------------------------------------------
 // Types

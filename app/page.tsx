@@ -588,6 +588,7 @@ export default function Home() {
       <header className="map-header">
         <strong style={{ fontSize: 16, whiteSpace: "nowrap" }}>🍽️ Smilefjeskartet</strong>
 
+        <nav aria-label="Filter og søk" style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", flex: 1 }}>
         <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <strong>Filter:</strong>
           <select
@@ -657,6 +658,7 @@ export default function Home() {
             </div>
           )}
         </div>
+        </nav>
 
         <div
         ref={infoWrapRef}
@@ -701,7 +703,7 @@ export default function Home() {
               className="map-info-dialog"
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-                <strong>Om dette kartet</strong>
+                <h2 style={{ margin: 0, fontSize: "inherit" }}>Om dette kartet</h2>
                 <button
                   onClick={() => setShowInfo(false)}
                   aria-label="Lukk"
@@ -753,7 +755,7 @@ export default function Home() {
 
       <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
 
-      <div
+      <footer
         style={{
           position: "absolute",
           bottom: 2,
@@ -794,7 +796,7 @@ export default function Home() {
         >
           © OpenStreetMap
         </a>
-      </div>
+      </footer>
     </main>
   );
 }
