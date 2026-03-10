@@ -53,6 +53,9 @@ const KARTVERKET_SOK_URL = "https://ws.geonorge.no/adresser/v1/sok";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const OUT_PATH = path.join(process.cwd(), "public", "tilsyn.geojson");
+const DIFF_PATH = path.join(process.cwd(), "public", "tilsyn-diff.json");
+const META_PATH = path.join(process.cwd(), "public", "tilsyn-meta.json");
+const SNAPSHOT_DIR = path.join(DATA_DIR, "snapshots");
 const GEOCODE_CACHE_PATH = path.join(DATA_DIR, "geocode-cache.json");
 
 // Throttle delay between geocode requests (be nice to public APIs)
@@ -254,7 +257,105 @@ async function main() {
     });
   }
 
-  // ---- 5) Write cache + output ----
+  // ---- 5) Compare with previous data (change tracking) ----
+  const newFeatureMap = new Map<string, typeof features[0]>();
+  for (const f of features) {
+    newFeatureMap.set(f.properties.tilsynsobjektid, f);
+  }
+
+  let previousFeatureMap = new Map<string, typeof features[0]>();
+  let previousDownloadTime: string | null = null;
+
+  // Load previous meta to get last download time
+  if (fs.existsSync(META_PATH)) {
+    try {
+      const meta = JSON.parse(fs.readFileSync(META_PATH, "utf8"));
+      previousDownloadTime = meta.lastDownload ?? null;
+    } catch { /* ignore */ }
+  }
+
+  // Load previous GeoJSON for comparison
+  if (fs.existsSync(OUT_PATH)) {
+    try {
+      const prevData = JSON.parse(fs.readFileSync(OUT_PATH, "utf8")) as GeoJSON.FeatureCollection<GeoJSON.Point, TilsynProperties>;
+      for (const f of prevData.features) {
+        previousFeatureMap.set(f.properties.tilsynsobjektid, f);
+      }
+    } catch { /* ignore */ }
+  }
+
+  // Compute diff
+  const newInspections: typeof features = [];
+  const changedInspections: typeof features = [];
+  const removedIds: string[] = [];
+
+  for (const [id, feat] of newFeatureMap) {
+    const prev = previousFeatureMap.get(id);
+    if (!prev) {
+      newInspections.push(feat);
+    } else if (prev.properties.dato !== feat.properties.dato ||
+               prev.properties.karakter !== feat.properties.karakter) {
+      changedInspections.push(feat);
+    }
+  }
+
+  for (const id of previousFeatureMap.keys()) {
+    if (!newFeatureMap.has(id)) {
+      removedIds.push(id);
+    }
+  }
+
+  const now = new Date().toISOString();
+
+  const diffData = {
+    generatedAt: now,
+    previousDownload: previousDownloadTime,
+    summary: {
+      previousTotal: previousFeatureMap.size,
+      currentTotal: newFeatureMap.size,
+      newCount: newInspections.length,
+      changedCount: changedInspections.length,
+      removedCount: removedIds.length,
+    },
+    newInspections: newInspections.map(f => f.properties),
+    changedInspections: changedInspections.map(f => f.properties),
+    removedIds,
+  };
+
+  fs.writeFileSync(DIFF_PATH, JSON.stringify(diffData, null, 2), "utf8");
+  console.log(`\nChange tracking: ${newInspections.length} new, ${changedInspections.length} changed, ${removedIds.length} removed`);
+
+  // Save snapshot for historical tracking
+  fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
+  const snapshotFile = path.join(SNAPSHOT_DIR, `snapshot-${now.replace(/[:.]/g, "-")}.json`);
+  const snapshotData = {
+    downloadedAt: now,
+    totalFeatures: features.length,
+    newCount: newInspections.length,
+    changedCount: changedInspections.length,
+    removedCount: removedIds.length,
+  };
+  fs.writeFileSync(snapshotFile, JSON.stringify(snapshotData, null, 2), "utf8");
+
+  // Build download history from snapshots
+  const snapshotFiles = fs.readdirSync(SNAPSHOT_DIR)
+    .filter(f => f.startsWith("snapshot-") && f.endsWith(".json"))
+    .sort();
+  const downloadHistory = snapshotFiles.map(f => {
+    try {
+      return JSON.parse(fs.readFileSync(path.join(SNAPSHOT_DIR, f), "utf8"));
+    } catch { return null; }
+  }).filter(Boolean);
+
+  // Write meta with download history
+  const metaData = {
+    lastDownload: now,
+    totalFeatures: features.length,
+    downloadHistory,
+  };
+  fs.writeFileSync(META_PATH, JSON.stringify(metaData, null, 2), "utf8");
+
+  // ---- 6) Write cache + output ----
   fs.writeFileSync(
     GEOCODE_CACHE_PATH,
     JSON.stringify(geocodeCache, null, 2),
@@ -283,6 +384,8 @@ async function main() {
     `\nGeocode: ${geocodeAttempts} attempts, ${geocodeHits} hits, ${cacheHits} from cache, ${failedAddresses.length} failed`,
   );
   console.log(`✅ Wrote ${features.length} features to ${OUT_PATH}`);
+  console.log(`📊 Diff written to ${DIFF_PATH}`);
+  console.log(`📋 Meta written to ${META_PATH}`);
 }
 
 main().catch((e) => {
