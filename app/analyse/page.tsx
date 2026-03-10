@@ -1116,12 +1116,7 @@ function RecentHeatmap({ geojson }: { geojson: RecentGeoJSON }) {
     <div style={{ position: "relative" }}>
       <div
         ref={containerRef}
-        style={{
-          width: "100%",
-          height: 420,
-          borderRadius: 12,
-          overflow: "hidden",
-        }}
+        className="analyse-heatmap-container"
       />
       {/* Pulsing animation overlay via CSS */}
       <style>{`
@@ -1187,8 +1182,8 @@ function RecentHeatmap({ geojson }: { geojson: RecentGeoJSON }) {
           display: "flex",
           flexDirection: "column",
           gap: 4,
-          minWidth: 260,
         }}
+        className="analyse-timeline-scrubber"
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
           <span style={{ fontWeight: 600, fontSize: 11, color: COLORS.text }}>Tidslinje</span>
@@ -1649,6 +1644,35 @@ export default function AnalysePage() {
         color: COLORS.text,
       }}
     >
+      <style>{`
+        .analyse-grid-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .analyse-grid-2col { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(400px, 2fr); gap: 16px; margin-bottom: 16px; }
+        .analyse-grid-2col-alt { display: grid; grid-template-columns: minmax(400px, 3fr) minmax(320px, 2fr); gap: 16px; margin-bottom: 16px; }
+        .analyse-grid-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .analyse-grid-scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 8px; }
+        .analyse-heatmap-container { width: 100%; height: 420px; border-radius: 12px; overflow: hidden; }
+        .analyse-timeline-scrubber { min-width: 260px; }
+        .analyse-header-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .analyse-content { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; }
+        @media (max-width: 768px) {
+          .analyse-grid-kpi { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+          .analyse-grid-2col { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+          .analyse-grid-2col-alt { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+          .analyse-grid-3col { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+          .analyse-grid-scores { grid-template-columns: 1fr 1fr; }
+          .analyse-heatmap-container { height: 320px; }
+          .analyse-timeline-scrubber { min-width: 200px; }
+          .analyse-content { padding: 16px 12px 40px; }
+          .analyse-header-inner { gap: 8px; }
+        }
+        @media (max-width: 480px) {
+          .analyse-grid-kpi { grid-template-columns: 1fr; gap: 8px; }
+          .analyse-grid-scores { grid-template-columns: 1fr; }
+          .analyse-heatmap-container { height: 280px; }
+          .analyse-timeline-scrubber { min-width: 160px; font-size: 9px; }
+          .analyse-header-inner { flex-direction: column; align-items: flex-start; }
+        }
+      `}</style>
       {/* ============================================================== */}
       {/* HEADER                                                         */}
       {/* ============================================================== */}
@@ -1664,7 +1688,7 @@ export default function AnalysePage() {
           backgroundColor: "rgba(255,255,255,0.85)",
         }}
       >
-        <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+        <div className="analyse-header-inner">
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <Link
               href="/"
@@ -1709,19 +1733,12 @@ export default function AnalysePage() {
         </div>
       </header>
 
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "24px 20px 60px" }}>
+      <div className="analyse-content">
 
         {/* ============================================================== */}
         {/* KPI CARDS ROW                                                  */}
         {/* ============================================================== */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: 16,
-            marginBottom: 24,
-          }}
-        >
+        <div className="analyse-grid-kpi">
           <KpiCard
             icon="📋"
             title="Totalt kontroller"
@@ -1757,14 +1774,7 @@ export default function AnalysePage() {
         {/* ============================================================== */}
         {/* ROW: Donut + Timeline                                          */}
         {/* ============================================================== */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(280px, 1fr) minmax(400px, 2fr)",
-            gap: 16,
-            marginBottom: 16,
-          }}
-        >
+        <div className="analyse-grid-2col">
           {/* Donut */}
           <SectionCard>
             <canvas
@@ -1799,14 +1809,7 @@ export default function AnalysePage() {
         {/* ============================================================== */}
         {/* ROW: Stacked Area + Category Breakdown                         */}
         {/* ============================================================== */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(400px, 3fr) minmax(320px, 2fr)",
-            gap: 16,
-            marginBottom: 16,
-          }}
-        >
+        <div className="analyse-grid-2col-alt">
           {/* Stacked area */}
           <SectionCard>
             <canvas
@@ -1848,14 +1851,7 @@ export default function AnalysePage() {
         {/* ============================================================== */}
         {/* ROW: Active Areas + Worst Performers + Repeat Offenders        */}
         {/* ============================================================== */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: 16,
-            marginBottom: 16,
-          }}
-        >
+        <div className="analyse-grid-3col">
           {/* Recent hotspots table */}
           <SectionCard title="📍 Aktive kontrollområder" subtitle="Steder med flest kontroller siste 7 dager">
             <div style={{ overflowX: "auto", maxHeight: 420, overflowY: "auto" }}>
@@ -2079,7 +2075,7 @@ export default function AnalysePage() {
         {/* ============================================================== */}
         <div style={{ marginTop: 16 }}>
           <SectionCard title="📊 Detaljert karakterfordeling" subtitle="Fordeling av individuelle kravpunktkarakterer (0–3)">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginTop: 8 }}>
+            <div className="analyse-grid-scores">
               {[0, 1, 2, 3].map(k => {
                 const count = scoreDist[k];
                 const pct = features.length > 0 ? (count / features.length) * 100 : 0;
