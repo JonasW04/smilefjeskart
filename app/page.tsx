@@ -675,22 +675,6 @@ export default function Home() {
         style={{ position: "relative", display: "flex", gap: 8, alignItems: "center" }}
         > 
           <Link
-            href="/varsling"
-            style={{
-              padding: "8px 12px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              background: "white",
-              cursor: "pointer",
-              textDecoration: "none",
-              color: "inherit",
-              fontSize: 14,
-            }}
-            title="Varslingstjeneste for kontroller"
-          >
-            🔔 Varsling
-          </Link>
-          <Link
             href="/analyse"
             style={{
               padding: "8px 12px",
