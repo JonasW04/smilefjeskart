@@ -31,19 +31,7 @@ export default function Legend() {
       <button
         type="button"
         onClick={() => setHidden(false)}
-        style={{
-          position: "absolute",
-          top: 72, // same placement as before
-          left: 12,
-          zIndex: 3,
-          background: "white",
-          border: "1px solid #ddd",
-          borderRadius: 999,
-          padding: "6px 10px",
-          cursor: "pointer",
-          boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-          fontSize: 13,
-        }}
+        className="map-legend-pill"
         title="Vis forklaring"
       >
         Forklaring
@@ -56,19 +44,7 @@ export default function Legend() {
     <div
       role="region"
       aria-label="Kartforklaring"
-      style={{
-        position: "absolute",
-        top: 72, // move below header to avoid overlapping controls
-        left: 12,
-        zIndex: 3,
-        background: "white",
-        padding: 10,
-        borderRadius: 8,
-        border: "1px solid #ddd",
-        boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-        fontSize: 13,
-        maxWidth: 240,
-      }}
+      className="map-legend"
     >
       <div
         style={{

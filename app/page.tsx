@@ -585,19 +585,7 @@ export default function Home() {
 
   return (
     <main style={{ height: "100vh", display: "grid", gridTemplateRows: "auto 1fr" }}>
-      <header
-        style={{
-          padding: "10px 12px",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 10,
-          alignItems: "center",
-          borderBottom: "1px solid #eee",
-          fontFamily: "system-ui",
-          position: "relative",
-          zIndex: 2,
-        }}
-      >
+      <header className="map-header">
         <strong style={{ fontSize: 16, whiteSpace: "nowrap" }}>🍽️ Smilefjeskartet</strong>
 
         <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -618,7 +606,7 @@ export default function Home() {
           </select>
         </label>
 
-        <div style={{ position: "relative", flex: 1, maxWidth: 520 }}>
+        <div className="map-search-wrap">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -672,7 +660,7 @@ export default function Home() {
 
         <div
         ref={infoWrapRef}
-        style={{ position: "relative", display: "flex", gap: 8, alignItems: "center" }}
+        className="map-actions-wrap"
         > 
           <Link
             href="/analyse"
@@ -710,18 +698,7 @@ export default function Home() {
               ref={infoWrapRef}
               role="dialog"
               aria-label="Om smilefjeskart"
-              style={{
-                position: "absolute",
-                top: 44,
-                right: 0,
-                width: 340,
-                background: "white",
-                border: "1px solid #ddd",
-                borderRadius: 8,
-                padding: 14,
-                boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-                zIndex: 10,
-              }}
+              className="map-info-dialog"
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                 <strong>Om dette kartet</strong>
@@ -769,18 +746,7 @@ export default function Home() {
       <button
         onClick={centerOnUser}
         title="Sentrer kartet på min posisjon"
-        style={{
-          position: "absolute",
-          bottom: 40,
-          right: 20,
-          padding: "10px 14px",
-          borderRadius: 8,
-          border: "1px solid #ddd",
-          background: "white",
-          cursor: "pointer",
-          zIndex: 3,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-        }}
+        className="map-locate-btn"
       >
         {locating ? "…" : "📍 Nær meg"}
       </button>
