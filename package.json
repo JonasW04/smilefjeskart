@@ -20,7 +20,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/geojson": "^7946.0.16",
-    "@types/node": "^20",
+    "@types/node": "^20.19.37",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
