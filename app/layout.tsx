@@ -174,8 +174,7 @@ export default function RootLayout({
               url: "https://smilefjeskartet.no",
               description:
                 "Interaktivt kart over Mattilsynets smilefjeskontroller for restauranter og spisesteder i Norge.",
-              logo: "https://smilefjeskartet.no/opengraph-image",
-              sameAs: [],
+              logo: "https://smilefjeskartet.no/opengraph-image.png",
             }),
           }}
         />
