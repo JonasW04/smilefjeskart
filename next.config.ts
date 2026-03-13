@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' https://tile.openstreetmap.org data: blob:",
               "font-src 'self'",
-              "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+              "connect-src 'self' https://tile.openstreetmap.org https://vitals.vercel-insights.com https://va.vercel-scripts.com",
               "worker-src 'self' blob:",
               "child-src 'self' blob:",
               "frame-ancestors 'self'",

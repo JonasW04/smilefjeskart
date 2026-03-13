@@ -337,6 +337,7 @@ export default function Home() {
         source: "tilsyn",
         filter: ["has", "point_count"],
         paint: {
+          "circle-color": "#51bbd6",
           "circle-radius": ["step", ["get", "point_count"], 16, 20, 22, 50, 28],
           "circle-opacity": 0.7,
         },
@@ -348,6 +349,7 @@ export default function Home() {
         source: "tilsyn",
         filter: ["has", "point_count"],
         layout: { "text-field": "{point_count_abbreviated}", "text-size": 12 },
+        paint: { "text-color": "#ffffff" },
       });
 
       // unclustered smiley-face icons colored by smileScore
