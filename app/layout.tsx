@@ -164,6 +164,21 @@ export default function RootLayout({
             }),
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Smilefjeskartet",
+              url: "https://smilefjeskartet.no",
+              description:
+                "Interaktivt kart over Mattilsynets smilefjeskontroller for restauranter og spisesteder i Norge.",
+              logo: "https://smilefjeskartet.no/opengraph-image",
+              sameAs: [],
+            }),
+          }}
+        />
         <noscript>
           <div style={{ padding: "2rem", fontFamily: "system-ui, sans-serif", maxWidth: "800px", margin: "0 auto" }}>
             <h1>Smilefjeskartet – Mattilsynets Smilefjeskontroller på Kart</h1>
