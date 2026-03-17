@@ -1979,7 +1979,10 @@ export default function AnalysePage() {
                 <label style={{ fontSize: 12, color: COLORS.textMuted, fontWeight: 500 }}>Velg nedlasting:</label>
                 <select
                   value={selectedDiffIdx}
-                  onChange={e => { setSelectedDiffIdx(Number(e.target.value)); setActiveSection("all"); }}
+                  onChange={e => {
+                    setSelectedDiffIdx(Number(e.target.value));
+                    setActiveSection("all");
+                  }}
                   style={{
                     padding: "6px 12px",
                     borderRadius: 8,
@@ -1992,8 +1995,7 @@ export default function AnalysePage() {
                 >
                   {diffHistory.map((entry, i) => {
                     const date = new Date(entry.generatedAt);
-                    const label = date.toLocaleDateString("nb-NO", { day: "2-digit", month: "short", year: "numeric" })
-                      + " " + date.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+                    const label = `${date.toLocaleDateString("nb-NO", { day: "2-digit", month: "short", year: "numeric" })} ${date.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}`;
                     return (
                       <option key={i} value={i}>
                         {i === 0 ? `${label} (siste)` : label}
