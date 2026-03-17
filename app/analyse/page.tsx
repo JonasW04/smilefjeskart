@@ -28,7 +28,7 @@ type Feature = {
   properties: TilsynProperties;
 };
 
-type DiffData = {
+type DiffEntry = {
   generatedAt: string;
   previousDownload: string | null;
   summary: {
@@ -1272,7 +1272,8 @@ function RecentHeatmap({ geojson }: { geojson: RecentGeoJSON }) {
 
 export default function AnalysePage() {
   const [features, setFeatures] = useState<Feature[]>([]);
-  const [diff, setDiff] = useState<DiffData | null>(null);
+  const [diffHistory, setDiffHistory] = useState<DiffEntry[]>([]);
+  const [selectedDiffIdx, setSelectedDiffIdx] = useState(0);
   const [meta, setMeta] = useState<MetaData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<string>("all");
@@ -1291,7 +1292,12 @@ export default function AnalysePage() {
       fetch("/tilsyn-meta.json").then(r => r.json()).catch(() => null),
     ]).then(([geo, diffData, metaData]) => {
       setFeatures(geo.features ?? []);
-      setDiff(diffData);
+      // Handle both old single-object format and new array format
+      if (Array.isArray(diffData)) {
+        setDiffHistory(diffData);
+      } else if (diffData && typeof diffData === "object" && diffData.generatedAt) {
+        setDiffHistory([diffData]);
+      }
       setMeta(metaData);
       setLoading(false);
     });
@@ -1300,6 +1306,8 @@ export default function AnalysePage() {
   // ---------------------------------------------------------------------------
   // Computed data
   // ---------------------------------------------------------------------------
+
+  const diff = diffHistory.length > 0 ? diffHistory[selectedDiffIdx] ?? null : null;
 
   const scoreDist = useMemo(() => {
     const dist: Record<number, number> = { 0: 0, 1: 0, 2: 0, 3: 0 };
@@ -1574,15 +1582,15 @@ export default function AnalysePage() {
       );
     }
 
-    // Download history
-    if (downloadRef.current && meta?.downloadHistory && meta.downloadHistory.length > 1) {
-      const histData = meta.downloadHistory.map(h => ({
-        label: new Date(h.downloadedAt).toLocaleDateString("nb-NO", { day: "2-digit", month: "2-digit" }),
-        value: h.newCount,
+    // Download history (use diffHistory for chart data, reversed so oldest is first)
+    if (downloadRef.current && diffHistory.length > 1) {
+      const histData = [...diffHistory].reverse().map(h => ({
+        label: new Date(h.generatedAt).toLocaleDateString("nb-NO", { day: "2-digit", month: "2-digit" }),
+        value: h.summary.newCount,
       }));
       drawAreaChart(downloadRef.current, histData, COLORS.accent, "Nye kontroller per nedlasting", true);
     }
-  }, [loading, features, groupedDist, monthlyData, categoryAnalysis, monthlyByGroup, meta]);
+  }, [loading, features, groupedDist, monthlyData, categoryAnalysis, monthlyByGroup, meta, diffHistory]);
 
   // Resize handler
   useEffect(() => {
@@ -1743,7 +1751,7 @@ export default function AnalysePage() {
             icon="📋"
             title="Totalt kontroller"
             value={features.length.toLocaleString("nb-NO")}
-            subtitle={meta ? `Fra ${meta.downloadHistory.length} nedlastinger` : undefined}
+            subtitle={diffHistory.length > 0 ? `Fra ${diffHistory.length} nedlasting${diffHistory.length === 1 ? "" : "er"}` : undefined}
             color={COLORS.primary}
             sparkData={monthlySparkData}
           />
@@ -1960,106 +1968,154 @@ export default function AnalysePage() {
         {/* ============================================================== */}
         {/* Diff / Recent Changes                                          */}
         {/* ============================================================== */}
-        {diff && (diff.newInspections.length > 0 || diff.changedInspections.length > 0) && (
+        {diffHistory.length > 0 && (
           <SectionCard
-            title="🆕 Nylige endringer"
-            subtitle={`${diff.summary.newCount} nye, ${diff.summary.changedCount} endret, ${diff.summary.removedCount} fjernet siden forrige nedlasting`}
+            title="🆕 Endringshistorikk"
+            subtitle={`${diffHistory.length} nedlasting${diffHistory.length === 1 ? "" : "er"} registrert`}
           >
-            <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-              <button
-                onClick={() => setActiveSection("all")}
-                style={{
-                  padding: "6px 14px",
-                  borderRadius: 8,
-                  border: `1px solid ${activeSection === "all" ? COLORS.primary : COLORS.border}`,
-                  background: activeSection === "all" ? COLORS.primaryLight : "transparent",
-                  color: activeSection === "all" ? COLORS.primary : COLORS.textMuted,
-                  fontSize: 12,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
-              >
-                Alle ({diff.newInspections.length + diff.changedInspections.length})
-              </button>
-              <button
-                onClick={() => setActiveSection("new")}
-                style={{
-                  padding: "6px 14px",
-                  borderRadius: 8,
-                  border: `1px solid ${activeSection === "new" ? COLORS.smil : COLORS.border}`,
-                  background: activeSection === "new" ? COLORS.smilLight : "transparent",
-                  color: activeSection === "new" ? COLORS.smil : COLORS.textMuted,
-                  fontSize: 12,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
-              >
-                Nye ({diff.newInspections.length})
-              </button>
-              <button
-                onClick={() => setActiveSection("changed")}
-                style={{
-                  padding: "6px 14px",
-                  borderRadius: 8,
-                  border: `1px solid ${activeSection === "changed" ? COLORS.strek : COLORS.border}`,
-                  background: activeSection === "changed" ? COLORS.strekLight : "transparent",
-                  color: activeSection === "changed" ? COLORS.strek : COLORS.textMuted,
-                  fontSize: 12,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
-              >
-                Endret ({diff.changedInspections.length})
-              </button>
-            </div>
-
-            <div style={{ overflowX: "auto", maxHeight: 400, overflowY: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-                <thead style={{ position: "sticky", top: 0, background: COLORS.card }}>
-                  <tr>
-                    <th style={{ padding: "8px 10px", textAlign: "left", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Type</th>
-                    <th style={{ padding: "8px 10px", textAlign: "left", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Navn</th>
-                    <th style={{ padding: "8px 10px", textAlign: "left", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Adresse</th>
-                    <th style={{ padding: "8px 10px", textAlign: "left", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Dato</th>
-                    <th style={{ padding: "8px 10px", textAlign: "center", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Resultat</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    ...(activeSection !== "changed" ? diff.newInspections.map(item => ({ ...item, _type: "ny" as const })) : []),
-                    ...(activeSection !== "new" ? diff.changedInspections.map(item => ({ ...item, _type: "endret" as const })) : []),
-                  ].map((item, i) => {
-                    const score = computeSmileScore(item);
-                    const group = smileGroupFromScore(score);
+            {/* History selector */}
+            {diffHistory.length > 1 && (
+              <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <label style={{ fontSize: 12, color: COLORS.textMuted, fontWeight: 500 }}>Velg nedlasting:</label>
+                <select
+                  value={selectedDiffIdx}
+                  onChange={e => {
+                    setSelectedDiffIdx(Number(e.target.value));
+                    setActiveSection("all");
+                  }}
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: 8,
+                    border: `1px solid ${COLORS.border}`,
+                    background: COLORS.card,
+                    color: COLORS.text,
+                    fontSize: 12,
+                    cursor: "pointer",
+                  }}
+                >
+                  {diffHistory.map((entry, i) => {
+                    const date = new Date(entry.generatedAt);
+                    const label = `${date.toLocaleDateString("nb-NO", { day: "2-digit", month: "short", year: "numeric" })} ${date.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}`;
                     return (
-                      <tr key={i} style={{ borderBottom: `1px solid ${COLORS.border}20` }}>
-                        <td style={{ padding: "7px 10px" }}>
-                          <Badge color={item._type === "ny" ? COLORS.smil : COLORS.strek}>
-                            {item._type === "ny" ? "Ny" : "Endret"}
-                          </Badge>
-                        </td>
-                        <td style={{ padding: "7px 10px", fontWeight: 500 }}>{item.navn}</td>
-                        <td style={{ padding: "7px 10px", color: COLORS.textMuted, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.adresse}</td>
-                        <td style={{ padding: "7px 10px", whiteSpace: "nowrap" }}>{formatDato(item.dato)}</td>
-                        <td style={{ padding: "7px 10px", textAlign: "center" }}>
-                          <Badge color={group ? (group === "smil" ? COLORS.smil : group === "strek" ? COLORS.strek : COLORS.sur) : COLORS.textFaint}>
-                            {group === "smil" ? "😊" : group === "strek" ? "😐" : group === "sur" ? "😠" : "?"}{" "}
-                            {SCORE_LABELS[score] ?? "Ukjent"}
-                          </Badge>
-                        </td>
-                      </tr>
+                      <option key={i} value={i}>
+                        {i === 0 ? `${label} (siste)` : label}
+                        {` — ${entry.summary.newCount} nye, ${entry.summary.changedCount} endret, ${entry.summary.removedCount} fjernet`}
+                      </option>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
+                </select>
+              </div>
+            )}
+
+            {diff && (diff.newInspections.length > 0 || diff.changedInspections.length > 0) ? (
+              <>
+                <div style={{ fontSize: 12, color: COLORS.textMuted, marginBottom: 12 }}>
+                  {diff.summary.newCount} nye, {diff.summary.changedCount} endret, {diff.summary.removedCount} fjernet
+                  {diff.previousDownload && (
+                    <> — sammenlignet med nedlasting {new Date(diff.previousDownload).toLocaleDateString("nb-NO", { day: "2-digit", month: "short", year: "numeric" })}</>
+                  )}
+                </div>
+                <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => setActiveSection("all")}
+                    style={{
+                      padding: "6px 14px",
+                      borderRadius: 8,
+                      border: `1px solid ${activeSection === "all" ? COLORS.primary : COLORS.border}`,
+                      background: activeSection === "all" ? COLORS.primaryLight : "transparent",
+                      color: activeSection === "all" ? COLORS.primary : COLORS.textMuted,
+                      fontSize: 12,
+                      fontWeight: 500,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Alle ({diff.newInspections.length + diff.changedInspections.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveSection("new")}
+                    style={{
+                      padding: "6px 14px",
+                      borderRadius: 8,
+                      border: `1px solid ${activeSection === "new" ? COLORS.smil : COLORS.border}`,
+                      background: activeSection === "new" ? COLORS.smilLight : "transparent",
+                      color: activeSection === "new" ? COLORS.smil : COLORS.textMuted,
+                      fontSize: 12,
+                      fontWeight: 500,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Nye ({diff.newInspections.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveSection("changed")}
+                    style={{
+                      padding: "6px 14px",
+                      borderRadius: 8,
+                      border: `1px solid ${activeSection === "changed" ? COLORS.strek : COLORS.border}`,
+                      background: activeSection === "changed" ? COLORS.strekLight : "transparent",
+                      color: activeSection === "changed" ? COLORS.strek : COLORS.textMuted,
+                      fontSize: 12,
+                      fontWeight: 500,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Endret ({diff.changedInspections.length})
+                  </button>
+                </div>
+
+                <div style={{ overflowX: "auto", maxHeight: 400, overflowY: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                    <thead style={{ position: "sticky", top: 0, background: COLORS.card }}>
+                      <tr>
+                        <th style={{ padding: "8px 10px", textAlign: "left", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Type</th>
+                        <th style={{ padding: "8px 10px", textAlign: "left", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Navn</th>
+                        <th style={{ padding: "8px 10px", textAlign: "left", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Adresse</th>
+                        <th style={{ padding: "8px 10px", textAlign: "left", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Dato</th>
+                        <th style={{ padding: "8px 10px", textAlign: "center", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Resultat</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ...(activeSection !== "changed" ? diff.newInspections.map(item => ({ ...item, _type: "ny" as const })) : []),
+                        ...(activeSection !== "new" ? diff.changedInspections.map(item => ({ ...item, _type: "endret" as const })) : []),
+                      ].map((item, i) => {
+                        const score = computeSmileScore(item);
+                        const group = smileGroupFromScore(score);
+                        return (
+                          <tr key={i} style={{ borderBottom: `1px solid ${COLORS.border}20` }}>
+                            <td style={{ padding: "7px 10px" }}>
+                              <Badge color={item._type === "ny" ? COLORS.smil : COLORS.strek}>
+                                {item._type === "ny" ? "Ny" : "Endret"}
+                              </Badge>
+                            </td>
+                            <td style={{ padding: "7px 10px", fontWeight: 500 }}>{item.navn}</td>
+                            <td style={{ padding: "7px 10px", color: COLORS.textMuted, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.adresse}</td>
+                            <td style={{ padding: "7px 10px", whiteSpace: "nowrap" }}>{formatDato(item.dato)}</td>
+                            <td style={{ padding: "7px 10px", textAlign: "center" }}>
+                              <Badge color={group ? (group === "smil" ? COLORS.smil : group === "strek" ? COLORS.strek : COLORS.sur) : COLORS.textFaint}>
+                                {group === "smil" ? "😊" : group === "strek" ? "😐" : group === "sur" ? "😠" : "?"}{" "}
+                                {SCORE_LABELS[score] ?? "Ukjent"}
+                              </Badge>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : (
+              <div style={{ fontSize: 13, color: COLORS.textMuted, padding: "12px 0" }}>
+                Ingen endringer registrert for denne nedlastingen.
+              </div>
+            )}
           </SectionCard>
         )}
 
         {/* ============================================================== */}
         {/* Download History                                               */}
         {/* ============================================================== */}
-        {meta && meta.downloadHistory.length > 1 && (
+        {diffHistory.length > 1 && (
           <div style={{ marginTop: 16 }}>
             <SectionCard>
               <canvas

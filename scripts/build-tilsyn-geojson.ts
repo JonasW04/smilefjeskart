@@ -307,7 +307,7 @@ async function main() {
 
   const now = new Date().toISOString();
 
-  const diffData = {
+  const diffEntry = {
     generatedAt: now,
     previousDownload: previousDownloadTime,
     summary: {
@@ -322,8 +322,24 @@ async function main() {
     removedIds,
   };
 
-  fs.writeFileSync(DIFF_PATH, JSON.stringify(diffData, null, 2), "utf8");
+  // Load existing diff history and append the new entry
+  let diffHistory: typeof diffEntry[] = [];
+  if (fs.existsSync(DIFF_PATH)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(DIFF_PATH, "utf8"));
+      if (Array.isArray(existing)) {
+        diffHistory = existing;
+      } else if (existing && typeof existing === "object" && existing.generatedAt) {
+        // Migrate from old single-object format to array format
+        diffHistory = [existing];
+      }
+    } catch { /* ignore */ }
+  }
+  diffHistory.unshift(diffEntry);
+
+  fs.writeFileSync(DIFF_PATH, JSON.stringify(diffHistory, null, 2), "utf8");
   console.log(`\nChange tracking: ${newInspections.length} new, ${changedInspections.length} changed, ${removedIds.length} removed`);
+  console.log(`Diff history now contains ${diffHistory.length} entries`);
 
   // Save snapshot for historical tracking
   fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });

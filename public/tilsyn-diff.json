@@ -1,110 +1,112 @@
-{
-  "generatedAt": "2026-03-17T06:56:43.620Z",
-  "previousDownload": "2026-03-16T07:09:45.788Z",
-  "summary": {
-    "previousTotal": 8419,
-    "currentTotal": 8420,
-    "newCount": 3,
-    "changedCount": 4,
-    "removedCount": 2
-  },
-  "newInspections": [
-    {
-      "tilsynsobjektid": "Z1006090416386241190CXNYP_Tilsynsobjekt",
-      "orgnummer": "984259700",
-      "navn": "Select Service Partner",
-      "adresse": "Flyplassveien 4, 6517, Kristiansund N",
-      "dato": "16032026",
-      "karakter": 0,
-      "karakter1": 0,
-      "karakter2": 0,
-      "karakter3": 0,
-      "karakter4": 0,
-      "status": "0"
+[
+  {
+    "generatedAt": "2026-03-17T06:56:43.620Z",
+    "previousDownload": "2026-03-16T07:09:45.788Z",
+    "summary": {
+      "previousTotal": 8419,
+      "currentTotal": 8420,
+      "newCount": 3,
+      "changedCount": 4,
+      "removedCount": 2
     },
-    {
-      "tilsynsobjektid": "Z2603121316409911059QJOTA_Tilsynsobjekt",
-      "orgnummer": "997922670",
-      "navn": "Maki Burger Byhaven",
-      "adresse": "Olav Tryggvasons gate 28, 7011, Trondheim",
-      "dato": "11032026",
-      "karakter": 2,
-      "karakter1": 2,
-      "karakter2": 2,
-      "karakter3": 2,
-      "karakter4": 0,
-      "status": "0"
-    },
-    {
-      "tilsynsobjektid": "Z2507101017348820128RTWPI_Tilsynsobjekt",
-      "orgnummer": "895501212",
-      "navn": "Gioia",
-      "adresse": "Jørgen Kanitz gate 4, 1337, Sandvika",
-      "dato": "16032026",
-      "karakter": 1,
-      "karakter1": 0,
-      "karakter2": 0,
-      "karakter3": 1,
-      "karakter4": 0,
-      "status": "0"
-    }
-  ],
-  "changedInspections": [
-    {
-      "tilsynsobjektid": "Z1006090416484561190RQZXB_Tilsynsobjekt",
-      "orgnummer": "986255168",
-      "navn": "Braud & Sirkus",
-      "adresse": "Industriveien 17, 6517, Kristiansund N",
-      "dato": "16032026",
-      "karakter": 2,
-      "karakter1": 1,
-      "karakter2": 2,
-      "karakter3": 0,
-      "karakter4": 0,
-      "status": "0"
-    },
-    {
-      "tilsynsobjektid": "Z1603020809055723101HVUYR_Tilsynsobjekt",
-      "orgnummer": "982653665",
-      "navn": "Grimstad Vertshus",
-      "adresse": "Frivoldveien 11, 4877, Grimstad",
-      "dato": "16032026",
-      "karakter": 1,
-      "karakter1": 0,
-      "karakter2": 1,
-      "karakter3": 1,
-      "karakter4": 0,
-      "status": "0"
-    },
-    {
-      "tilsynsobjektid": "Z1907021631037250128SQRDH_Tilsynsobjekt",
-      "orgnummer": "999392016",
-      "navn": "Smaka",
-      "adresse": "Industriveien 17, 6517, Kristiansund N",
-      "dato": "16032026",
-      "karakter": 2,
-      "karakter1": 1,
-      "karakter2": 2,
-      "karakter3": 0,
-      "karakter4": 0,
-      "status": "0"
-    },
-    {
-      "tilsynsobjektid": "Z2404221041403120128JPOED_Tilsynsobjekt",
-      "orgnummer": "932092263",
-      "navn": "Sveberg pizza og grill",
-      "adresse": "Dalabakkan 49, 7550, Hommelvik",
-      "dato": "16032026",
-      "karakter": 0,
-      "karakter1": 0,
-      "karakter2": 0,
-      "karakter3": 0,
-      "karakter4": 0,
-      "status": "1"
-    }
-  ],
-  "removedIds": [
-    "Z2210121453261712109BSONQ_Tilsynsobjekt",
-    "Z2303011431095841062TFBPP_Tilsynsobjekt"
-  ]
-}
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z1006090416386241190CXNYP_Tilsynsobjekt",
+        "orgnummer": "984259700",
+        "navn": "Select Service Partner",
+        "adresse": "Flyplassveien 4, 6517, Kristiansund N",
+        "dato": "16032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603121316409911059QJOTA_Tilsynsobjekt",
+        "orgnummer": "997922670",
+        "navn": "Maki Burger Byhaven",
+        "adresse": "Olav Tryggvasons gate 28, 7011, Trondheim",
+        "dato": "11032026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2507101017348820128RTWPI_Tilsynsobjekt",
+        "orgnummer": "895501212",
+        "navn": "Gioia",
+        "adresse": "Jørgen Kanitz gate 4, 1337, Sandvika",
+        "dato": "16032026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006090416484561190RQZXB_Tilsynsobjekt",
+        "orgnummer": "986255168",
+        "navn": "Braud & Sirkus",
+        "adresse": "Industriveien 17, 6517, Kristiansund N",
+        "dato": "16032026",
+        "karakter": 2,
+        "karakter1": 1,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1603020809055723101HVUYR_Tilsynsobjekt",
+        "orgnummer": "982653665",
+        "navn": "Grimstad Vertshus",
+        "adresse": "Frivoldveien 11, 4877, Grimstad",
+        "dato": "16032026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1907021631037250128SQRDH_Tilsynsobjekt",
+        "orgnummer": "999392016",
+        "navn": "Smaka",
+        "adresse": "Industriveien 17, 6517, Kristiansund N",
+        "dato": "16032026",
+        "karakter": 2,
+        "karakter1": 1,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2404221041403120128JPOED_Tilsynsobjekt",
+        "orgnummer": "932092263",
+        "navn": "Sveberg pizza og grill",
+        "adresse": "Dalabakkan 49, 7550, Hommelvik",
+        "dato": "16032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z2210121453261712109BSONQ_Tilsynsobjekt",
+      "Z2303011431095841062TFBPP_Tilsynsobjekt"
+    ]
+  }
+]
