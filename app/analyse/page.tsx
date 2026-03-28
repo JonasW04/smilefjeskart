@@ -96,6 +96,13 @@ function smileGroupFromScore(score: number): SmileGroup | null {
   return null;
 }
 
+function emojiForGroup(group: SmileGroup | null): string {
+  if (group === "smil") return "😊";
+  if (group === "strek") return "😐";
+  if (group === "sur") return "😠";
+  return "?";
+}
+
 const COLORS = {
   smil: "#10b981",
   smilLight: "#d1fae5",
@@ -134,6 +141,9 @@ const CATEGORY_LABELS: Record<number, string> = {
   3: "Mathåndtering",
   4: "Merking & sporbarhet",
 };
+
+// WeakMap to store chart hit-test data without mutating DOM elements
+const chartPointsMap = new WeakMap<HTMLCanvasElement, Array<{ x: number; y: number; label: string; value: number }>>();
 
 // ---------------------------------------------------------------------------
 // Canvas chart: Smooth Area Chart
@@ -259,9 +269,8 @@ function drawAreaChart(
     ctx.fillText(data[data.length - 1].label, points[points.length - 1].x, chartBottom + 8);
   }
 
-  // Store hit-test data on the canvas element for tooltip support
-  (canvas as HTMLCanvasElement & { _chartPoints?: Array<{ x: number; y: number; label: string; value: number }> })._chartPoints =
-    data.map((d, i) => ({ x: points[i].x, y: points[i].y, label: d.label, value: d.value }));
+  // Store hit-test data for tooltip support
+  chartPointsMap.set(canvas, data.map((d, i) => ({ x: points[i].x, y: points[i].y, label: d.label, value: d.value })));
 }
 
 // ---------------------------------------------------------------------------
@@ -1415,9 +1424,12 @@ export default function AnalysePage() {
   // Repeat offenders (places with multiple inspections, find ones that improved or got worse)
   const repeatAnalysis = useMemo(() => {
     // Group by unique establishment identifier (tilsynsobjektid) instead of name
+    // to avoid aggregating different branches of the same chain
     const byId: Record<string, Feature[]> = {};
     for (const f of features) {
-      const key = f.properties.tilsynsobjektid || f.properties.navn.toLowerCase();
+      const id = f.properties.tilsynsobjektid;
+      // Fall back to name + address combination when tilsynsobjektid is missing
+      const key = id || `${f.properties.navn.toLowerCase()}|${f.properties.adresse.toLowerCase()}`;
       if (!byId[key]) byId[key] = [];
       byId[key].push(f);
     }
@@ -1551,7 +1563,7 @@ export default function AnalysePage() {
     }
 
     function handleMove(e: MouseEvent | TouchEvent) {
-      const chartPoints = (canvas as HTMLCanvasElement & { _chartPoints?: Array<{ x: number; y: number; label: string; value: number }> })._chartPoints;
+      const chartPoints = chartPointsMap.get(canvas!);
       if (!chartPoints || !chartPoints.length) return;
 
       const rect = canvas!.getBoundingClientRect();
@@ -1891,8 +1903,8 @@ export default function AnalysePage() {
                 </thead>
                 <tbody>
                   {repeatAnalysis.map((item, i) => {
-                    const prevEmoji = item.previousGroup === "smil" ? "😊" : item.previousGroup === "strek" ? "😐" : item.previousGroup === "sur" ? "😠" : "?";
-                    const latestEmoji = item.latestGroup === "smil" ? "😊" : item.latestGroup === "strek" ? "😐" : item.latestGroup === "sur" ? "😠" : "?";
+                    const prevEmoji = emojiForGroup(item.previousGroup);
+                    const latestEmoji = emojiForGroup(item.latestGroup);
                     return (
                       <tr key={i} style={{ borderBottom: `1px solid ${COLORS.border}20` }}>
                         <td style={{ padding: "6px 8px" }}>
