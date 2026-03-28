@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import Link from "next/link";
 import maplibregl from "maplibre-gl";
 
@@ -136,76 +136,6 @@ const CATEGORY_LABELS: Record<number, string> = {
 };
 
 // ---------------------------------------------------------------------------
-// Canvas chart: Donut
-// ---------------------------------------------------------------------------
-
-function drawDonutChart(
-  canvas: HTMLCanvasElement,
-  segments: Array<{ label: string; value: number; color: string }>,
-  centerLabel: string,
-  centerValue: string
-) {
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-
-  const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = rect.height * dpr;
-  ctx.scale(dpr, dpr);
-  const w = rect.width;
-  const h = rect.height;
-  ctx.clearRect(0, 0, w, h);
-
-  const total = segments.reduce((a, b) => a + b.value, 0);
-  if (total === 0) return;
-
-  const cx = w / 2;
-  const cy = h / 2;
-  const outerR = Math.min(cx, cy) - 16;
-  const innerR = outerR * 0.62;
-  const gapAngle = 0.03;
-
-  let startAngle = -Math.PI / 2;
-
-  for (const seg of segments) {
-    const sliceAngle = (seg.value / total) * Math.PI * 2;
-    const drawAngle = Math.max(0, sliceAngle - gapAngle);
-
-    // Gradient from segment color to lighter version
-    const grad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
-    grad.addColorStop(0, seg.color + "cc");
-    grad.addColorStop(1, seg.color);
-
-    ctx.beginPath();
-    ctx.arc(cx, cy, outerR, startAngle + gapAngle / 2, startAngle + drawAngle + gapAngle / 2);
-    ctx.arc(cx, cy, innerR, startAngle + drawAngle + gapAngle / 2, startAngle + gapAngle / 2, true);
-    ctx.closePath();
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // Subtle shadow
-    ctx.shadowColor = seg.color + "40";
-    ctx.shadowBlur = 8;
-    ctx.fill();
-    ctx.shadowColor = "transparent";
-    ctx.shadowBlur = 0;
-
-    startAngle += sliceAngle;
-  }
-
-  // Center text
-  ctx.fillStyle = COLORS.text;
-  ctx.font = `bold ${Math.round(outerR * 0.32)}px system-ui, -apple-system, sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(centerValue, cx, cy - 6);
-  ctx.fillStyle = COLORS.textMuted;
-  ctx.font = `${Math.round(outerR * 0.13)}px system-ui, -apple-system, sans-serif`;
-  ctx.fillText(centerLabel, cx, cy + outerR * 0.2);
-}
-
-// ---------------------------------------------------------------------------
 // Canvas chart: Smooth Area Chart
 // ---------------------------------------------------------------------------
 
@@ -283,8 +213,8 @@ function drawAreaChart(
 
   // Area fill with gradient
   const grad = ctx.createLinearGradient(0, chartTop, 0, chartBottom);
-  grad.addColorStop(0, color + "30");
-  grad.addColorStop(1, color + "05");
+  grad.addColorStop(0, color + "40");
+  grad.addColorStop(1, color + "08");
   ctx.beginPath();
   ctx.moveTo(points[0].x, chartBottom);
   buildSmoothPath(points);
@@ -300,7 +230,7 @@ function drawAreaChart(
   ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  // Dots
+  // Dots — always show for better tooltip targeting
   if (showDots && points.length <= 30) {
     for (const p of points) {
       ctx.beginPath();
@@ -313,19 +243,25 @@ function drawAreaChart(
     }
   }
 
-  // X labels
-  const maxLabels = 8;
+  // X labels — thinned to avoid overlap, with last label always shown
+  const maxLabels = 6;
   const labelStep = Math.max(1, Math.ceil(data.length / maxLabels));
   ctx.fillStyle = COLORS.textFaint;
   ctx.font = "10px system-ui, sans-serif";
-  ctx.textAlign = "center";
   ctx.textBaseline = "top";
   for (let i = 0; i < data.length; i += labelStep) {
-    ctx.fillText(data[i].label, points[i].x, chartBottom + 8);
+    const x = points[i].x;
+    ctx.textAlign = i === 0 ? "left" : "center";
+    ctx.fillText(data[i].label, x, chartBottom + 8);
   }
   if (data.length > 1 && (data.length - 1) % labelStep !== 0) {
+    ctx.textAlign = "right";
     ctx.fillText(data[data.length - 1].label, points[points.length - 1].x, chartBottom + 8);
   }
+
+  // Store hit-test data on the canvas element for tooltip support
+  (canvas as HTMLCanvasElement & { _chartPoints?: Array<{ x: number; y: number; label: string; value: number }> })._chartPoints =
+    data.map((d, i) => ({ x: points[i].x, y: points[i].y, label: d.label, value: d.value }));
 }
 
 // ---------------------------------------------------------------------------
@@ -445,13 +381,12 @@ function drawStackedAreaChart(
   const chartW = chartRight - chartLeft;
   const chartH = chartBottom - chartTop;
 
-  // Compute stacked totals
-  const stackedTotals = months.map((_, i) => series.reduce((sum, s) => sum + s.values[i], 0));
-  const maxVal = Math.max(...stackedTotals, 1);
+  // Compute totals per month for percentage calculation
+  const monthTotals = months.map((_, i) => series.reduce((sum, s) => sum + s.values[i], 0));
 
   const stepX = chartW / Math.max(months.length - 1, 1);
 
-  // Y-axis grid
+  // Y-axis grid (percentage 0%-100%)
   for (let i = 0; i <= 4; i++) {
     const y = chartTop + (chartH / 4) * i;
     ctx.strokeStyle = COLORS.border;
@@ -465,33 +400,37 @@ function drawStackedAreaChart(
     ctx.font = "11px system-ui, sans-serif";
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
-    ctx.fillText(String(Math.round(maxVal * (1 - i / 4))), chartLeft - 8, y);
+    ctx.fillText(`${Math.round(100 * (1 - i / 4))}%`, chartLeft - 8, y);
   }
 
-  // Draw areas bottom-to-top
+  // Draw areas bottom-to-top (100% stacked)
   const reversedSeries = [...series].reverse();
   for (let s = 0; s < reversedSeries.length; s++) {
     const ser = reversedSeries[s];
-    // Compute cumulative values (sum of this series + all below)
     const seriesIndex = series.indexOf(ser);
+    // Compute cumulative percentages
     const cumulativeTop = months.map((_, i) => {
+      const total = monthTotals[i];
+      if (total === 0) return 0;
       let sum = 0;
       for (let j = 0; j <= seriesIndex; j++) sum += series[j].values[i];
-      return sum;
+      return (sum / total) * 100;
     });
     const cumulativeBottom = months.map((_, i) => {
+      const total = monthTotals[i];
+      if (total === 0) return 0;
       let sum = 0;
       for (let j = 0; j < seriesIndex; j++) sum += series[j].values[i];
-      return sum;
+      return (sum / total) * 100;
     });
 
-    const topPoints = cumulativeTop.map((v, i) => ({
+    const topPoints = cumulativeTop.map((pct, i) => ({
       x: chartLeft + i * stepX,
-      y: chartTop + chartH * (1 - v / maxVal),
+      y: chartTop + chartH * (1 - pct / 100),
     }));
-    const bottomPoints = cumulativeBottom.map((v, i) => ({
+    const bottomPoints = cumulativeBottom.map((pct, i) => ({
       x: chartLeft + i * stepX,
-      y: chartTop + chartH * (1 - v / maxVal),
+      y: chartTop + chartH * (1 - pct / 100),
     }));
 
     // Area
@@ -529,18 +468,21 @@ function drawStackedAreaChart(
     ctx.stroke();
   }
 
-  // X labels
-  const maxLabels = 8;
+  // X labels — thinned to avoid overlap, with last label always shown
+  const maxLabels = 6;
   const labelStep = Math.max(1, Math.ceil(months.length / maxLabels));
   ctx.fillStyle = COLORS.textFaint;
   ctx.font = "10px system-ui, sans-serif";
-  ctx.textAlign = "center";
   ctx.textBaseline = "top";
   for (let i = 0; i < months.length; i += labelStep) {
-    ctx.fillText(months[i], chartLeft + i * stepX, chartBottom + 8);
+    const x = chartLeft + i * stepX;
+    ctx.textAlign = i === 0 ? "left" : "center";
+    ctx.fillText(months[i], x, chartBottom + 8);
   }
   if (months.length > 1 && (months.length - 1) % labelStep !== 0) {
-    ctx.fillText(months[months.length - 1], chartLeft + (months.length - 1) * stepX, chartBottom + 8);
+    const lastX = chartLeft + (months.length - 1) * stepX;
+    ctx.textAlign = "right";
+    ctx.fillText(months[months.length - 1], lastX, chartBottom + 8);
   }
 }
 
@@ -565,6 +507,9 @@ function drawCategoryChart(
   const h = rect.height;
   ctx.clearRect(0, 0, w, h);
 
+  // Sort categories by failPct descending
+  const sorted = [...categories].sort((a, b) => b.failPct - a.failPct);
+
   // Title
   ctx.fillStyle = COLORS.text;
   ctx.font = "600 14px system-ui, -apple-system, sans-serif";
@@ -578,8 +523,13 @@ function drawCategoryChart(
   const barGap = 14;
   const chartW = chartRight - chartLeft;
 
-  for (let i = 0; i < categories.length; i++) {
-    const cat = categories[i];
+  // Zoom the domain so bars fill at least 50% width
+  const maxFailPct = Math.max(...sorted.map(c => c.failPct), 0.01);
+  // Set axis max to ~1.3x the max value, but at least enough to show bars well
+  const axisMax = Math.max(maxFailPct * 1.35, maxFailPct + 0.05);
+
+  for (let i = 0; i < sorted.length; i++) {
+    const cat = sorted[i];
     const y = chartTop + i * (barHeight + barGap);
 
     // Label
@@ -595,8 +545,8 @@ function drawCategoryChart(
     ctx.fillStyle = COLORS.border + "60";
     ctx.fill();
 
-    // Fail percentage bar
-    const failW = Math.max(4, (cat.failPct / 100) * chartW);
+    // Fail percentage bar (scaled to zoomed domain)
+    const failW = Math.max(4, (cat.failPct / axisMax) * chartW);
     const grad = ctx.createLinearGradient(chartLeft, 0, chartLeft + failW, 0);
     if (cat.failPct > 20) {
       grad.addColorStop(0, COLORS.sur);
@@ -614,28 +564,50 @@ function drawCategoryChart(
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Percentage label on bar
-    ctx.fillStyle = cat.failPct > 8 ? "#fff" : COLORS.text;
-    ctx.font = "bold 12px system-ui, sans-serif";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    if (failW > 40) {
+    // Percentage label inside bar if it fits, otherwise next to it
+    if (failW > 50) {
+      ctx.fillStyle = cat.failPct > 8 ? "#fff" : COLORS.text;
+      ctx.font = "bold 12px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
       ctx.fillText(`${cat.failPct.toFixed(1)}%`, chartLeft + 10, y + barHeight / 2);
     }
 
-    // Count on right
-    ctx.fillStyle = COLORS.textMuted;
-    ctx.font = "11px system-ui, sans-serif";
+    // Value label at end of bar
+    ctx.fillStyle = COLORS.text;
+    ctx.font = "bold 11px system-ui, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(`${cat.failPct.toFixed(1)}%`, chartRight + 8, y + barHeight / 2);
+    ctx.textBaseline = "middle";
+    ctx.fillText(`${cat.failPct.toFixed(1)}%`, chartLeft + failW + 8, y + barHeight / 2);
   }
 
-  // Footer note
+  // Footer note — ensure it wraps if needed
   ctx.fillStyle = COLORS.textFaint;
   ctx.font = "10px system-ui, sans-serif";
   ctx.textAlign = "left";
-  const footerY = chartTop + categories.length * (barHeight + barGap) + 8;
-  ctx.fillText("Andel kontroller med brudd (karakter 2-3) per kravpunktkategori", 16, footerY);
+  const footerY = chartTop + sorted.length * (barHeight + barGap) + 8;
+  const footerText = "Andel kontroller med brudd (karakter 2-3) per kravpunktkategori";
+  // Measure text and wrap if too wide
+  const footerMaxW = w - 32;
+  if (ctx.measureText(footerText).width <= footerMaxW) {
+    ctx.fillText(footerText, 16, footerY);
+  } else {
+    // Simple word-wrap
+    const words = footerText.split(" ");
+    let line = "";
+    let lineY = footerY;
+    for (const word of words) {
+      const testLine = line ? `${line} ${word}` : word;
+      if (ctx.measureText(testLine).width > footerMaxW && line) {
+        ctx.fillText(line, 16, lineY);
+        line = word;
+        lineY += 14;
+      } else {
+        line = testLine;
+      }
+    }
+    if (line) ctx.fillText(line, 16, lineY);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -903,8 +875,8 @@ function RecentHeatmap({ geojson }: { geojson: RecentGeoJSON }) {
           },
         ],
       },
-      center: [10.75, 63.43],
-      zoom: 4,
+      center: [14.5, 63.5],
+      zoom: 5,
       attributionControl: false,
     });
 
@@ -1277,11 +1249,10 @@ export default function AnalysePage() {
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<string>("all");
 
-  const donutRef = useRef<HTMLCanvasElement>(null);
-  const timelineRef = useRef<HTMLCanvasElement>(null);
   const categoryRef = useRef<HTMLCanvasElement>(null);
   const stackedRef = useRef<HTMLCanvasElement>(null);
   const downloadRef = useRef<HTMLCanvasElement>(null);
+  const downloadCanvasWrapperRef = useRef<HTMLDivElement>(null);
 
   // Load data
   useEffect(() => {
@@ -1328,20 +1299,6 @@ export default function AnalysePage() {
     const total = groupedDist.smil + groupedDist.strek + groupedDist.sur;
     return total > 0 ? (((groupedDist.strek + groupedDist.sur) / total) * 100) : 0;
   }, [groupedDist]);
-
-  // Monthly data
-  const monthlyData = useMemo(() => {
-    const months: Record<string, number> = {};
-    for (const f of features) {
-      const date = parseDatoToDate(f.properties.dato);
-      if (!date) continue;
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-      months[key] = (months[key] || 0) + 1;
-    }
-    return Object.entries(months)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([label, count]) => ({ label, value: count }));
-  }, [features]);
 
   // Monthly data by score group (for stacked chart)
   const monthlyByGroup = useMemo(() => {
@@ -1457,23 +1414,27 @@ export default function AnalysePage() {
 
   // Repeat offenders (places with multiple inspections, find ones that improved or got worse)
   const repeatAnalysis = useMemo(() => {
-    const byName: Record<string, Feature[]> = {};
+    // Group by unique establishment identifier (tilsynsobjektid) instead of name
+    const byId: Record<string, Feature[]> = {};
     for (const f of features) {
-      const key = f.properties.navn.toLowerCase();
-      if (!byName[key]) byName[key] = [];
-      byName[key].push(f);
+      const key = f.properties.tilsynsobjektid || f.properties.navn.toLowerCase();
+      if (!byId[key]) byId[key] = [];
+      byId[key].push(f);
     }
 
     const repeats: Array<{
       name: string;
+      address: string;
       inspections: number;
       latestScore: number;
       previousScore: number;
       trend: "improved" | "worsened" | "same";
       latestDate: string;
+      latestGroup: SmileGroup | null;
+      previousGroup: SmileGroup | null;
     }> = [];
 
-    for (const [, group] of Object.entries(byName)) {
+    for (const [, group] of Object.entries(byId)) {
       if (group.length < 2) continue;
       const sorted = [...group].sort((a, b) => {
         const da = parseDatoToDate(a.properties.dato);
@@ -1491,11 +1452,14 @@ export default function AnalysePage() {
 
       repeats.push({
         name: latest.properties.navn,
+        address: latest.properties.adresse,
         inspections: group.length,
         latestScore,
         previousScore,
         trend,
         latestDate: latest.properties.dato,
+        latestGroup: smileGroupFromScore(latestScore),
+        previousGroup: smileGroupFromScore(previousScore),
       });
     }
 
@@ -1508,48 +1472,12 @@ export default function AnalysePage() {
       .slice(0, 20);
   }, [features]);
 
-  // Sparkline data for download history
-  const downloadSparkData = useMemo(() => {
-    if (!meta?.downloadHistory) return [];
-    return meta.downloadHistory.map(h => h.newCount);
-  }, [meta]);
-
-  // Monthly sparkline for KPI
-  const monthlySparkData = useMemo(() => {
-    return monthlyData.slice(-12).map(d => d.value);
-  }, [monthlyData]);
-
   // ---------------------------------------------------------------------------
   // Draw charts on mount / data change
   // ---------------------------------------------------------------------------
 
   useEffect(() => {
     if (loading || features.length === 0) return;
-
-    // Donut chart
-    if (donutRef.current) {
-      drawDonutChart(
-        donutRef.current,
-        [
-          { label: "Smil", value: groupedDist.smil, color: COLORS.smil },
-          { label: "Strekmunn", value: groupedDist.strek, color: COLORS.strek },
-          { label: "Sur munn", value: groupedDist.sur, color: COLORS.sur },
-        ],
-        "kontroller totalt",
-        String(features.length)
-      );
-    }
-
-    // Timeline
-    if (timelineRef.current) {
-      drawAreaChart(
-        timelineRef.current,
-        monthlyData,
-        COLORS.primary,
-        "Kontroller per måned",
-        monthlyData.length <= 24
-      );
-    }
 
     // Category analysis
     if (categoryRef.current) {
@@ -1582,7 +1510,7 @@ export default function AnalysePage() {
       }));
       drawAreaChart(downloadRef.current, histData, COLORS.accent, "Nye kontroller per nedlasting", true);
     }
-  }, [loading, features, groupedDist, monthlyData, categoryAnalysis, monthlyByGroup, meta]);
+  }, [loading, features, categoryAnalysis, monthlyByGroup, meta]);
 
   // Resize handler
   useEffect(() => {
@@ -1593,12 +1521,82 @@ export default function AnalysePage() {
       window.dispatchEvent(event);
     };
     const resizeObserver = new ResizeObserver(handler);
-    const refs = [donutRef, timelineRef, categoryRef, stackedRef, downloadRef];
+    const refs = [categoryRef, stackedRef, downloadRef];
     for (const ref of refs) {
       if (ref.current) resizeObserver.observe(ref.current);
     }
     return () => resizeObserver.disconnect();
   }, [loading]);
+
+  // Tooltip for download chart
+  useEffect(() => {
+    const canvas = downloadRef.current;
+    const wrapper = downloadCanvasWrapperRef.current;
+    if (!canvas || !wrapper) return;
+
+    let tooltipEl: HTMLDivElement | null = null;
+
+    function getTooltip(): HTMLDivElement {
+      if (!tooltipEl) {
+        tooltipEl = document.createElement("div");
+        tooltipEl.style.cssText = `
+          position: absolute; pointer-events: none; background: rgba(15,23,42,0.9);
+          color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px;
+          font-family: system-ui, sans-serif; white-space: nowrap; z-index: 10;
+          opacity: 0; transition: opacity 0.15s;
+        `;
+        wrapper!.appendChild(tooltipEl);
+      }
+      return tooltipEl;
+    }
+
+    function handleMove(e: MouseEvent | TouchEvent) {
+      const chartPoints = (canvas as HTMLCanvasElement & { _chartPoints?: Array<{ x: number; y: number; label: string; value: number }> })._chartPoints;
+      if (!chartPoints || !chartPoints.length) return;
+
+      const rect = canvas!.getBoundingClientRect();
+      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+      const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+      const mx = clientX - rect.left;
+      const my = clientY - rect.top;
+
+      let closest: (typeof chartPoints)[0] | null = null;
+      let closestDist = Infinity;
+      for (const pt of chartPoints) {
+        const dist = Math.hypot(pt.x - mx, pt.y - my);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = pt;
+        }
+      }
+
+      const tip = getTooltip();
+      if (closest && closestDist < 30) {
+        tip.textContent = `${closest.value} kontroller`;
+        tip.style.opacity = "1";
+        tip.style.left = `${closest.x}px`;
+        tip.style.top = `${closest.y - 32}px`;
+        tip.style.transform = "translateX(-50%)";
+      } else {
+        tip.style.opacity = "0";
+      }
+    }
+
+    function handleLeave() {
+      if (tooltipEl) tooltipEl.style.opacity = "0";
+    }
+
+    canvas.addEventListener("mousemove", handleMove);
+    canvas.addEventListener("touchstart", handleMove, { passive: true });
+    canvas.addEventListener("mouseleave", handleLeave);
+
+    return () => {
+      canvas.removeEventListener("mousemove", handleMove);
+      canvas.removeEventListener("touchstart", handleMove);
+      canvas.removeEventListener("mouseleave", handleLeave);
+      if (tooltipEl && tooltipEl.parentNode) tooltipEl.parentNode.removeChild(tooltipEl);
+    };
+  }, [loading, meta]);
 
   // ---------------------------------------------------------------------------
   // Render
@@ -1646,7 +1644,6 @@ export default function AnalysePage() {
     >
       <style>{`
         .analyse-grid-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .analyse-grid-2col { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(400px, 2fr); gap: 16px; margin-bottom: 16px; }
         .analyse-grid-2col-alt { display: grid; grid-template-columns: minmax(400px, 3fr) minmax(320px, 2fr); gap: 16px; margin-bottom: 16px; }
         .analyse-grid-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
         .analyse-grid-scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 8px; }
@@ -1656,7 +1653,6 @@ export default function AnalysePage() {
         .analyse-content { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; }
         @media (max-width: 768px) {
           .analyse-grid-kpi { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-          .analyse-grid-2col { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
           .analyse-grid-2col-alt { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
           .analyse-grid-3col { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
           .analyse-grid-scores { grid-template-columns: 1fr 1fr; }
@@ -1745,7 +1741,6 @@ export default function AnalysePage() {
             value={features.length.toLocaleString("nb-NO")}
             subtitle={meta ? `Fra ${meta.downloadHistory.length} nedlastinger` : undefined}
             color={COLORS.primary}
-            sparkData={monthlySparkData}
           />
           <KpiCard
             icon="😊"
@@ -1764,46 +1759,10 @@ export default function AnalysePage() {
           <KpiCard
             icon="😠"
             title="Sur munn"
-            value={groupedDist.sur}
-            subtitle={`${((groupedDist.sur / features.length) * 100).toFixed(1)}% av alle`}
+            value={`${((groupedDist.sur / features.length) * 100).toFixed(1)}%`}
+            subtitle={`${groupedDist.sur} av ${features.length.toLocaleString("nb-NO")} kontroller`}
             color={COLORS.sur}
-            sparkData={downloadSparkData.length >= 2 ? downloadSparkData : undefined}
           />
-        </div>
-
-        {/* ============================================================== */}
-        {/* ROW: Donut + Timeline                                          */}
-        {/* ============================================================== */}
-        <div className="analyse-grid-2col">
-          {/* Donut */}
-          <SectionCard>
-            <canvas
-              ref={donutRef}
-              style={{ width: "100%", height: 280 }}
-            />
-            {/* Legend below donut */}
-            <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 8, flexWrap: "wrap" }}>
-              {([
-                { label: "Smil 😊", color: COLORS.smil, count: groupedDist.smil },
-                { label: "Strekmunn 😐", color: COLORS.strek, count: groupedDist.strek },
-                { label: "Sur munn 😠", color: COLORS.sur, count: groupedDist.sur },
-              ]).map(item => (
-                <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12 }}>
-                  <span style={{ width: 10, height: 10, borderRadius: 3, background: item.color, display: "inline-block" }} />
-                  <span style={{ color: COLORS.textMuted }}>{item.label}</span>
-                  <span style={{ fontWeight: 600 }}>{item.count}</span>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
-
-          {/* Timeline */}
-          <SectionCard>
-            <canvas
-              ref={timelineRef}
-              style={{ width: "100%", height: 320 }}
-            />
-          </SectionCard>
         </div>
 
         {/* ============================================================== */}
@@ -1919,38 +1878,46 @@ export default function AnalysePage() {
           </SectionCard>
 
           {/* Repeat offenders / trends */}
-          <SectionCard title="🔄 Gjenbesøk-analyse" subtitle="Steder med flere kontroller – trend mellom siste to">
+          <SectionCard title="🔄 Gjenbesøk-analyse" subtitle="Steder som har fått dårligere resultat ved siste gjenbesøk">
             <div style={{ overflowX: "auto", maxHeight: 420, overflowY: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                 <thead style={{ position: "sticky", top: 0, background: COLORS.card }}>
                   <tr>
                     <th style={{ padding: "8px 8px", textAlign: "left", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Navn</th>
                     <th style={{ padding: "8px 8px", textAlign: "center", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>#</th>
+                    <th style={{ padding: "8px 8px", textAlign: "center", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Endring</th>
                     <th style={{ padding: "8px 8px", textAlign: "center", borderBottom: `1px solid ${COLORS.border}`, color: COLORS.textMuted, fontWeight: 500, fontSize: 11 }}>Trend</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {repeatAnalysis.map((item, i) => (
-                    <tr key={i} style={{ borderBottom: `1px solid ${COLORS.border}20` }}>
-                      <td style={{ padding: "6px 8px" }}>
-                        <span style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>
-                          {item.name}
-                        </span>
-                      </td>
-                      <td style={{ padding: "6px 8px", textAlign: "center", color: COLORS.textMuted }}>{item.inspections}</td>
-                      <td style={{ padding: "6px 8px", textAlign: "center" }}>
-                        {item.trend === "worsened" && (
-                          <Badge color={COLORS.sur}>↗ Forverret</Badge>
-                        )}
-                        {item.trend === "improved" && (
-                          <Badge color={COLORS.smil}>↘ Forbedret</Badge>
-                        )}
-                        {item.trend === "same" && (
-                          <Badge color={COLORS.textFaint}>→ Uendret</Badge>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {repeatAnalysis.map((item, i) => {
+                    const prevEmoji = item.previousGroup === "smil" ? "😊" : item.previousGroup === "strek" ? "😐" : item.previousGroup === "sur" ? "😠" : "?";
+                    const latestEmoji = item.latestGroup === "smil" ? "😊" : item.latestGroup === "strek" ? "😐" : item.latestGroup === "sur" ? "😠" : "?";
+                    return (
+                      <tr key={i} style={{ borderBottom: `1px solid ${COLORS.border}20` }}>
+                        <td style={{ padding: "6px 8px" }}>
+                          <span style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>
+                            {item.name}
+                          </span>
+                        </td>
+                        <td style={{ padding: "6px 8px", textAlign: "center", color: COLORS.textMuted }}>{item.inspections}</td>
+                        <td style={{ padding: "6px 8px", textAlign: "center", fontSize: 13 }}>
+                          {prevEmoji} → {latestEmoji}
+                        </td>
+                        <td style={{ padding: "6px 8px", textAlign: "center" }}>
+                          {item.trend === "worsened" && (
+                            <Badge color={COLORS.sur}>↗ Forverret</Badge>
+                          )}
+                          {item.trend === "improved" && (
+                            <Badge color={COLORS.smil}>↘ Forbedret</Badge>
+                          )}
+                          {item.trend === "same" && (
+                            <Badge color={COLORS.textFaint}>→ Uendret</Badge>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -2062,10 +2029,12 @@ export default function AnalysePage() {
         {meta && meta.downloadHistory.length > 1 && (
           <div style={{ marginTop: 16 }}>
             <SectionCard>
-              <canvas
-                ref={downloadRef}
-                style={{ width: "100%", height: 220 }}
-              />
+              <div ref={downloadCanvasWrapperRef} style={{ position: "relative" }}>
+                <canvas
+                  ref={downloadRef}
+                  style={{ width: "100%", height: 220 }}
+                />
+              </div>
             </SectionCard>
           </div>
         )}
