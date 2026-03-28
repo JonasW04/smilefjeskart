@@ -213,11 +213,15 @@ function drawAreaChart(
 
   // Area fill with gradient
   const grad = ctx.createLinearGradient(0, chartTop, 0, chartBottom);
-  grad.addColorStop(0, color + "30");
-  grad.addColorStop(1, color + "05");
+  grad.addColorStop(0, color + "50");
+  grad.addColorStop(1, color + "10");
   ctx.beginPath();
   ctx.moveTo(points[0].x, chartBottom);
-  buildSmoothPath(points);
+  ctx.lineTo(points[0].x, points[0].y);
+  for (let i = 0; i < points.length - 1; i++) {
+    const cpx = (points[i].x + points[i + 1].x) / 2;
+    ctx.bezierCurveTo(cpx, points[i].y, cpx, points[i + 1].y, points[i + 1].x, points[i + 1].y);
+  }
   ctx.lineTo(points[points.length - 1].x, chartBottom);
   ctx.closePath();
   ctx.fillStyle = grad;
@@ -1330,13 +1334,13 @@ export default function AnalysePage() {
   }, [features]);
 
   // Repeat offenders (places with multiple inspections, find ones that improved or got worse)
-  // Group by tilsynsobjektid to correctly separate branches of the same chain
+  // Group by name to find establishments with multiple inspections in the dataset
   const repeatAnalysis = useMemo(() => {
-    const byId: Record<string, Feature[]> = {};
+    const byName: Record<string, Feature[]> = {};
     for (const f of features) {
-      const key = f.properties.tilsynsobjektid;
-      if (!byId[key]) byId[key] = [];
-      byId[key].push(f);
+      const key = f.properties.navn.toLowerCase();
+      if (!byName[key]) byName[key] = [];
+      byName[key].push(f);
     }
 
     const repeats: Array<{
@@ -1351,7 +1355,7 @@ export default function AnalysePage() {
       previousGroup: SmileGroup | null;
     }> = [];
 
-    for (const [, group] of Object.entries(byId)) {
+    for (const [, group] of Object.entries(byName)) {
       if (group.length < 2) continue;
       const sorted = [...group].sort((a, b) => {
         const da = parseDatoToDate(a.properties.dato);
