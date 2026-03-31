@@ -1,5 +1,154 @@
 [
   {
+    "generatedAt": "2026-03-31T07:05:45.838Z",
+    "previousDownload": "2026-03-30T07:19:08.076Z",
+    "summary": {
+      "previousTotal": 8419,
+      "currentTotal": 8420,
+      "newCount": 3,
+      "changedCount": 7,
+      "removedCount": 2
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2603271521209841062FKUID_Tilsynsobjekt",
+        "orgnummer": "933182533",
+        "navn": "Koie Løkka",
+        "adresse": "Thorvald Meyers gate 44, 0552, Oslo",
+        "dato": "30032026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603301556515481056MJHJG_Tilsynsobjekt",
+        "orgnummer": "936459137",
+        "navn": "Pizza Huset",
+        "adresse": "Sandebuktveien 4, 3070, Sande i Vestfold",
+        "dato": "30032026",
+        "karakter": 2,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 2,
+        "karakter4": 2,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2512171031219682025AZJAW_Tilsynsobjekt",
+        "orgnummer": "971755474",
+        "navn": "Rauland Høgfjellshotell",
+        "adresse": "Høgfjellsbakken 2, 3864, Rauland",
+        "dato": "30032026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006090119055181190NKTHA_Tilsynsobjekt",
+        "orgnummer": "971783095",
+        "navn": "Torsetlia Fjellstue og Hyttegrend - servering",
+        "adresse": "Torsetlie 3, 3632, Uvdal",
+        "dato": "30032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1506142120424803252FZXQF_Tilsynsobjekt",
+        "orgnummer": "914958202",
+        "navn": "Crafty Dog",
+        "adresse": "Markveien 57, 0550, Oslo",
+        "dato": "30032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006090119063101189WDVHT_Tilsynsobjekt",
+        "orgnummer": "999368484",
+        "navn": "Vasstulan Høyfjellseter",
+        "adresse": "Vasstulan 46, 3632, Uvdal",
+        "dato": "30032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006121211288901127HUCFG_Tilsynsobjekt",
+        "orgnummer": "976768922",
+        "navn": "Haukelifjell Skisenter AS",
+        "adresse": "Tyrvelivegen 81, 3895, Edland",
+        "dato": "30032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1808011043347882025EUUUS_Tilsynsobjekt",
+        "orgnummer": "996886085",
+        "navn": "NamNam Lier",
+        "adresse": "Lierstranda 139, 3414, Lierstranda",
+        "dato": "30032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2303090952057840127IDTGF_Tilsynsobjekt",
+        "orgnummer": "928796353",
+        "navn": "Sande Cappadocia Kafe & Restaurant AS",
+        "adresse": "Gamle Sørlandske 214, 3073, Sande i Vestfold",
+        "dato": "30032026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2406261207434441025UAFII_Tilsynsobjekt",
+        "orgnummer": "932307901",
+        "navn": "Stasjonsgaarden Kafe og Bar",
+        "adresse": "Revåveien 2, 3070, Sande i Vestfold",
+        "dato": "30032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2002100943170692024MSJEI_Tilsynsobjekt",
+      "Z2408020912435100127RHJPO_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-03-30T07:19:08.076Z",
     "previousDownload": "2026-03-29T06:56:35.638Z",
     "summary": {
