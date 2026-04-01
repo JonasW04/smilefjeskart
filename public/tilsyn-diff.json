@@ -1,5 +1,86 @@
 [
   {
+    "generatedAt": "2026-04-01T07:11:55.068Z",
+    "previousDownload": "2026-03-31T07:05:45.838Z",
+    "summary": {
+      "previousTotal": 8420,
+      "currentTotal": 8421,
+      "newCount": 1,
+      "changedCount": 4,
+      "removedCount": 0
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2411141003205192107QDNNB_Tilsynsobjekt",
+        "orgnummer": "983918573",
+        "navn": "Sjursnes Kroa",
+        "adresse": "Sjursnesvegen 1551, 9030, Sjursnes",
+        "dato": "31032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006060856110221126NDAMU_Tilsynsobjekt",
+        "orgnummer": "971691662",
+        "navn": "Furulund Kro AS",
+        "adresse": "Stokke Ravei 158, 3160, Stokke",
+        "dato": "31032026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2005201443050712024NHEII_Tilsynsobjekt",
+        "orgnummer": "980149765",
+        "navn": "Ysteriet Bistro",
+        "adresse": "Nygaards alle 3, 3160, Stokke",
+        "dato": "31032026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2310251611055891051AXMYR_Tilsynsobjekt",
+        "orgnummer": "932268701",
+        "navn": "Søstrene Kafe og Landhandleri",
+        "adresse": "Tromtindvegen 215, 9107, Kvaløya",
+        "dato": "31032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2309261054550252024UNZJR_Tilsynsobjekt",
+        "orgnummer": "926617818",
+        "navn": "Cats cafe",
+        "adresse": "Eidsgata 45, 6770, Nordfjordeid",
+        "dato": "30032026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-03-31T07:05:45.838Z",
     "previousDownload": "2026-03-30T07:19:08.076Z",
     "summary": {
