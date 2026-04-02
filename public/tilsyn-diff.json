@@ -1,5 +1,33 @@
 [
   {
+    "generatedAt": "2026-04-02T07:03:58.938Z",
+    "previousDownload": "2026-04-01T07:11:55.068Z",
+    "summary": {
+      "previousTotal": 8421,
+      "currentTotal": 8421,
+      "newCount": 0,
+      "changedCount": 1,
+      "removedCount": 0
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z2602161856454982025BBCVA_Tilsynsobjekt",
+        "orgnummer": "919079754",
+        "navn": "Burger King Tiller",
+        "adresse": "Ivar Lykkes veg 3, 7075, Tiller",
+        "dato": "01042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-04-01T07:11:55.068Z",
     "previousDownload": "2026-03-31T07:05:45.838Z",
     "summary": {
