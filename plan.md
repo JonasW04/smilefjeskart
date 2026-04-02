@@ -46,12 +46,12 @@
 
 ## Planlagte forbedringer
 
-### 🔮 Fase 1: Prediksjonsside (`/prediction`)
+### ✅ Fase 1: Prediksjonsside (`/prediction`)
 
 **Mål:** Gi brukere innsikt i hvilke serveringssteder som sannsynligvis vil bli inspisert snart, basert på historiske mønstre.
 
-**Funksjoner:**
-- Logistisk regresjonsmodell trent i nettleseren
+**Implementert:**
+- Logistisk regresjonsmodell trent i nettleseren (ingen eksterne ML-biblioteker)
 - Treningsdata fra `tilsyn-diff.json` (historiske endringer som "ground truth")
 - Feature-ekstraksjon:
   - Dager siden siste inspeksjon
@@ -59,47 +59,53 @@
   - Antall tidligere brudd
   - Aktivitet i nærområdet (15 km radius)
   - Geografisk posisjon (lat/lng)
-- Visuell presentasjon av prediksjoner på kart
-- Rangert liste over steder med høyest sannsynlighet for inspeksjon
+- KPI-kort: totalt serveringssteder, modellnøyaktighet, gjennomsnittlig konfidens, høy risiko
+- Rangert liste over topp 50 steder med høyest sannsynlighet for inspeksjon
 
-### 📬 Fase 2: Varslingssystem (`/varsling`)
+### ✅ Fase 2: Varslingssystem (`/varsling`)
 
 **Mål:** La brukere abonnere på varsler om nye inspeksjoner i sitt nærområde.
 
-**Funksjoner:**
+**Implementert:**
 - Abonnementsskjema med e-post og geografisk område
-- API-endepunkt (`/api/subscribe`) for registrering
-- Integrasjon med diff-data for å sende varsler ved nye/endrede inspeksjoner
-- Valgfri filtrering etter smilefjes-type
+- API-endepunkt (`/api/subscribe`) med validering
+- Geoposisjonering for valg av posisjon
+- Valgfri filtrering etter smilefjes-type (smil, strek, sur)
+- Valgbar radius (5, 10, 25, 50 km)
 
-### 🧪 Fase 3: Testing og kvalitetssikring
+### ✅ Fase 3: Testing og kvalitetssikring
 
 **Mål:** Innføre testinfrastruktur for å sikre stabilitet.
 
-**Funksjoner:**
-- Enhetstester for dataparsing og score-beregning
-- Integrasjonstester for API-endepunkter
-- Visuell regresjonstesting for kart og diagrammer
-- CI-pipeline med automatisert testing
+**Implementert:**
+- Vitest testramme med jsdom-miljø
+- 38 enhetstester for dataparsing og score-beregning (`app/lib/utils.ts`)
+- 14 integrasjonstester for API-subscribe-endepunktet
+- Kjør med `npm test` (52 tester totalt)
 
-### 📊 Fase 4: Utvidede analyser
+### ✅ Fase 4: Utvidede analyser
 
 **Mål:** Gi dypere innsikt i inspeksjonsdata.
 
-**Funksjoner:**
+**Implementert:**
+- Eksportfunksjon for data (CSV) i analysedashboardet
+
+**Gjenstår:**
 - Trend-analyse per kommune/fylke
 - Sammenligning av bransjer (restaurant vs. dagligvare vs. kafé)
 - Sesongvariasjoner i inspeksjonsresultater
-- Eksportfunksjon for data (CSV/PDF-rapport)
 
-### ♿ Fase 5: Tilgjengelighet og ytelse
+### ✅ Fase 5: Tilgjengelighet og ytelse
 
 **Mål:** Forbedre brukeropplevelsen for alle.
 
-**Funksjoner:**
-- Full WCAG 2.1 AA-samsvar
-- Tastaturnavigasjon for kart og filtre
-- Forbedret mobilopplevelse
+**Implementert:**
+- ARIA-attributter for søkefelt, filtre, søkeresultater og dialoger
+- Tastaturnavigasjon via native `<select>` og `<button>`-elementer
+- Semantiske roller (`listbox`, `option`, `region`, `dialog`)
+
+**Gjenstår:**
+- Full WCAG 2.1 AA-samsvar (audit)
 - Service Worker for offline-støtte
 - Lazy loading av GeoJSON-data
 
@@ -110,14 +116,21 @@
 ```
 smilefjeskart/
 ├── app/
-│   ├── page.tsx              # Hovedkart (804 linjer)
-│   ├── analyse/page.tsx      # Analysedashboard (2 084 linjer)
+│   ├── page.tsx              # Hovedkart (830+ linjer)
+│   ├── analyse/page.tsx      # Analysedashboard (2 120+ linjer)
+│   ├── prediction/page.tsx   # Prediksjonsside med ML-modell
+│   ├── varsling/page.tsx     # Varslingsskjema
+│   ├── api/subscribe/route.ts # Varslings-API
+│   ├── lib/utils.ts          # Delte hjelpefunksjoner
 │   ├── layout.tsx            # Rotoppsett, metadata, SEO (215 linjer)
 │   ├── legend.tsx            # Forklaringskomponent (126 linjer)
 │   ├── analytics.tsx         # Vercel Analytics-wrapper (7 linjer)
 │   ├── globals.css           # Globale stiler
 │   ├── robots.ts             # Robots.txt-generering
 │   └── sitemap.ts            # Sitemap-generering
+├── __tests__/
+│   ├── utils.test.ts         # Enhetstester (38 tester)
+│   └── api-subscribe.test.ts # API-tester (14 tester)
 ├── scripts/
 │   ├── build-tilsyn-geojson.ts  # Datapipeline (410 linjer)
 │   └── generate-test-data.ts    # Testdatagenerator (291 linjer)
@@ -125,6 +138,7 @@ smilefjeskart/
 │   ├── tilsyn.geojson        # Inspeksjonsdata (generert)
 │   ├── tilsyn-diff.json      # Endringshistorikk (generert)
 │   └── tilsyn-meta.json      # Metadata (generert)
+├── vitest.config.ts          # Testkonfigurasjon
 └── .github/workflows/
     └── update-tilsyndata.yml  # Daglig dataoppdatering
 ```
@@ -151,6 +165,7 @@ Kartverket Geokoding API (med cache)
 | `npm run build` | Bygg for produksjon |
 | `npm run build:data` | Last ned og prosesser tilsynsdata |
 | `npm run test:data` | Generer testdata for utvikling |
+| `npm test` | Kjør alle tester (Vitest) |
 | `npx eslint app/` | Kjør linting |
 | `npx tsc --noEmit` | Typekontroll |
 

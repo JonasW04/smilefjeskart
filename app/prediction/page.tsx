@@ -942,6 +942,9 @@ export default function PredictionPage() {
             <Link href="/analyse" style={{ color: COLORS.primary, textDecoration: "none" }}>
               Analyse
             </Link>
+            <Link href="/varsling" style={{ color: COLORS.primary, textDecoration: "none" }}>
+              Varsling
+            </Link>
           </div>
         </footer>
       </div>

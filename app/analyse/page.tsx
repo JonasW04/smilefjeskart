@@ -1398,6 +1398,42 @@ export default function AnalysePage() {
   }, [features]);
 
   // ---------------------------------------------------------------------------
+  // CSV export
+  // ---------------------------------------------------------------------------
+
+  const exportCsv = useCallback(() => {
+    if (features.length === 0) return;
+    const header = "tilsynsobjektid,orgnummer,navn,adresse,dato,karakter,karakter1,karakter2,karakter3,karakter4,smilefjes";
+    const rows = features.map(f => {
+      const p = f.properties;
+      const score = computeSmileScore(p);
+      const group = smileGroupFromScore(score) ?? "ukjent";
+      const esc = (s: string) => `"${(s ?? "").replace(/"/g, '""')}"`;
+      return [
+        p.tilsynsobjektid,
+        p.orgnummer ?? "",
+        esc(p.navn),
+        esc(p.adresse),
+        p.dato,
+        p.karakter,
+        p.karakter1,
+        p.karakter2,
+        p.karakter3,
+        p.karakter4,
+        group,
+      ].join(",");
+    });
+    const csv = [header, ...rows].join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `smilefjes-data-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [features]);
+
+  // ---------------------------------------------------------------------------
   // Draw charts on mount / data change
   // ---------------------------------------------------------------------------
 
@@ -1599,15 +1635,36 @@ export default function AnalysePage() {
           </div>
 
           {meta && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: COLORS.textMuted }}>
-              <span style={{
-                width: 7,
-                height: 7,
-                borderRadius: "50%",
-                background: COLORS.smil,
-                display: "inline-block",
-              }} />
-              Oppdatert {new Date(meta.lastDownload).toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric" })}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: COLORS.textMuted }}>
+                <span style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: "50%",
+                  background: COLORS.smil,
+                  display: "inline-block",
+                }} />
+                Oppdatert {new Date(meta.lastDownload).toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric" })}
+              </div>
+              <button
+                onClick={exportCsv}
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: 8,
+                  border: `1px solid ${COLORS.border}`,
+                  background: "white",
+                  cursor: "pointer",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: COLORS.text,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+                title="Last ned alle data som CSV-fil"
+              >
+                📥 Eksporter CSV
+              </button>
             </div>
           )}
         </div>
@@ -2076,6 +2133,8 @@ export default function AnalysePage() {
           </span>
           <div style={{ display: "flex", gap: 16 }}>
             <Link href="/" style={{ color: COLORS.primary, textDecoration: "none" }}>Kart</Link>
+            <Link href="/prediction" style={{ color: COLORS.primary, textDecoration: "none" }}>Prediksjoner</Link>
+            <Link href="/varsling" style={{ color: COLORS.primary, textDecoration: "none" }}>Varsling</Link>
           </div>
         </footer>
       </div>

@@ -595,6 +595,7 @@ export default function Home() {
           <strong>Filter:</strong>
           <select
             value={filterMode}
+            aria-label="Filtrer etter smilefjestype"
             onChange={(e) => {
               setFilterMode(e.target.value as FilterMode);
               setQuery("");
@@ -614,6 +615,7 @@ export default function Home() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Søk (navn, adresse, orgnr)…"
+            aria-label="Søk etter restaurant, adresse eller organisasjonsnummer"
             style={{
               width: "100%",
               padding: "8px 10px",
@@ -625,6 +627,8 @@ export default function Home() {
 
           {hits.length > 0 && (
             <div
+              role="listbox"
+              aria-label="Søkeresultater"
               style={{
                 position: "absolute",
                 top: 40,
@@ -640,6 +644,8 @@ export default function Home() {
               {hits.map((h) => (
                 <button
                   key={h.id}
+                  role="option"
+                  aria-selected={selectedId === h.id}
                   onClick={() => flyToHit(h)}
                   style={{
                     width: "100%",
@@ -681,6 +687,38 @@ export default function Home() {
             title="Analyse av tilsynsdata"
           >
             📊 Analyse
+          </Link>
+          <Link
+            href="/prediction"
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              background: "white",
+              cursor: "pointer",
+              textDecoration: "none",
+              color: "inherit",
+              fontSize: 14,
+            }}
+            title="Prediksjoner for kommende tilsyn"
+          >
+            🔮 Prediksjon
+          </Link>
+          <Link
+            href="/varsling"
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              background: "white",
+              cursor: "pointer",
+              textDecoration: "none",
+              color: "inherit",
+              fontSize: 14,
+            }}
+            title="Varsling om nye kontroller"
+          >
+            📬 Varsling
           </Link>
           <button
             aria-expanded={showInfo}
