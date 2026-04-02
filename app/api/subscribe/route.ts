@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     // Validate filters
     if (!Array.isArray(filters) || filters.length === 0) {
       return NextResponse.json(
-        { success: false, error: "Ugyldig filtere" },
+        { success: false, error: "Ugyldig filtre" },
         { status: 400 },
       );
     }
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     for (const f of filters) {
       if (!validFilters.includes(f)) {
         return NextResponse.json(
-          { success: false, error: "Ugyldig filtere" },
+          { success: false, error: "Ugyldig filtre" },
           { status: 400 },
         );
       }

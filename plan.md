@@ -117,7 +117,7 @@
 smilefjeskart/
 ├── app/
 │   ├── page.tsx              # Hovedkart (830+ linjer)
-│   ├── analyse/page.tsx      # Analysedashboard (2 120+ linjer)
+│   ├── analyse/page.tsx      # Analysedashboard (2120+ linjer)
 │   ├── prediction/page.tsx   # Prediksjonsside med ML-modell
 │   ├── varsling/page.tsx     # Varslingsskjema
 │   ├── api/subscribe/route.ts # Varslings-API
