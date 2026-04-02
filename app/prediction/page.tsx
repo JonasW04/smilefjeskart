@@ -114,13 +114,6 @@ const COLORS = {
   accent: "#8b5cf6",
 };
 
-const SCORE_EMOJI: Record<number, string> = {
-  0: "😊",
-  1: "😊",
-  2: "😐",
-  3: "😠",
-};
-
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 const LEARNING_RATE = 0.5;
 const TRAINING_EPOCHS = 300;
@@ -132,19 +125,10 @@ const RANDOM_SEED = 42;
 // Higher value → stronger preference for establishments that haven't been inspected recently.
 const DAYS_BOOST_WEIGHT = 1.0;
 
-const SCORE_LABELS: Record<number, string> = {
-  0: "Ingen brudd",
-  1: "Små brudd",
-  2: "Strekmunn",
-  3: "Sur munn",
-};
-
-// Training features only — days-related features are excluded to prevent data leakage.
-// Positive training examples (recently inspected) have post-inspection daysSince values (very low),
-// which would teach the model "recently inspected → will be inspected" — the opposite of reality.
+// Training features only — days-related features are excluded to prevent data leakage,
+// and score/violation features are excluded because the model focuses on smiley-face
+// restaurants (score ≤ 1) where those features carry no useful signal.
 const TRAINING_FEATURE_NAMES = [
-  "Verste karakter",
-  "Ant. brudd (≥2)",
   "Historiske tilsyn",
   "Lokal aktivitet",
   "Breddegrad",
@@ -399,16 +383,10 @@ function buildFeatureVector(
   // (See DAYS_BOOST_WEIGHT comment for rationale.)
   const daysFeat = maxDays > 0 ? Math.min(est.daysSinceInspection / maxDays, 1) : 0;
 
-  // Training feature 1: Worst score (normalized 0-1)
-  const scoreFeat = est.worstScore / 3;
-
-  // Training feature 2: Number of category violations (normalized 0-1)
-  const violFeat = est.violationCount / 4;
-
-  // Training feature 3: Prior inspection history (more inspections = higher likelihood, capped)
+  // Training feature 1: Prior inspection history (more inspections = higher likelihood, capped)
   const historyFeat = Math.min(est.priorInspectionCount / 5, 1);
 
-  // Training feature 4: Area activity — count of other inspections within 15km (grid-accelerated)
+  // Training feature 2: Area activity — count of other inspections within 15km (grid-accelerated)
   let areaCount = 0;
   for (const other of allEstablishments) {
     if (other.id === est.id) continue;
@@ -421,16 +399,16 @@ function buildFeatureVector(
   }
   const areaFeat = Math.min(areaCount / 200, 1);
 
-  // Training feature 5: Normalized latitude
+  // Training feature 3: Normalized latitude
   const latRange = maxLat - minLat || 1;
   const latFeat = (est.lat - minLat) / latRange;
 
-  // Training feature 6: Normalized longitude
+  // Training feature 4: Normalized longitude
   const lngRange = maxLng - minLng || 1;
   const lngFeat = (est.lng - minLng) / lngRange;
 
   return {
-    training: [scoreFeat, violFeat, historyFeat, areaFeat, latFeat, lngFeat],
+    training: [historyFeat, areaFeat, latFeat, lngFeat],
     daysFeat,
   };
 }
@@ -703,45 +681,51 @@ export default function PredictionPage() {
         // Generate predictions for ALL establishments:
         // Combine trained model logit + days-based boost in logit space.
         // Days boost ensures: more days since inspection → higher probability.
-        const results: PredictionResult[] = establishments.map((est, i) => {
-          const modelLogit = model.weights.reduce(
-            (sum, w, j) => sum + w * trainingVectors[i][j], model.bias,
-          );
-          const combinedLogit = modelLogit + DAYS_BOOST_WEIGHT * daysFeatures[i];
-          return {
-            id: est.id,
-            navn: est.navn,
-            adresse: est.adresse,
-            dato: est.dato,
-            score: est.score,
-            probability: sigmoid(combinedLogit),
-            daysSinceInspection: est.daysSinceInspection,
-          };
-        });
+        // Only include smiley-face restaurants (score ≤ 1) — restaurants with violations
+        // already know they have something to fix.
+        const results: PredictionResult[] = establishments
+          .map((est, i) => {
+            const modelLogit = model.weights.reduce(
+              (sum, w, j) => sum + w * trainingVectors[i][j], model.bias,
+            );
+            const combinedLogit = modelLogit + DAYS_BOOST_WEIGHT * daysFeatures[i];
+            return {
+              id: est.id,
+              navn: est.navn,
+              adresse: est.adresse,
+              dato: est.dato,
+              score: est.score,
+              probability: sigmoid(combinedLogit),
+              daysSinceInspection: est.daysSinceInspection,
+            };
+          })
+          .filter((r) => r.score <= 1);
 
         results.sort((a, b) => b.probability - a.probability);
         setPredictions(results);
       } else {
         // Fallback heuristic weights when no ground truth is available
-        // [worstScore, violations, history, area, lat, lng]
-        const fallbackWeights = [1.5, 1.0, 0.3, 0.3, 0.1, 0.1];
+        // [history, area, lat, lng]
+        const fallbackWeights = [0.3, 0.3, 0.1, 0.1];
         const fallbackBias = -1.5;
 
-        const results: PredictionResult[] = establishments.map((est, i) => {
-          const modelLogit = fallbackWeights.reduce(
-            (sum, w, j) => sum + w * trainingVectors[i][j], fallbackBias,
-          );
-          const combinedLogit = modelLogit + DAYS_BOOST_WEIGHT * daysFeatures[i];
-          return {
-            id: est.id,
-            navn: est.navn,
-            adresse: est.adresse,
-            dato: est.dato,
-            score: est.score,
-            probability: sigmoid(combinedLogit),
-            daysSinceInspection: est.daysSinceInspection,
-          };
-        });
+        const results: PredictionResult[] = establishments
+          .map((est, i) => {
+            const modelLogit = fallbackWeights.reduce(
+              (sum, w, j) => sum + w * trainingVectors[i][j], fallbackBias,
+            );
+            const combinedLogit = modelLogit + DAYS_BOOST_WEIGHT * daysFeatures[i];
+            return {
+              id: est.id,
+              navn: est.navn,
+              adresse: est.adresse,
+              dato: est.dato,
+              score: est.score,
+              probability: sigmoid(combinedLogit),
+              daysSinceInspection: est.daysSinceInspection,
+            };
+          })
+          .filter((r) => r.score <= 1);
 
         results.sort((a, b) => b.probability - a.probability);
         setPredictions(results);
@@ -750,6 +734,11 @@ export default function PredictionPage() {
       setLoading(false);
     });
   }, []);
+
+  const smileyCount = useMemo(
+    () => predictions.length,
+    [predictions],
+  );
 
   const highRiskCount = useMemo(
     () => predictions.filter((p) => p.probability > 0.7).length,
@@ -862,7 +851,7 @@ export default function PredictionPage() {
                 Prediksjoner
               </h1>
               <p style={{ margin: 0, fontSize: 12, color: COLORS.textFaint }}>
-                Smilefjeskartet · Hvilke steder inspiseres neste?
+                Smilefjeskartet · Når inspiseres 😊-steder neste?
               </p>
             </div>
           </div>
@@ -890,11 +879,11 @@ export default function PredictionPage() {
         {/* ============================================================== */}
         <div className="predict-grid-kpi">
           <KpiCard
-            icon="📋"
-            title="Serveringssteder"
-            value={totalEstablishments.toLocaleString("nb-NO")}
-            subtitle={modelInfo ? `${(modelInfo.positiveRate * 100).toFixed(1)}% nylig inspisert` : "Unike tilsynsobjekter"}
-            color={COLORS.primary}
+            icon="😊"
+            title="Smilefjes-steder"
+            value={smileyCount.toLocaleString("nb-NO")}
+            subtitle={`Av ${totalEstablishments.toLocaleString("nb-NO")} totalt · Kun steder uten brudd`}
+            color={COLORS.smil}
           />
           <KpiCard
             icon="🎯"
@@ -914,7 +903,7 @@ export default function PredictionPage() {
             icon="⚠️"
             title="Høy risiko (>70%)"
             value={highRiskCount.toLocaleString("nb-NO")}
-            subtitle={`${totalEstablishments > 0 ? ((highRiskCount / totalEstablishments) * 100).toFixed(1) : 0}% av alle steder`}
+            subtitle={`${smileyCount > 0 ? ((highRiskCount / smileyCount) * 100).toFixed(1) : 0}% av 😊-steder`}
             color={highRiskCount > 0 ? COLORS.sur : COLORS.smil}
           />
         </div>
@@ -1011,7 +1000,7 @@ export default function PredictionPage() {
         {/* ============================================================== */}
         <SectionCard
           title="🔮 Mest sannsynlige inspeksjoner"
-          subtitle="Topp 50 serveringssteder rangert etter predikert inspeksjonssannsynlighet"
+          subtitle="Topp 50 😊-steder rangert etter predikert inspeksjonssannsynlighet"
         >
           <div style={{ overflowX: "auto", maxHeight: 700, overflowY: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
@@ -1078,18 +1067,6 @@ export default function PredictionPage() {
                   >
                     Dager siden tilsyn
                   </th>
-                  <th
-                    style={{
-                      padding: "8px 8px",
-                      textAlign: "center",
-                      borderBottom: `1px solid ${COLORS.border}`,
-                      color: COLORS.textMuted,
-                      fontWeight: 500,
-                      fontSize: 11,
-                    }}
-                  >
-                    Karakter
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -1101,18 +1078,6 @@ export default function PredictionPage() {
                       : probPct >= 40
                         ? COLORS.strek
                         : COLORS.smil;
-
-                  const scoreColor =
-                    item.score <= 1
-                      ? COLORS.smil
-                      : item.score === 2
-                        ? COLORS.strek
-                        : item.score === 3
-                          ? COLORS.sur
-                          : COLORS.textFaint;
-
-                  const emoji = SCORE_EMOJI[item.score] ?? "❓";
-                  const scoreLabel = SCORE_LABELS[item.score] ?? "Ukjent";
 
                   // Shorten address for display
                   const addrParts = item.adresse.split(",").map((s) => s.trim());
@@ -1176,11 +1141,6 @@ export default function PredictionPage() {
                         }}
                       >
                         {item.daysSinceInspection} d
-                      </td>
-                      <td style={{ padding: "8px 8px", textAlign: "center" }}>
-                        <Badge color={scoreColor}>
-                          {emoji} {scoreLabel}
-                        </Badge>
                       </td>
                     </tr>
                   );
