@@ -372,7 +372,7 @@ export default function VarslingPage() {
                   }}
                 >
                   {position
-                    ? `${position.lat.toFixed(4)}°N, ${position.lng.toFixed(4)}°E`
+                    ? `${Math.abs(position.lat).toFixed(4)}°${position.lat >= 0 ? "N" : "S"}, ${Math.abs(position.lng).toFixed(4)}°${position.lng >= 0 ? "E" : "W"}`
                     : "Ingen posisjon valgt"}
                 </p>
 

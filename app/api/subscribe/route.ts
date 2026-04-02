@@ -9,9 +9,13 @@ export async function POST(request: Request) {
     const { email, lat, lng, radius, filters } = body;
 
     // Validate email
-    if (!email || typeof email !== "string" || !email.includes("@")) {
+    if (
+      !email ||
+      typeof email !== "string" ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
       return NextResponse.json(
-        { success: false, error: "Ugyldig forespørsel" },
+        { success: false, error: "Ugyldig e-postadresse" },
         { status: 400 },
       );
     }
@@ -26,7 +30,7 @@ export async function POST(request: Request) {
       lng > 180
     ) {
       return NextResponse.json(
-        { success: false, error: "Ugyldig forespørsel" },
+        { success: false, error: "Ugyldig koordinater" },
         { status: 400 },
       );
     }
@@ -34,7 +38,7 @@ export async function POST(request: Request) {
     // Validate radius
     if (typeof radius !== "number" || radius <= 0) {
       return NextResponse.json(
-        { success: false, error: "Ugyldig forespørsel" },
+        { success: false, error: "Ugyldig radius" },
         { status: 400 },
       );
     }
@@ -42,7 +46,7 @@ export async function POST(request: Request) {
     // Validate filters
     if (!Array.isArray(filters) || filters.length === 0) {
       return NextResponse.json(
-        { success: false, error: "Ugyldig forespørsel" },
+        { success: false, error: "Ugyldig filtere" },
         { status: 400 },
       );
     }
@@ -51,7 +55,7 @@ export async function POST(request: Request) {
     for (const f of filters) {
       if (!validFilters.includes(f)) {
         return NextResponse.json(
-          { success: false, error: "Ugyldig forespørsel" },
+          { success: false, error: "Ugyldig filtere" },
           { status: 400 },
         );
       }
