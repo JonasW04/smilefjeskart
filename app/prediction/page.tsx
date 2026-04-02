@@ -404,6 +404,7 @@ function buildTrainingData(
 export default function PredictionPage() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+  const popupRef = useRef<maplibregl.Popup | null>(null);
 
   const [features, setFeatures] = useState<Feature[]>([]);
   const [diffs, setDiffs] = useState<DiffEntry[]>([]);
@@ -662,19 +663,62 @@ export default function PredictionPage() {
     };
   }, [predictions]);
 
+  // --- Build popup HTML for a prediction ---
+  const buildPopupHTML = useCallback((pred: Prediction, rank: number) => {
+    const p = pred.feature.properties;
+    const pct = Math.round(pred.probability * 1000) / 10;
+    return `<div style="font-family:system-ui,sans-serif;font-size:13px">
+      <div style="font-weight:700;font-size:14px;margin-bottom:4px">#${rank} ${p.navn}</div>
+      <div style="color:#64748b;margin-bottom:6px">${p.adresse}</div>
+      <div style="display:flex;gap:12px;margin-bottom:4px">
+        <span>Sannsynlighet: <strong style="color:${COLORS.predict}">${pct}%</strong></span>
+      </div>
+      <div style="display:flex;gap:12px">
+        <span>Siste tilsyn: ${formatDato(String(p.dato))}</span>
+        <span>Karakter: ${p.karakter}</span>
+      </div>
+      <div style="color:#94a3b8;font-size:11px;margin-top:4px">
+        ${pred.features.daysSinceInspection} dager siden siste tilsyn
+      </div>
+    </div>`;
+  }, []);
+
   // --- Fly to selected prediction ---
   const flyTo = useCallback(
     (pred: Prediction) => {
       setSelectedPrediction(pred);
+
+      // Scroll map into view
+      mapContainer.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+
       const map = mapRef.current;
       if (!map) return;
+
+      // Close any existing popup
+      if (popupRef.current) {
+        popupRef.current.remove();
+        popupRef.current = null;
+      }
+
+      const coords = pred.feature.geometry.coordinates.slice() as [number, number];
+      const rank = predictions.indexOf(pred) + 1;
+
       map.flyTo({
-        center: pred.feature.geometry.coordinates,
+        center: coords,
         zoom: 14,
         duration: 1500,
       });
+
+      // Open popup after fly animation ends
+      map.once("moveend", () => {
+        const popup = new maplibregl.Popup({ offset: 15, maxWidth: "320px" })
+          .setLngLat(coords)
+          .setHTML(buildPopupHTML(pred, rank))
+          .addTo(map);
+        popupRef.current = popup;
+      });
     },
-    []
+    [predictions, buildPopupHTML]
   );
 
   // --- Model metrics ---
