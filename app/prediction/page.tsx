@@ -495,10 +495,29 @@ export default function PredictionPage() {
 
     const map = new maplibregl.Map({
       container: mapContainer.current,
-      style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+      style: {
+        version: 8,
+        sources: {
+          osm: {
+            type: "raster",
+            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+            tileSize: 256,
+            attribution: "© OpenStreetMap contributors",
+          },
+        },
+        layers: [
+          {
+            id: "osm-tiles",
+            type: "raster",
+            source: "osm",
+            paint: { "raster-saturation": -0.3, "raster-brightness-max": 0.92 },
+          },
+        ],
+      },
       center: [10.75, 63.43],
       zoom: 4.5,
       maxZoom: 18,
+      attributionControl: false,
     });
 
     mapRef.current = map;
