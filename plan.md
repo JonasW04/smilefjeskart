@@ -81,7 +81,8 @@
 - Vitest testramme med jsdom-miljø
 - 38 enhetstester for dataparsing og score-beregning (`app/lib/utils.ts`)
 - 14 integrasjonstester for API-subscribe-endepunktet
-- Kjør med `npm test` (52 tester totalt)
+- 20 enhetstester for prediksjonsmodellen (sigmoid, trening, evaluering, AUC-ROC)
+- Kjør med `npm test` (72 tester totalt)
 
 ### ✅ Fase 4: Utvidede analyser
 
