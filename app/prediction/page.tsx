@@ -111,6 +111,10 @@ const SCORE_EMOJI: Record<number, string> = {
   3: "😠",
 };
 
+const MS_PER_DAY = 1000 * 60 * 60 * 24;
+const LEARNING_RATE = 1.0;
+const TRAINING_EPOCHS = 200;
+
 const SCORE_LABELS: Record<number, string> = {
   0: "Ingen brudd",
   1: "Små brudd",
@@ -231,7 +235,7 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
     const p = f.properties;
     const inspDate = parseDatoToDate(p.dato);
     const daysSince = inspDate
-      ? Math.max(0, Math.round((now.getTime() - inspDate.getTime()) / (1000 * 60 * 60 * 24)))
+      ? Math.max(0, Math.round((now.getTime() - inspDate.getTime()) / MS_PER_DAY))
       : 365;
 
     const scores = [p.karakter1, p.karakter2, p.karakter3, p.karakter4]
@@ -507,10 +511,12 @@ export default function PredictionPage() {
 
       let model: { weights: number[]; bias: number; accuracy: number };
       if (hasPositives) {
-        model = trainLogisticRegression(featureVectors, labels, 1.0, 200);
+        model = trainLogisticRegression(featureVectors, labels, LEARNING_RATE, TRAINING_EPOCHS);
       } else {
-        // Fallback: no ground truth, use heuristic weights
-        // Higher weight for days since inspection and worst score
+        // Fallback heuristic weights when no ground truth is available:
+        // [daysSince, worstScore, violations, areaActivity, lat, lng]
+        // Days since inspection and worst score are weighted highest because
+        // older inspections and worse scores are the strongest predictors.
         model = {
           weights: [2.0, 1.5, 1.0, 0.3, 0.1, 0.1],
           bias: -1.5,
