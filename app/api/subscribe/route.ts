@@ -9,10 +9,19 @@ export async function POST(request: Request) {
     const { email, lat, lng, radius, filters } = body;
 
     // Validate email
+    if (!email || typeof email !== "string") {
+      return NextResponse.json(
+        { success: false, error: "Ugyldig e-postadresse" },
+        { status: 400 },
+      );
+    }
+
+    const atIdx = email.indexOf("@");
     if (
-      !email ||
-      typeof email !== "string" ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      atIdx < 1 ||
+      atIdx === email.length - 1 ||
+      email.indexOf(".", atIdx) === -1 ||
+      email.includes(" ")
     ) {
       return NextResponse.json(
         { success: false, error: "Ugyldig e-postadresse" },
