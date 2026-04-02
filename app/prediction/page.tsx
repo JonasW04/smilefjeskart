@@ -92,6 +92,15 @@ const COLORS = {
   predictLight: "#fff7ed",
 };
 
+// Model configuration constants
+const DEFAULT_DAYS_SINCE_INSPECTION = 365;
+const AREA_ACTIVITY_RADIUS_KM = 15;
+const SIGMOID_CLIP_THRESHOLD = 500;
+const ML_LEARNING_RATE = 0.15;
+const ML_EPOCHS = 300;
+const ML_REGULARIZATION = 0.01;
+const MAX_MAP_PREDICTIONS = 200;
+
 const FEATURE_NAMES: Record<keyof FeatureVector, string> = {
   daysSinceInspection: "Dager siden siste tilsyn",
   overallScore: "Samlet karakter",
@@ -188,7 +197,7 @@ function extractFeatures(
 
   // Days since last inspection
   const inspDate = parseDatoToDate(p.dato);
-  const daysSinceInspection = inspDate ? daysBetween(referenceDate, inspDate) : 365;
+  const daysSinceInspection = inspDate ? daysBetween(referenceDate, inspDate) : DEFAULT_DAYS_SINCE_INSPECTION;
 
   // Score features
   const overallScore = p.karakter >= 0 ? p.karakter : 0;
@@ -204,7 +213,7 @@ function extractFeatures(
   // Recent area activity: count of recent inspections within 15km radius
   let recentAreaActivity = 0;
   for (const [rLng, rLat] of recentInspectionCoords) {
-    if (haversineKm(lat, lng, rLat, rLng) < 15) {
+    if (haversineKm(lat, lng, rLat, rLng) < AREA_ACTIVITY_RADIUS_KM) {
       recentAreaActivity++;
     }
   }
@@ -233,8 +242,8 @@ type ModelWeights = {
 };
 
 function sigmoid(x: number): number {
-  if (x > 500) return 1;
-  if (x < -500) return 0;
+  if (x > SIGMOID_CLIP_THRESHOLD) return 1;
+  if (x < -SIGMOID_CLIP_THRESHOLD) return 0;
   return 1 / (1 + Math.exp(-x));
 }
 
@@ -285,9 +294,9 @@ function normalizeFeatures(
 function trainLogisticRegression(
   X: number[][],
   y: number[],
-  learningRate: number = 0.1,
-  epochs: number = 200,
-  lambda: number = 0.01
+  learningRate: number = ML_LEARNING_RATE,
+  epochs: number = ML_EPOCHS,
+  lambda: number = ML_REGULARIZATION
 ): ModelWeights {
   const n = X.length;
   const nFeatures = X[0].length;
@@ -449,7 +458,7 @@ export default function PredictionPage() {
     // Use requestAnimationFrame to avoid blocking UI
     const frameId = requestAnimationFrame(() => {
       const { X, y } = buildTrainingData(features, diffs);
-      const trainedModel = trainLogisticRegression(X, y, 0.15, 300, 0.01);
+      const trainedModel = trainLogisticRegression(X, y, ML_LEARNING_RATE, ML_EPOCHS, ML_REGULARIZATION);
 
       // Predict for all features using today as reference
       const now = new Date();
@@ -495,7 +504,7 @@ export default function PredictionPage() {
     mapRef.current = map;
 
     map.on("load", () => {
-      const topN = Math.min(200, predictions.length);
+      const topN = Math.min(MAX_MAP_PREDICTIONS, predictions.length);
       const topPredictions = predictions.slice(0, topN);
 
       const geojsonData: GeoJSON.FeatureCollection = {
