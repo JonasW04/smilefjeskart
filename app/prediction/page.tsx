@@ -127,6 +127,10 @@ const TRAINING_EPOCHS = 300;
 const L2_LAMBDA = 0.01; // Regularization strength
 const TEST_SPLIT = 0.2;
 const RANDOM_SEED = 42;
+// Fixed positive weight for days-since-inspection at prediction time.
+// NOT used during training (the feature leaks the label due to post-inspection dates).
+// Higher value → stronger preference for establishments that haven't been inspected recently.
+const DAYS_BOOST_WEIGHT = 3.0;
 
 const SCORE_LABELS: Record<number, string> = {
   0: "Ingen brudd",
@@ -135,9 +139,10 @@ const SCORE_LABELS: Record<number, string> = {
   3: "Sur munn",
 };
 
-const FEATURE_NAMES = [
-  "Dager siden tilsyn",
-  "Avvik fra gj.snitt tid",
+// Training features only — days-related features are excluded to prevent data leakage.
+// Positive training examples (recently inspected) have post-inspection daysSince values (very low),
+// which would teach the model "recently inspected → will be inspected" — the opposite of reality.
+const TRAINING_FEATURE_NAMES = [
   "Verste karakter",
   "Ant. brudd (≥2)",
   "Historiske tilsyn",
@@ -383,31 +388,27 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
 
 function buildFeatureVector(
   est: EstablishmentData,
-  avgDays: number,
   maxDays: number,
   allEstablishments: EstablishmentData[],
   minLat: number,
   maxLat: number,
   minLng: number,
   maxLng: number,
-): number[] {
-  // Feature 1: Days since inspection (normalized 0-1)
+): { training: number[]; daysFeat: number } {
+  // Days feature — used ONLY at prediction time, NOT during training.
+  // (See DAYS_BOOST_WEIGHT comment for rationale.)
   const daysFeat = maxDays > 0 ? Math.min(est.daysSinceInspection / maxDays, 1) : 0;
 
-  // Feature 2: How many standard deviations above/below average days (capped at ±3)
-  const daysDev = avgDays > 0 ? (est.daysSinceInspection - avgDays) / Math.max(avgDays, 1) : 0;
-  const daysDevFeat = Math.max(-1, Math.min(1, daysDev / 3));
-
-  // Feature 3: Worst score (normalized 0-1)
+  // Training feature 1: Worst score (normalized 0-1)
   const scoreFeat = est.worstScore / 3;
 
-  // Feature 4: Number of category violations (normalized 0-1)
+  // Training feature 2: Number of category violations (normalized 0-1)
   const violFeat = est.violationCount / 4;
 
-  // Feature 5: Prior inspection history (more inspections = higher likelihood, capped)
+  // Training feature 3: Prior inspection history (more inspections = higher likelihood, capped)
   const historyFeat = Math.min(est.priorInspectionCount / 5, 1);
 
-  // Feature 6: Area activity — count of other inspections within 15km (grid-accelerated)
+  // Training feature 4: Area activity — count of other inspections within 15km (grid-accelerated)
   let areaCount = 0;
   for (const other of allEstablishments) {
     if (other.id === est.id) continue;
@@ -420,15 +421,18 @@ function buildFeatureVector(
   }
   const areaFeat = Math.min(areaCount / 200, 1);
 
-  // Feature 7: Normalized latitude
+  // Training feature 5: Normalized latitude
   const latRange = maxLat - minLat || 1;
   const latFeat = (est.lat - minLat) / latRange;
 
-  // Feature 8: Normalized longitude
+  // Training feature 6: Normalized longitude
   const lngRange = maxLng - minLng || 1;
   const lngFeat = (est.lng - minLng) / lngRange;
 
-  return [daysFeat, daysDevFeat, scoreFeat, violFeat, historyFeat, areaFeat, latFeat, lngFeat];
+  return {
+    training: [scoreFeat, violFeat, historyFeat, areaFeat, latFeat, lngFeat],
+    daysFeat,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -570,7 +574,7 @@ type PredictionResult = {
 type ModelInfo = {
   trainMetrics: EvalMetrics;
   testMetrics: EvalMetrics;
-  featureWeights: { name: string; weight: number }[];
+  featureWeights: { name: string; weight: number; isFixed?: boolean }[];
   trainSize: number;
   testSize: number;
   positiveRate: number;
@@ -631,15 +635,16 @@ export default function PredictionPage() {
       const minLng = Math.min(...lngs);
       const maxLng = Math.max(...lngs);
       const maxDays = Math.max(...establishments.map((e) => e.daysSinceInspection), 1);
-      const avgDays = establishments.reduce((s, e) => s + e.daysSinceInspection, 0) / establishments.length;
 
-      // Build feature vectors
-      const featureVectors: number[][] = [];
+      // Build feature vectors (training features and days feature are separate)
+      const trainingVectors: number[][] = [];
+      const daysFeatures: number[] = [];
       const labels: number[] = [];
 
       for (const est of establishments) {
-        const fv = buildFeatureVector(est, avgDays, maxDays, establishments, minLat, maxLat, minLng, maxLng);
-        featureVectors.push(fv);
+        const { training, daysFeat } = buildFeatureVector(est, maxDays, establishments, minLat, maxLat, minLng, maxLng);
+        trainingVectors.push(training);
+        daysFeatures.push(daysFeat);
         labels.push(recentlyInspectedIds.has(est.id) ? 1 : 0);
       }
 
@@ -649,7 +654,7 @@ export default function PredictionPage() {
 
       if (hasPositives) {
         const rng = mulberry32(RANDOM_SEED);
-        const indices = featureVectors.map((_, i) => i);
+        const indices = trainingVectors.map((_, i) => i);
         // Shuffle indices
         for (let i = indices.length - 1; i > 0; i--) {
           const j = Math.floor(rng() * (i + 1));
@@ -660,27 +665,31 @@ export default function PredictionPage() {
         const trainIdx = indices.slice(0, splitPoint);
         const testIdx = indices.slice(splitPoint);
 
-        const trainX = trainIdx.map((i) => featureVectors[i]);
+        const trainX = trainIdx.map((i) => trainingVectors[i]);
         const trainY = trainIdx.map((i) => labels[i]);
-        const testX = testIdx.map((i) => featureVectors[i]);
+        const testX = testIdx.map((i) => trainingVectors[i]);
         const testY = testIdx.map((i) => labels[i]);
 
-        // Train model
+        // Train model on non-leaky features only
         const model = trainLogisticRegression(trainX, trainY, LEARNING_RATE, TRAINING_EPOCHS, L2_LAMBDA);
 
-        // Evaluate on train
+        // Evaluate on train (base model only, without days boost)
         const trainProbs = trainX.map((x) => predictProba(x, model.weights, model.bias));
         const trainMetrics = computeMetrics(trainProbs, trainY);
 
-        // Evaluate on test
+        // Evaluate on test (base model only, without days boost)
         const testProbs = testX.map((x) => predictProba(x, model.weights, model.bias));
         const testMetrics = computeMetrics(testProbs, testY);
 
-        // Feature importance
-        const featureWeights = FEATURE_NAMES.map((name, j) => ({
-          name,
-          weight: model.weights[j] ?? 0,
-        })).sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight));
+        // Feature importance (trained weights + the fixed days boost)
+        const featureWeights = [
+          { name: "Dager siden tilsyn", weight: DAYS_BOOST_WEIGHT, isFixed: true },
+          ...TRAINING_FEATURE_NAMES.map((name, j) => ({
+            name,
+            weight: model.weights[j] ?? 0,
+            isFixed: false,
+          })),
+        ].sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight));
 
         setModelInfo({
           trainMetrics,
@@ -691,33 +700,48 @@ export default function PredictionPage() {
           positiveRate: positiveCount / labels.length,
         });
 
-        // Generate predictions for ALL establishments using the trained model
-        const results: PredictionResult[] = establishments.map((est, i) => ({
-          id: est.id,
-          navn: est.navn,
-          adresse: est.adresse,
-          dato: est.dato,
-          score: est.score,
-          probability: predictProba(featureVectors[i], model.weights, model.bias),
-          daysSinceInspection: est.daysSinceInspection,
-        }));
+        // Generate predictions for ALL establishments:
+        // Combine trained model logit + days-based boost in logit space.
+        // Days boost ensures: more days since inspection → higher probability.
+        const results: PredictionResult[] = establishments.map((est, i) => {
+          const modelLogit = model.weights.reduce(
+            (sum, w, j) => sum + w * trainingVectors[i][j], model.bias,
+          );
+          const combinedLogit = modelLogit + DAYS_BOOST_WEIGHT * daysFeatures[i];
+          return {
+            id: est.id,
+            navn: est.navn,
+            adresse: est.adresse,
+            dato: est.dato,
+            score: est.score,
+            probability: sigmoid(combinedLogit),
+            daysSinceInspection: est.daysSinceInspection,
+          };
+        });
 
         results.sort((a, b) => b.probability - a.probability);
         setPredictions(results);
       } else {
         // Fallback heuristic weights when no ground truth is available
-        const fallbackWeights = [2.0, 1.0, 1.5, 1.0, 0.3, 0.3, 0.1, 0.1];
+        // [worstScore, violations, history, area, lat, lng]
+        const fallbackWeights = [1.5, 1.0, 0.3, 0.3, 0.1, 0.1];
         const fallbackBias = -1.5;
 
-        const results: PredictionResult[] = establishments.map((est, i) => ({
-          id: est.id,
-          navn: est.navn,
-          adresse: est.adresse,
-          dato: est.dato,
-          score: est.score,
-          probability: predictProba(featureVectors[i], fallbackWeights, fallbackBias),
-          daysSinceInspection: est.daysSinceInspection,
-        }));
+        const results: PredictionResult[] = establishments.map((est, i) => {
+          const modelLogit = fallbackWeights.reduce(
+            (sum, w, j) => sum + w * trainingVectors[i][j], fallbackBias,
+          );
+          const combinedLogit = modelLogit + DAYS_BOOST_WEIGHT * daysFeatures[i];
+          return {
+            id: est.id,
+            navn: est.navn,
+            adresse: est.adresse,
+            dato: est.dato,
+            score: est.score,
+            probability: sigmoid(combinedLogit),
+            daysSinceInspection: est.daysSinceInspection,
+          };
+        });
 
         results.sort((a, b) => b.probability - a.probability);
         setPredictions(results);
@@ -949,7 +973,12 @@ export default function PredictionPage() {
                 return (
                   <div key={fw.name} style={{ marginBottom: 8 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}>
-                      <span style={{ color: COLORS.text }}>{fw.name}</span>
+                      <span style={{ color: COLORS.text }}>
+                        {fw.name}
+                        {fw.isFixed && (
+                          <span style={{ fontSize: 10, color: COLORS.textFaint, marginLeft: 4 }}>(fast)</span>
+                        )}
+                      </span>
                       <span style={{ color: isPositive ? COLORS.smil : COLORS.sur, fontWeight: 600 }}>
                         {isPositive ? "+" : ""}{fw.weight.toFixed(3)}
                       </span>
@@ -970,7 +999,8 @@ export default function PredictionPage() {
               })}
               <div style={{ marginTop: 12, fontSize: 11, color: COLORS.textFaint, lineHeight: 1.4 }}>
                 <strong>Positiv vekt</strong> = øker sannsynlighet for inspeksjon.{" "}
-                <strong>Negativ vekt</strong> = reduserer sannsynlighet.
+                <strong>Negativ vekt</strong> = reduserer sannsynlighet.{" "}
+                <strong>(fast)</strong> = fast vekt, ikke trent (forhindrer datalekkasje).
               </div>
             </SectionCard>
           </div>
