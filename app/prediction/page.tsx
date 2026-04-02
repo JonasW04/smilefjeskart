@@ -85,6 +85,16 @@ function haversineKm(
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+/** Seeded PRNG for reproducible train/test split */
+function mulberry32(seed: number) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Colors & constants (matching analyse page)
 // ---------------------------------------------------------------------------
@@ -112,8 +122,11 @@ const SCORE_EMOJI: Record<number, string> = {
 };
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
-const LEARNING_RATE = 1.0;
-const TRAINING_EPOCHS = 200;
+const LEARNING_RATE = 0.5;
+const TRAINING_EPOCHS = 300;
+const L2_LAMBDA = 0.01; // Regularization strength
+const TEST_SPLIT = 0.2;
+const RANDOM_SEED = 42;
 
 const SCORE_LABELS: Record<number, string> = {
   0: "Ingen brudd",
@@ -122,8 +135,19 @@ const SCORE_LABELS: Record<number, string> = {
   3: "Sur munn",
 };
 
+const FEATURE_NAMES = [
+  "Dager siden tilsyn",
+  "Avvik fra gj.snitt tid",
+  "Verste karakter",
+  "Ant. brudd (≥2)",
+  "Historiske tilsyn",
+  "Lokal aktivitet",
+  "Breddegrad",
+  "Lengdegrad",
+];
+
 // ---------------------------------------------------------------------------
-// Logistic Regression (from scratch)
+// Logistic Regression with L2 regularization and class weighting
 // ---------------------------------------------------------------------------
 
 function sigmoid(x: number): number {
@@ -132,18 +156,25 @@ function sigmoid(x: number): number {
   return 1 / (1 + Math.exp(-x));
 }
 
-/** Train logistic regression with gradient descent and return weights + bias. */
+/** Train logistic regression with class-weighted gradient descent + L2 regularization */
 function trainLogisticRegression(
   X: number[][],
   y: number[],
   learningRate: number,
   epochs: number,
-): { weights: number[]; bias: number; accuracy: number } {
+  lambda: number,
+): { weights: number[]; bias: number } {
   const n = X.length;
-  if (n === 0) return { weights: [], bias: 0, accuracy: 0 };
+  if (n === 0) return { weights: [], bias: 0 };
   const featureCount = X[0].length;
   const weights = new Array<number>(featureCount).fill(0);
   let bias = 0;
+
+  // Compute class weights to handle imbalance (inversely proportional to frequency)
+  const posCount = y.filter((v) => v === 1).length;
+  const negCount = n - posCount;
+  const wPos = posCount > 0 ? n / (2 * posCount) : 1;
+  const wNeg = negCount > 0 ? n / (2 * negCount) : 1;
 
   for (let epoch = 0; epoch < epochs; epoch++) {
     const dW = new Array<number>(featureCount).fill(0);
@@ -155,7 +186,8 @@ function trainLogisticRegression(
         z += weights[j] * X[i][j];
       }
       const pred = sigmoid(z);
-      const error = pred - y[i];
+      const sampleWeight = y[i] === 1 ? wPos : wNeg;
+      const error = (pred - y[i]) * sampleWeight;
       for (let j = 0; j < featureCount; j++) {
         dW[j] += error * X[i][j];
       }
@@ -163,26 +195,16 @@ function trainLogisticRegression(
     }
 
     for (let j = 0; j < featureCount; j++) {
-      weights[j] -= (learningRate / n) * dW[j];
+      // L2 regularization: penalize large weights
+      weights[j] -= (learningRate / n) * (dW[j] + lambda * weights[j]);
     }
     bias -= (learningRate / n) * dB;
   }
 
-  // Compute accuracy
-  let correct = 0;
-  for (let i = 0; i < n; i++) {
-    let z = bias;
-    for (let j = 0; j < featureCount; j++) {
-      z += weights[j] * X[i][j];
-    }
-    const pred = sigmoid(z) >= 0.5 ? 1 : 0;
-    if (pred === y[i]) correct++;
-  }
-
-  return { weights, bias, accuracy: n > 0 ? correct / n : 0 };
+  return { weights, bias };
 }
 
-function predict(
+function predictProba(
   features: number[],
   weights: number[],
   bias: number,
@@ -195,11 +217,98 @@ function predict(
 }
 
 // ---------------------------------------------------------------------------
+// Model evaluation metrics
+// ---------------------------------------------------------------------------
+
+type EvalMetrics = {
+  accuracy: number;
+  precision: number;
+  recall: number;
+  f1: number;
+  aucRoc: number;
+  positiveCount: number;
+  negativeCount: number;
+  truePositives: number;
+  falsePositives: number;
+  trueNegatives: number;
+  falseNegatives: number;
+};
+
+function computeMetrics(
+  probabilities: number[],
+  labels: number[],
+  threshold = 0.5,
+): EvalMetrics {
+  let tp = 0, fp = 0, tn = 0, fn = 0;
+  for (let i = 0; i < labels.length; i++) {
+    const pred = probabilities[i] >= threshold ? 1 : 0;
+    if (pred === 1 && labels[i] === 1) tp++;
+    else if (pred === 1 && labels[i] === 0) fp++;
+    else if (pred === 0 && labels[i] === 0) tn++;
+    else fn++;
+  }
+
+  const precision = tp + fp > 0 ? tp / (tp + fp) : 0;
+  const recall = tp + fn > 0 ? tp / (tp + fn) : 0;
+  const f1 = precision + recall > 0 ? (2 * precision * recall) / (precision + recall) : 0;
+  const accuracy = labels.length > 0 ? (tp + tn) / labels.length : 0;
+
+  // Compute AUC-ROC using trapezoidal rule
+  const aucRoc = computeAucRoc(probabilities, labels);
+
+  return {
+    accuracy,
+    precision,
+    recall,
+    f1,
+    aucRoc,
+    positiveCount: tp + fn,
+    negativeCount: tn + fp,
+    truePositives: tp,
+    falsePositives: fp,
+    trueNegatives: tn,
+    falseNegatives: fn,
+  };
+}
+
+function computeAucRoc(probabilities: number[], labels: number[]): number {
+  if (probabilities.length === 0) return 0;
+  const totalPos = labels.filter((l) => l === 1).length;
+  const totalNeg = labels.length - totalPos;
+  if (totalPos === 0 || totalNeg === 0) return 0.5;
+
+  // Sort by descending probability
+  const pairs = probabilities
+    .map((p, i) => ({ p, label: labels[i] }))
+    .sort((a, b) => b.p - a.p);
+
+  let auc = 0;
+  let tpCount = 0;
+  let fpCount = 0;
+  let prevTpr = 0;
+  let prevFpr = 0;
+
+  for (const { label } of pairs) {
+    if (label === 1) tpCount++;
+    else fpCount++;
+    const tpr = tpCount / totalPos;
+    const fpr = fpCount / totalNeg;
+    // Trapezoidal rule
+    auc += (fpr - prevFpr) * (tpr + prevTpr) / 2;
+    prevTpr = tpr;
+    prevFpr = fpr;
+  }
+
+  return auc;
+}
+
+// ---------------------------------------------------------------------------
 // Feature extraction for each establishment
 // ---------------------------------------------------------------------------
 
 type EstablishmentData = {
   id: string;
+  orgnummer: string | null;
   navn: string;
   adresse: string;
   dato: string;
@@ -207,6 +316,7 @@ type EstablishmentData = {
   daysSinceInspection: number;
   worstScore: number;
   violationCount: number;
+  priorInspectionCount: number; // How many inspections for this orgnummer
   lat: number;
   lng: number;
 };
@@ -215,7 +325,7 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
   const now = new Date();
   const byId = new Map<string, Feature>();
 
-  // Keep the most recent inspection per establishment
+  // Keep the most recent inspection per tilsynsobjektid
   for (const f of features) {
     const id = f.properties.tilsynsobjektid;
     const existing = byId.get(id);
@@ -228,6 +338,13 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
         byId.set(id, f);
       }
     }
+  }
+
+  // Count inspections per orgnummer (for history feature)
+  const orgCounts = new Map<string, number>();
+  for (const f of features) {
+    const org = f.properties.orgnummer;
+    if (org) orgCounts.set(org, (orgCounts.get(org) ?? 0) + 1);
   }
 
   const result: EstablishmentData[] = [];
@@ -247,6 +364,7 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
 
     result.push({
       id,
+      orgnummer: p.orgnummer,
       navn: p.navn,
       adresse: p.adresse,
       dato: p.dato,
@@ -254,6 +372,7 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
       daysSinceInspection: daysSince,
       worstScore: worstScore >= 0 ? worstScore : 0,
       violationCount,
+      priorInspectionCount: p.orgnummer ? (orgCounts.get(p.orgnummer) ?? 1) : 1,
       lat,
       lng,
     });
@@ -264,6 +383,7 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
 
 function buildFeatureVector(
   est: EstablishmentData,
+  avgDays: number,
   maxDays: number,
   allEstablishments: EstablishmentData[],
   minLat: number,
@@ -274,32 +394,41 @@ function buildFeatureVector(
   // Feature 1: Days since inspection (normalized 0-1)
   const daysFeat = maxDays > 0 ? Math.min(est.daysSinceInspection / maxDays, 1) : 0;
 
-  // Feature 2: Worst score (normalized 0-1)
+  // Feature 2: How many standard deviations above/below average days (capped at ±3)
+  const daysDev = avgDays > 0 ? (est.daysSinceInspection - avgDays) / Math.max(avgDays, 1) : 0;
+  const daysDevFeat = Math.max(-1, Math.min(1, daysDev / 3));
+
+  // Feature 3: Worst score (normalized 0-1)
   const scoreFeat = est.worstScore / 3;
 
-  // Feature 3: Number of category violations (normalized 0-1)
+  // Feature 4: Number of category violations (normalized 0-1)
   const violFeat = est.violationCount / 4;
 
-  // Feature 4: Area activity — count of other inspections within 15km
+  // Feature 5: Prior inspection history (more inspections = higher likelihood, capped)
+  const historyFeat = Math.min(est.priorInspectionCount / 5, 1);
+
+  // Feature 6: Area activity — count of other inspections within 15km (grid-accelerated)
   let areaCount = 0;
   for (const other of allEstablishments) {
     if (other.id === est.id) continue;
+    // Quick lat/lng bounding box pre-filter (~15km ≈ 0.135° lat)
+    if (Math.abs(other.lat - est.lat) > 0.15) continue;
+    if (Math.abs(other.lng - est.lng) > 0.3) continue;
     if (haversineKm(est.lat, est.lng, other.lat, other.lng) <= 15) {
       areaCount++;
     }
   }
-  // Normalize area activity (cap at 200 for normalization)
   const areaFeat = Math.min(areaCount / 200, 1);
 
-  // Feature 5: Normalized latitude
+  // Feature 7: Normalized latitude
   const latRange = maxLat - minLat || 1;
   const latFeat = (est.lat - minLat) / latRange;
 
-  // Feature 6: Normalized longitude
+  // Feature 8: Normalized longitude
   const lngRange = maxLng - minLng || 1;
   const lngFeat = (est.lng - minLng) / lngRange;
 
-  return [daysFeat, scoreFeat, violFeat, areaFeat, latFeat, lngFeat];
+  return [daysFeat, daysDevFeat, scoreFeat, violFeat, historyFeat, areaFeat, latFeat, lngFeat];
 }
 
 // ---------------------------------------------------------------------------
@@ -413,6 +542,17 @@ function Badge({ children, color }: { children: React.ReactNode; color: string }
   );
 }
 
+function MetricRow({ label, value }: { label: string; value: number }) {
+  const pct = (value * 100).toFixed(1);
+  const color = value >= 0.6 ? COLORS.smil : value >= 0.3 ? COLORS.strek : COLORS.sur;
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+      <span style={{ fontSize: 12, color: COLORS.textMuted }}>{label}</span>
+      <span style={{ fontSize: 12, fontWeight: 600, color }}>{pct}%</span>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Prediction result type
 // ---------------------------------------------------------------------------
@@ -427,6 +567,15 @@ type PredictionResult = {
   daysSinceInspection: number;
 };
 
+type ModelInfo = {
+  trainMetrics: EvalMetrics;
+  testMetrics: EvalMetrics;
+  featureWeights: { name: string; weight: number }[];
+  trainSize: number;
+  testSize: number;
+  positiveRate: number;
+};
+
 // ---------------------------------------------------------------------------
 // Main Page
 // ---------------------------------------------------------------------------
@@ -434,7 +583,7 @@ type PredictionResult = {
 export default function PredictionPage() {
   const [loading, setLoading] = useState(true);
   const [predictions, setPredictions] = useState<PredictionResult[]>([]);
-  const [modelAccuracy, setModelAccuracy] = useState(0);
+  const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
   const [totalEstablishments, setTotalEstablishments] = useState(0);
 
   useEffect(() => {
@@ -482,74 +631,101 @@ export default function PredictionPage() {
       const minLng = Math.min(...lngs);
       const maxLng = Math.max(...lngs);
       const maxDays = Math.max(...establishments.map((e) => e.daysSinceInspection), 1);
-
-      // Use a sample for area activity calculation to keep it performant
-      // For large datasets, sample neighbours instead of full O(n²)
-      const sampleSize = Math.min(establishments.length, 2000);
-      const sample =
-        establishments.length <= sampleSize
-          ? establishments
-          : establishments
-              .map((e, i) => ({ e, i, r: Math.random() }))
-              .sort((a, b) => a.r - b.r)
-              .slice(0, sampleSize)
-              .map((x) => x.e);
+      const avgDays = establishments.reduce((s, e) => s + e.daysSinceInspection, 0) / establishments.length;
 
       // Build feature vectors
       const featureVectors: number[][] = [];
       const labels: number[] = [];
 
       for (const est of establishments) {
-        const fv = buildFeatureVector(est, maxDays, sample, minLat, maxLat, minLng, maxLng);
+        const fv = buildFeatureVector(est, avgDays, maxDays, establishments, minLat, maxLat, minLng, maxLng);
         featureVectors.push(fv);
         labels.push(recentlyInspectedIds.has(est.id) ? 1 : 0);
       }
 
-      // Train model
+      // Train/test split using seeded PRNG for reproducibility
       const positiveCount = labels.filter((l) => l === 1).length;
       const hasPositives = positiveCount > 0 && positiveCount < labels.length;
 
-      let model: { weights: number[]; bias: number; accuracy: number };
       if (hasPositives) {
-        model = trainLogisticRegression(featureVectors, labels, LEARNING_RATE, TRAINING_EPOCHS);
+        const rng = mulberry32(RANDOM_SEED);
+        const indices = featureVectors.map((_, i) => i);
+        // Shuffle indices
+        for (let i = indices.length - 1; i > 0; i--) {
+          const j = Math.floor(rng() * (i + 1));
+          [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+
+        const splitPoint = Math.floor(indices.length * (1 - TEST_SPLIT));
+        const trainIdx = indices.slice(0, splitPoint);
+        const testIdx = indices.slice(splitPoint);
+
+        const trainX = trainIdx.map((i) => featureVectors[i]);
+        const trainY = trainIdx.map((i) => labels[i]);
+        const testX = testIdx.map((i) => featureVectors[i]);
+        const testY = testIdx.map((i) => labels[i]);
+
+        // Train model
+        const model = trainLogisticRegression(trainX, trainY, LEARNING_RATE, TRAINING_EPOCHS, L2_LAMBDA);
+
+        // Evaluate on train
+        const trainProbs = trainX.map((x) => predictProba(x, model.weights, model.bias));
+        const trainMetrics = computeMetrics(trainProbs, trainY);
+
+        // Evaluate on test
+        const testProbs = testX.map((x) => predictProba(x, model.weights, model.bias));
+        const testMetrics = computeMetrics(testProbs, testY);
+
+        // Feature importance
+        const featureWeights = FEATURE_NAMES.map((name, j) => ({
+          name,
+          weight: model.weights[j] ?? 0,
+        })).sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight));
+
+        setModelInfo({
+          trainMetrics,
+          testMetrics,
+          featureWeights,
+          trainSize: trainX.length,
+          testSize: testX.length,
+          positiveRate: positiveCount / labels.length,
+        });
+
+        // Generate predictions for ALL establishments using the trained model
+        const results: PredictionResult[] = establishments.map((est, i) => ({
+          id: est.id,
+          navn: est.navn,
+          adresse: est.adresse,
+          dato: est.dato,
+          score: est.score,
+          probability: predictProba(featureVectors[i], model.weights, model.bias),
+          daysSinceInspection: est.daysSinceInspection,
+        }));
+
+        results.sort((a, b) => b.probability - a.probability);
+        setPredictions(results);
       } else {
-        // Fallback heuristic weights when no ground truth is available:
-        // [daysSince, worstScore, violations, areaActivity, lat, lng]
-        // Days since inspection and worst score are weighted highest because
-        // older inspections and worse scores are the strongest predictors.
-        model = {
-          weights: [2.0, 1.5, 1.0, 0.3, 0.1, 0.1],
-          bias: -1.5,
-          accuracy: 0,
-        };
+        // Fallback heuristic weights when no ground truth is available
+        const fallbackWeights = [2.0, 1.0, 1.5, 1.0, 0.3, 0.3, 0.1, 0.1];
+        const fallbackBias = -1.5;
+
+        const results: PredictionResult[] = establishments.map((est, i) => ({
+          id: est.id,
+          navn: est.navn,
+          adresse: est.adresse,
+          dato: est.dato,
+          score: est.score,
+          probability: predictProba(featureVectors[i], fallbackWeights, fallbackBias),
+          daysSinceInspection: est.daysSinceInspection,
+        }));
+
+        results.sort((a, b) => b.probability - a.probability);
+        setPredictions(results);
       }
 
-      setModelAccuracy(model.accuracy);
-
-      // Generate predictions for all establishments
-      const results: PredictionResult[] = establishments.map((est, i) => ({
-        id: est.id,
-        navn: est.navn,
-        adresse: est.adresse,
-        dato: est.dato,
-        score: est.score,
-        probability: predict(featureVectors[i], model.weights, model.bias),
-        daysSinceInspection: est.daysSinceInspection,
-      }));
-
-      // Sort by probability descending
-      results.sort((a, b) => b.probability - a.probability);
-      setPredictions(results);
       setLoading(false);
     });
   }, []);
-
-  // Derived stats
-  const avgConfidence = useMemo(() => {
-    if (predictions.length === 0) return 0;
-    const sum = predictions.reduce((acc, p) => acc + p.probability, 0);
-    return sum / predictions.length;
-  }, [predictions]);
 
   const highRiskCount = useMemo(
     () => predictions.filter((p) => p.probability > 0.7).length,
@@ -557,6 +733,9 @@ export default function PredictionPage() {
   );
 
   const top50 = useMemo(() => predictions.slice(0, 50), [predictions]);
+
+  const testF1 = modelInfo?.testMetrics.f1 ?? 0;
+  const testAuc = modelInfo?.testMetrics.aucRoc ?? 0;
 
   // ---------------------------------------------------------------------------
   // Render
@@ -606,8 +785,10 @@ export default function PredictionPage() {
         .predict-grid-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
         .predict-header-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
         .predict-content { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; }
+        .predict-eval-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
         @media (max-width: 768px) {
           .predict-grid-kpi { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+          .predict-eval-grid { grid-template-columns: 1fr; }
           .predict-content { padding: 16px 12px 40px; }
           .predict-header-inner { gap: 8px; }
         }
@@ -688,22 +869,22 @@ export default function PredictionPage() {
             icon="📋"
             title="Serveringssteder"
             value={totalEstablishments.toLocaleString("nb-NO")}
-            subtitle="Unike tilsynsobjekter"
+            subtitle={modelInfo ? `${(modelInfo.positiveRate * 100).toFixed(1)}% nylig inspisert` : "Unike tilsynsobjekter"}
             color={COLORS.primary}
           />
           <KpiCard
             icon="🎯"
-            title="Modellnøyaktighet"
-            value={modelAccuracy > 0 ? `${(modelAccuracy * 100).toFixed(1)}%` : "–"}
-            subtitle={modelAccuracy > 0 ? "Logistisk regresjon" : "Heuristisk modell"}
-            color={modelAccuracy >= 0.7 ? COLORS.smil : modelAccuracy > 0 ? COLORS.strek : COLORS.textFaint}
+            title="F1-score (test)"
+            value={testF1 > 0 ? `${(testF1 * 100).toFixed(1)}%` : "–"}
+            subtitle={modelInfo ? `Precision: ${(modelInfo.testMetrics.precision * 100).toFixed(0)}% · Recall: ${(modelInfo.testMetrics.recall * 100).toFixed(0)}%` : "Heuristisk modell"}
+            color={testF1 >= 0.3 ? COLORS.smil : testF1 > 0 ? COLORS.strek : COLORS.textFaint}
           />
           <KpiCard
-            icon="📊"
-            title="Gj.snitt konfidens"
-            value={`${(avgConfidence * 100).toFixed(1)}%`}
-            subtitle="Gjennomsnittlig sannsynlighet"
-            color={COLORS.accent}
+            icon="📈"
+            title="AUC-ROC (test)"
+            value={testAuc > 0 ? `${(testAuc * 100).toFixed(1)}%` : "–"}
+            subtitle={testAuc >= 0.7 ? "God diskriminering" : testAuc >= 0.5 ? "Moderat diskriminering" : "Svak modell"}
+            color={testAuc >= 0.7 ? COLORS.smil : testAuc >= 0.55 ? COLORS.strek : COLORS.textFaint}
           />
           <KpiCard
             icon="⚠️"
@@ -713,6 +894,87 @@ export default function PredictionPage() {
             color={highRiskCount > 0 ? COLORS.sur : COLORS.smil}
           />
         </div>
+
+        {/* ============================================================== */}
+        {/* MODEL EVALUATION DETAILS                                       */}
+        {/* ============================================================== */}
+        {modelInfo && (
+          <div className="predict-eval-grid">
+            <SectionCard
+              title="📊 Modellevaluering"
+              subtitle={`Trent på ${modelInfo.trainSize} · Testet på ${modelInfo.testSize} eksempler`}
+            >
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 11, color: COLORS.textFaint, fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>Treningssett</div>
+                  <MetricRow label="Nøyaktighet" value={modelInfo.trainMetrics.accuracy} />
+                  <MetricRow label="Precision" value={modelInfo.trainMetrics.precision} />
+                  <MetricRow label="Recall" value={modelInfo.trainMetrics.recall} />
+                  <MetricRow label="F1-score" value={modelInfo.trainMetrics.f1} />
+                  <MetricRow label="AUC-ROC" value={modelInfo.trainMetrics.aucRoc} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, color: COLORS.textFaint, fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>Testsett</div>
+                  <MetricRow label="Nøyaktighet" value={modelInfo.testMetrics.accuracy} />
+                  <MetricRow label="Precision" value={modelInfo.testMetrics.precision} />
+                  <MetricRow label="Recall" value={modelInfo.testMetrics.recall} />
+                  <MetricRow label="F1-score" value={modelInfo.testMetrics.f1} />
+                  <MetricRow label="AUC-ROC" value={modelInfo.testMetrics.aucRoc} />
+                </div>
+              </div>
+              <div style={{ marginTop: 12, padding: "10px 12px", background: COLORS.bg, borderRadius: 8, fontSize: 11 }}>
+                <div style={{ fontWeight: 600, color: COLORS.text, marginBottom: 4 }}>Konfusjonsmatrise (test)</div>
+                <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr", gap: "2px 8px", fontSize: 11 }}>
+                  <span />
+                  <span style={{ color: COLORS.textFaint, textAlign: "center" }}>Predikert +</span>
+                  <span style={{ color: COLORS.textFaint, textAlign: "center" }}>Predikert −</span>
+                  <span style={{ color: COLORS.textFaint }}>Faktisk +</span>
+                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.smil }}>{modelInfo.testMetrics.truePositives}</span>
+                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.sur }}>{modelInfo.testMetrics.falseNegatives}</span>
+                  <span style={{ color: COLORS.textFaint }}>Faktisk −</span>
+                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.strek }}>{modelInfo.testMetrics.falsePositives}</span>
+                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.smil }}>{modelInfo.testMetrics.trueNegatives}</span>
+                </div>
+              </div>
+            </SectionCard>
+
+            <SectionCard
+              title="⚖️ Featurevekter"
+              subtitle="Viktigste egenskaper for prediksjonen (absolutt vekt)"
+            >
+              {modelInfo.featureWeights.map((fw) => {
+                const maxWeight = Math.max(...modelInfo.featureWeights.map((w) => Math.abs(w.weight)), 0.01);
+                const barWidth = Math.abs(fw.weight) / maxWeight;
+                const isPositive = fw.weight >= 0;
+                return (
+                  <div key={fw.name} style={{ marginBottom: 8 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}>
+                      <span style={{ color: COLORS.text }}>{fw.name}</span>
+                      <span style={{ color: isPositive ? COLORS.smil : COLORS.sur, fontWeight: 600 }}>
+                        {isPositive ? "+" : ""}{fw.weight.toFixed(3)}
+                      </span>
+                    </div>
+                    <div style={{ height: 6, background: COLORS.border, borderRadius: 3, overflow: "hidden" }}>
+                      <div
+                        style={{
+                          height: "100%",
+                          width: `${(barWidth * 100).toFixed(1)}%`,
+                          background: isPositive ? COLORS.smil : COLORS.sur,
+                          borderRadius: 3,
+                          transition: "width 0.3s",
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+              <div style={{ marginTop: 12, fontSize: 11, color: COLORS.textFaint, lineHeight: 1.4 }}>
+                <strong>Positiv vekt</strong> = øker sannsynlighet for inspeksjon.{" "}
+                <strong>Negativ vekt</strong> = reduserer sannsynlighet.
+              </div>
+            </SectionCard>
+          </div>
+        )}
 
         {/* ============================================================== */}
         {/* TOP 50 RANKED LIST                                             */}
