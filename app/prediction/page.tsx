@@ -130,7 +130,7 @@ const RANDOM_SEED = 42;
 // Fixed positive weight for days-since-inspection at prediction time.
 // NOT used during training (the feature leaks the label due to post-inspection dates).
 // Higher value → stronger preference for establishments that haven't been inspected recently.
-const DAYS_BOOST_WEIGHT = 3.0;
+const DAYS_BOOST_WEIGHT = 1.0;
 
 const SCORE_LABELS: Record<number, string> = {
   0: "Ingen brudd",
