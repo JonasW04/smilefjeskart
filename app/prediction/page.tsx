@@ -292,6 +292,80 @@ function computeAucRoc(probabilities: number[], labels: number[]): number {
 }
 
 // ---------------------------------------------------------------------------
+// Synthetic diff generation from inspection dates
+// ---------------------------------------------------------------------------
+
+/**
+ * Build synthetic DiffEntry[] by grouping features into monthly windows based
+ * on their inspection date (dato). This creates years of ground-truth data
+ * from the dates already present in the complete tilsyn dataset, rather than
+ * relying only on the small number of real daily diffs.
+ *
+ * For each monthly window, establishments inspected in that month become the
+ * positive examples (newInspections/changedInspections). If an orgnummer had
+ * a prior inspection in an earlier month, the record goes into
+ * changedInspections; otherwise it's in newInspections.
+ */
+function buildSyntheticDiffs(features: Feature[]): DiffEntry[] {
+  // Group features by YYYY-MM based on their dato field
+  const byMonth = new Map<string, Feature[]>();
+  for (const f of features) {
+    const d = parseDatoToDate(f.properties.dato);
+    if (!d) continue;
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const group = byMonth.get(key);
+    if (group) group.push(f);
+    else byMonth.set(key, [f]);
+  }
+
+  // Sort month keys chronologically
+  const months = Array.from(byMonth.keys()).sort();
+
+  // Track which orgnummers have been seen in prior months
+  const seenOrgs = new Set<string>();
+  const diffs: DiffEntry[] = [];
+
+  for (let i = 0; i < months.length; i++) {
+    const month = months[i];
+    const monthFeatures = byMonth.get(month)!;
+    const newInspections: TilsynProperties[] = [];
+    const changedInspections: TilsynProperties[] = [];
+
+    for (const f of monthFeatures) {
+      const org = f.properties.orgnummer;
+      if (org && seenOrgs.has(org)) {
+        changedInspections.push(f.properties);
+      } else {
+        newInspections.push(f.properties);
+      }
+    }
+
+    // Mark all orgnummers from this month as seen
+    for (const f of monthFeatures) {
+      const org = f.properties.orgnummer;
+      if (org) seenOrgs.add(org);
+    }
+
+    diffs.push({
+      generatedAt: `${month}-01T00:00:00.000Z`,
+      previousDownload: i > 0 ? `${months[i - 1]}-01T00:00:00.000Z` : null,
+      summary: {
+        previousTotal: 0,
+        currentTotal: monthFeatures.length,
+        newCount: newInspections.length,
+        changedCount: changedInspections.length,
+        removedCount: 0,
+      },
+      newInspections,
+      changedInspections,
+      removedIds: [],
+    });
+  }
+
+  return diffs;
+}
+
+// ---------------------------------------------------------------------------
 // Feature extraction for each establishment
 // ---------------------------------------------------------------------------
 
@@ -556,6 +630,7 @@ type ModelInfo = {
   trainSize: number;
   testSize: number;
   positiveRate: number;
+  syntheticMonths?: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -569,21 +644,15 @@ export default function PredictionPage() {
   const [totalEstablishments, setTotalEstablishments] = useState(0);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/tilsyn.geojson").then((r) => r.json()),
-      fetch("/tilsyn-diff.json")
-        .then((r) => r.json())
-        .catch(() => null),
-    ]).then(([geo, diffData]) => {
+    fetch("/tilsyn.geojson")
+      .then((r) => r.json())
+      .then((geo) => {
       const features: Feature[] = geo.features ?? [];
 
-      // Parse diff history
-      let diffHistory: DiffEntry[] = [];
-      if (Array.isArray(diffData)) {
-        diffHistory = diffData;
-      } else if (diffData && typeof diffData === "object" && diffData.generatedAt) {
-        diffHistory = [diffData];
-      }
+      // Build synthetic diff history from inspection dates in the dataset.
+      // This gives us years of ground-truth data instead of just the few
+      // daily diffs captured since we started tracking.
+      const diffHistory = buildSyntheticDiffs(features);
 
       // Extract establishments
       const establishments = extractEstablishments(features);
@@ -676,6 +745,7 @@ export default function PredictionPage() {
           trainSize: trainX.length,
           testSize: testX.length,
           positiveRate: positiveCount / labels.length,
+          syntheticMonths: diffHistory.length,
         });
 
         // Generate predictions for ALL establishments:
@@ -915,7 +985,7 @@ export default function PredictionPage() {
           <div className="predict-eval-grid">
             <SectionCard
               title="📊 Modellevaluering"
-              subtitle={`Trent på ${modelInfo.trainSize} · Testet på ${modelInfo.testSize} eksempler`}
+              subtitle={`Trent på ${modelInfo.trainSize} · Testet på ${modelInfo.testSize} eksempler${modelInfo.syntheticMonths ? ` · Syntetisk grunnlag: ${modelInfo.syntheticMonths} månedsvinduer` : ""}`}
             >
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
