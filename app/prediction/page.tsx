@@ -125,6 +125,9 @@ const RANDOM_SEED = 42;
 // gradient-based training (it leaks the label due to post-inspection dates), but
 // its weight is calibrated against held-out F1 so it is data-driven rather than arbitrary.
 const DAYS_WEIGHT_CANDIDATES = Array.from({ length: 21 }, (_, i) => i * 0.1); // 0.0 … 2.0
+// Number of most-recent synthetic months whose inspections count as positive
+// ground truth.  Older establishments not inspected in this window are negatives.
+const GROUND_TRUTH_MONTHS = 6;
 
 // Training features only — days-related features are excluded to prevent data leakage,
 // and score/violation features are excluded because the model focuses on smiley-face
@@ -696,9 +699,11 @@ export default function PredictionPage() {
         return;
       }
 
-      // Build ground truth: establishments recently inspected (appeared in diffs)
+      // Build ground truth: establishments recently inspected (appeared in diffs).
+      // Only use the most recent months so older establishments become negatives.
+      const recentDiffs = diffHistory.slice(-GROUND_TRUTH_MONTHS);
       const recentlyInspectedIds = new Set<string>();
-      for (const diff of diffHistory) {
+      for (const diff of recentDiffs) {
         for (const insp of diff.newInspections) {
           recentlyInspectedIds.add(insp.tilsynsobjektid);
         }
