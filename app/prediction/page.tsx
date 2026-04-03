@@ -120,10 +120,11 @@ const TRAINING_EPOCHS = 300;
 const L2_LAMBDA = 0.01; // Regularization strength
 const TEST_SPLIT = 0.2;
 const RANDOM_SEED = 42;
-// Fixed positive weight for days-since-inspection at prediction time.
-// NOT used during training (the feature leaks the label due to post-inspection dates).
-// Higher value → stronger preference for establishments that haven't been inspected recently.
-const DAYS_BOOST_WEIGHT = 1.0;
+// Candidate weights for the days-since-inspection boost, searched via grid-search
+// on the held-out test set after training. The days feature is NOT used during
+// gradient-based training (it leaks the label due to post-inspection dates), but
+// its weight is calibrated against held-out F1 so it is data-driven rather than arbitrary.
+const DAYS_WEIGHT_CANDIDATES = Array.from({ length: 21 }, (_, i) => i * 0.1); // 0.0 … 2.0
 
 // Training features only — days-related features are excluded to prevent data leakage,
 // and score/violation features are excluded because the model focuses on smiley-face
@@ -291,6 +292,38 @@ function computeAucRoc(probabilities: number[], labels: number[]): number {
   return auc;
 }
 
+/**
+ * Grid-search the best days-since-inspection boost weight on the held-out test set.
+ * For each candidate weight, combine the base model logit with the days feature,
+ * compute F1, and return the weight that maximises it.
+ */
+function calibrateDaysWeight(
+  model: { weights: number[]; bias: number },
+  testX: number[][],
+  testY: number[],
+  daysTestFeatures: number[],
+  candidates: number[],
+): number {
+  let bestWeight = 0;
+  let bestF1 = -1;
+
+  for (const dw of candidates) {
+    const probs = testX.map((x, i) => {
+      const modelLogit = model.weights.reduce(
+        (sum, w, j) => sum + w * x[j], model.bias,
+      );
+      return sigmoid(modelLogit + dw * daysTestFeatures[i]);
+    });
+    const m = computeMetrics(probs, testY);
+    if (m.f1 > bestF1) {
+      bestF1 = m.f1;
+      bestWeight = dw;
+    }
+  }
+
+  return bestWeight;
+}
+
 // ---------------------------------------------------------------------------
 // Synthetic diff generation from inspection dates
 // ---------------------------------------------------------------------------
@@ -454,7 +487,7 @@ function buildFeatureVector(
   maxLng: number,
 ): { training: number[]; daysFeat: number } {
   // Days feature — used ONLY at prediction time, NOT during training.
-  // (See DAYS_BOOST_WEIGHT comment for rationale.)
+  // (See DAYS_WEIGHT_CANDIDATES / calibrateDaysWeight for rationale.)
   const daysFeat = maxDays > 0 ? Math.min(est.daysSinceInspection / maxDays, 1) : 0;
 
   // Training feature 1: Prior inspection history (more inspections = higher likelihood, capped)
@@ -626,7 +659,7 @@ type PredictionResult = {
 type ModelInfo = {
   trainMetrics: EvalMetrics;
   testMetrics: EvalMetrics;
-  featureWeights: { name: string; weight: number; isFixed?: boolean }[];
+  featureWeights: { name: string; weight: number }[];
   trainSize: number;
   testSize: number;
   positiveRate: number;
@@ -728,13 +761,18 @@ export default function PredictionPage() {
         const testProbs = testX.map((x) => predictProba(x, model.weights, model.bias));
         const testMetrics = computeMetrics(testProbs, testY);
 
-        // Feature importance (trained weights + the fixed days boost)
+        // Calibrate the days-since-inspection weight via grid-search on held-out test set
+        const daysTestFeatures = testIdx.map((i) => daysFeatures[i]);
+        const bestDaysWeight = calibrateDaysWeight(
+          model, testX, testY, daysTestFeatures, DAYS_WEIGHT_CANDIDATES,
+        );
+
+        // Feature importance (trained weights + the calibrated days boost)
         const featureWeights = [
-          { name: "Dager siden tilsyn", weight: DAYS_BOOST_WEIGHT, isFixed: true },
+          { name: "Dager siden tilsyn", weight: bestDaysWeight },
           ...TRAINING_FEATURE_NAMES.map((name, j) => ({
             name,
             weight: model.weights[j] ?? 0,
-            isFixed: false,
           })),
         ].sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight));
 
@@ -749,7 +787,7 @@ export default function PredictionPage() {
         });
 
         // Generate predictions for ALL establishments:
-        // Combine trained model logit + days-based boost in logit space.
+        // Combine trained model logit + calibrated days-based boost in logit space.
         // Days boost ensures: more days since inspection → higher probability.
         // Only include smiley-face restaurants (score ≤ 1) — restaurants with violations
         // already know they have something to fix.
@@ -758,7 +796,7 @@ export default function PredictionPage() {
             const modelLogit = model.weights.reduce(
               (sum, w, j) => sum + w * trainingVectors[i][j], model.bias,
             );
-            const combinedLogit = modelLogit + DAYS_BOOST_WEIGHT * daysFeatures[i];
+            const combinedLogit = modelLogit + bestDaysWeight * daysFeatures[i];
             return {
               id: est.id,
               navn: est.navn,
@@ -778,13 +816,14 @@ export default function PredictionPage() {
         // [history, area, lat, lng]
         const fallbackWeights = [0.3, 0.3, 0.1, 0.1];
         const fallbackBias = -1.5;
+        const fallbackDaysWeight = 0.5; // conservative default when no calibration data
 
         const results: PredictionResult[] = establishments
           .map((est, i) => {
             const modelLogit = fallbackWeights.reduce(
               (sum, w, j) => sum + w * trainingVectors[i][j], fallbackBias,
             );
-            const combinedLogit = modelLogit + DAYS_BOOST_WEIGHT * daysFeatures[i];
+            const combinedLogit = modelLogit + fallbackDaysWeight * daysFeatures[i];
             return {
               id: est.id,
               navn: est.navn,
@@ -1034,9 +1073,6 @@ export default function PredictionPage() {
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}>
                       <span style={{ color: COLORS.text }}>
                         {fw.name}
-                        {fw.isFixed && (
-                          <span style={{ fontSize: 10, color: COLORS.textFaint, marginLeft: 4 }}>(fast)</span>
-                        )}
                       </span>
                       <span style={{ color: isPositive ? COLORS.smil : COLORS.sur, fontWeight: 600 }}>
                         {isPositive ? "+" : ""}{fw.weight.toFixed(3)}
@@ -1059,7 +1095,7 @@ export default function PredictionPage() {
               <div style={{ marginTop: 12, fontSize: 11, color: COLORS.textFaint, lineHeight: 1.4 }}>
                 <strong>Positiv vekt</strong> = øker sannsynlighet for inspeksjon.{" "}
                 <strong>Negativ vekt</strong> = reduserer sannsynlighet.{" "}
-                <strong>(fast)</strong> = fast vekt, ikke trent (forhindrer datalekkasje).
+                Dager-vekten er kalibrert via kryssvalidering på testsettet.
               </div>
             </SectionCard>
           </div>

@@ -141,6 +141,33 @@ function computeMetrics(
   };
 }
 
+function calibrateDaysWeight(
+  model: { weights: number[]; bias: number },
+  testX: number[][],
+  testY: number[],
+  daysTestFeatures: number[],
+  candidates: number[],
+): number {
+  let bestWeight = 0;
+  let bestF1 = -1;
+
+  for (const dw of candidates) {
+    const probs = testX.map((x, i) => {
+      const modelLogit = model.weights.reduce(
+        (sum, w, j) => sum + w * x[j], model.bias,
+      );
+      return sigmoid(modelLogit + dw * daysTestFeatures[i]);
+    });
+    const m = computeMetrics(probs, testY);
+    if (m.f1 > bestF1) {
+      bestF1 = m.f1;
+      bestWeight = dw;
+    }
+  }
+
+  return bestWeight;
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -343,5 +370,46 @@ describe("full training pipeline", () => {
     expect(metrics.aucRoc).toBeGreaterThan(0.6);
     // F1 should be non-trivial
     expect(metrics.f1).toBeGreaterThan(0.1);
+  });
+});
+
+describe("calibrateDaysWeight", () => {
+  it("returns 0 when all candidates produce zero F1", () => {
+    // Model with no useful signal, all negatives
+    const model = { weights: [0], bias: 0 };
+    const testX = [[0.1], [0.2], [0.3]];
+    const testY = [0, 0, 0];
+    const daysFeat = [0.5, 0.5, 0.5];
+    const candidates = [0, 0.5, 1.0];
+
+    const best = calibrateDaysWeight(model, testX, testY, daysFeat, candidates);
+    expect(best).toBe(0); // all F1s are 0, so first candidate wins
+  });
+
+  it("picks the candidate that best separates positives from negatives", () => {
+    // Positives have high daysFeat, negatives have low daysFeat
+    // A higher days weight should help separate them
+    const model = { weights: [0], bias: -2 };
+    const testX = [[0.5], [0.5], [0.5], [0.5]];
+    const testY = [1, 1, 0, 0];
+    const daysFeat = [0.9, 0.8, 0.1, 0.2];
+    const candidates = [0, 0.5, 1.0, 2.0, 5.0];
+
+    const best = calibrateDaysWeight(model, testX, testY, daysFeat, candidates);
+    // A positive weight should be selected since positives have high daysFeat
+    expect(best).toBeGreaterThan(0);
+  });
+
+  it("prefers a lower weight when days feature does not help", () => {
+    // Days feature is identical for all samples — should not matter
+    const model = { weights: [2], bias: -1 };
+    const testX = [[0.1], [0.2], [0.8], [0.9]];
+    const testY = [0, 0, 1, 1];
+    const daysFeat = [0.5, 0.5, 0.5, 0.5];
+    const candidates = [0, 0.5, 1.0, 2.0];
+
+    const best = calibrateDaysWeight(model, testX, testY, daysFeat, candidates);
+    // All candidates produce the same F1 (daysFeat is constant), so 0 wins (first)
+    expect(best).toBe(0);
   });
 });
