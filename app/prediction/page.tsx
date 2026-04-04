@@ -147,12 +147,17 @@ const TYPE_KEYWORDS: [string, number][] = [
 ];
 const NUM_ESTABLISHMENT_TYPES = 16; // 0 = unknown, 1–15 as above
 
-// Decision tree ensemble hyperparameters
+// Decision tree ensemble hyperparameters — chosen to balance model capacity with
+// in-browser training speed (~8000 samples).  10 trees give a stable ensemble
+// average, depth 4 captures 2-way interactions without overfitting, min 10 samples
+// prevents noisy leaf nodes, and 80% bootstrap maintains variance across trees.
 const NUM_TREES = 10;
 const TREE_MAX_DEPTH = 4;
 const TREE_MIN_SAMPLES = 10;
 const TREE_SAMPLE_FRACTION = 0.8;
-const ENSEMBLE_WEIGHT = 0.5; // weight for tree ensemble vs logistic regression
+// Equal weighting for LR and tree ensemble; LR provides smooth calibrated
+// probabilities while trees capture non-linear interactions.
+const ENSEMBLE_WEIGHT = 0.5;
 
 // Threshold candidates for calibrating decision threshold on validation F1
 const THRESHOLD_CANDIDATES = Array.from({ length: 17 }, (_, i) => 0.1 + i * 0.05); // 0.10 … 0.90
