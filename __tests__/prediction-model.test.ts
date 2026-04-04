@@ -413,3 +413,346 @@ describe("calibrateDaysWeight", () => {
     expect(best).toBe(0);
   });
 });
+
+// ---------------------------------------------------------------------------
+// New functions: tree ensemble, threshold calibration, type classification
+// ---------------------------------------------------------------------------
+
+const TYPE_KEYWORDS: [string, number][] = [
+  ["restaurant", 1], ["kafé", 2], ["kafe", 2], ["cafe", 2],
+  ["sushi", 3], ["pizza", 4], ["kebab", 5],
+  ["bakeri", 6], ["bakery", 6], ["konditor", 6],
+  ["hotell", 7], ["hotel", 7],
+  ["barnehage", 8], ["skole", 8],
+  ["sykehjem", 9], ["sykehus", 9],
+  ["butikk", 10], ["dagligvare", 10], ["kiwi", 10], ["rema", 10], ["coop", 10], ["meny", 10],
+  ["kiosk", 11], ["narvesen", 11],
+  ["bar", 12], ["pub", 12],
+  ["gatekjøkken", 13], ["grill", 13],
+  ["catering", 14],
+  ["bensinstasjon", 15],
+];
+
+function classifyEstablishmentType(navn: string): number {
+  const lower = navn.toLowerCase();
+  for (const [keyword, typeCode] of TYPE_KEYWORDS) {
+    if (lower.includes(keyword)) return typeCode;
+  }
+  return 0;
+}
+
+type TreeNode = {
+  featureIndex: number;
+  threshold: number;
+  left: TreeNode | number;
+  right: TreeNode | number;
+};
+
+function giniImpurity(pos: number, neg: number): number {
+  const total = pos + neg;
+  if (total === 0) return 0;
+  const p = pos / total;
+  return 2 * p * (1 - p);
+}
+
+function mulberry32(seed: number) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function buildDecisionTree(
+  X: number[][],
+  y: number[],
+  maxDepth: number,
+  minSamples: number,
+  rng: () => number,
+): TreeNode | number {
+  if (X.length <= minSamples || maxDepth === 0) {
+    return y.length > 0 ? y.reduce((a, b) => a + b, 0) / y.length : 0.5;
+  }
+  const posCount = y.filter((v) => v === 1).length;
+  if (posCount === 0 || posCount === y.length) {
+    return posCount / y.length;
+  }
+
+  const nFeatures = X[0].length;
+  const subsetSize = Math.max(Math.floor(Math.sqrt(nFeatures)), 1);
+  const available = Array.from({ length: nFeatures }, (_, i) => i);
+  const selectedFeatures: number[] = [];
+  for (let i = 0; i < subsetSize && available.length > 0; i++) {
+    const idx = Math.floor(rng() * available.length);
+    selectedFeatures.push(available.splice(idx, 1)[0]);
+  }
+
+  let bestGain = -Infinity;
+  let bestFeature = 0;
+  let bestThreshold = 0;
+  const totalNeg = y.length - posCount;
+  const parentImpurity = giniImpurity(posCount, totalNeg);
+
+  for (const fi of selectedFeatures) {
+    const values = X.map((x) => x[fi]).sort((a, b) => a - b);
+    const steps = Math.min(10, values.length - 1);
+    for (let s = 1; s <= steps; s++) {
+      const idx = Math.floor((s / (steps + 1)) * values.length);
+      const threshold = values[idx];
+      let lp = 0, ln = 0, rp = 0, rn = 0;
+      for (let i = 0; i < X.length; i++) {
+        if (X[i][fi] <= threshold) {
+          if (y[i] === 1) lp++; else ln++;
+        } else {
+          if (y[i] === 1) rp++; else rn++;
+        }
+      }
+      const leftTotal = lp + ln;
+      const rightTotal = rp + rn;
+      if (leftTotal === 0 || rightTotal === 0) continue;
+      const gain = parentImpurity -
+        (leftTotal * giniImpurity(lp, ln) + rightTotal * giniImpurity(rp, rn)) / X.length;
+      if (gain > bestGain) {
+        bestGain = gain;
+        bestFeature = fi;
+        bestThreshold = threshold;
+      }
+    }
+  }
+
+  if (bestGain <= 0) {
+    return y.reduce((a, b) => a + b, 0) / y.length;
+  }
+
+  const leftX: number[][] = [], leftY: number[] = [];
+  const rightX: number[][] = [], rightY: number[] = [];
+  for (let i = 0; i < X.length; i++) {
+    if (X[i][bestFeature] <= bestThreshold) {
+      leftX.push(X[i]); leftY.push(y[i]);
+    } else {
+      rightX.push(X[i]); rightY.push(y[i]);
+    }
+  }
+
+  return {
+    featureIndex: bestFeature,
+    threshold: bestThreshold,
+    left: buildDecisionTree(leftX, leftY, maxDepth - 1, minSamples, rng),
+    right: buildDecisionTree(rightX, rightY, maxDepth - 1, minSamples, rng),
+  };
+}
+
+function predictTree(node: TreeNode | number, features: number[]): number {
+  if (typeof node === "number") return node;
+  if (features[node.featureIndex] <= node.threshold) {
+    return predictTree(node.left, features);
+  }
+  return predictTree(node.right, features);
+}
+
+function trainTreeEnsemble(
+  X: number[][],
+  y: number[],
+  numTrees: number,
+  maxDepth: number,
+  minSamples: number,
+  sampleFraction: number,
+  rng: () => number,
+): (TreeNode | number)[] {
+  const trees: (TreeNode | number)[] = [];
+  for (let t = 0; t < numTrees; t++) {
+    const sampleSize = Math.floor(X.length * sampleFraction);
+    const sampleX: number[][] = [];
+    const sampleY: number[] = [];
+    for (let i = 0; i < sampleSize; i++) {
+      const idx = Math.floor(rng() * X.length);
+      sampleX.push(X[idx]);
+      sampleY.push(y[idx]);
+    }
+    trees.push(buildDecisionTree(sampleX, sampleY, maxDepth, minSamples, rng));
+  }
+  return trees;
+}
+
+function predictEnsemble(trees: (TreeNode | number)[], features: number[]): number {
+  const predictions = trees.map((t) => predictTree(t, features));
+  return predictions.reduce((a, b) => a + b, 0) / predictions.length;
+}
+
+function calibrateThreshold(
+  probabilities: number[],
+  labels: number[],
+  candidates: number[],
+): number {
+  let bestThreshold = 0.5;
+  let bestF1 = -1;
+  for (const t of candidates) {
+    const m = computeMetrics(probabilities, labels, t);
+    if (m.f1 > bestF1) {
+      bestF1 = m.f1;
+      bestThreshold = t;
+    }
+  }
+  return bestThreshold;
+}
+
+// ---------------------------------------------------------------------------
+// Tests for new functions
+// ---------------------------------------------------------------------------
+
+describe("classifyEstablishmentType", () => {
+  it("classifies restaurant names", () => {
+    expect(classifyEstablishmentType("Oslo Restaurant AS")).toBe(1);
+    expect(classifyEstablishmentType("Kafé Storgata")).toBe(2);
+    expect(classifyEstablishmentType("Sushi Palace")).toBe(3);
+    expect(classifyEstablishmentType("Pizza Express")).toBe(4);
+  });
+
+  it("classifies other establishment types", () => {
+    expect(classifyEstablishmentType("Hotell Bristol")).toBe(7);
+    expect(classifyEstablishmentType("Trollheim Barnehage")).toBe(8);
+    expect(classifyEstablishmentType("Kiwi Majorstuen")).toBe(10);
+    expect(classifyEstablishmentType("Narvesen Jernbanetorget")).toBe(11);
+  });
+
+  it("returns 0 for unknown types", () => {
+    expect(classifyEstablishmentType("Firma AS")).toBe(0);
+    expect(classifyEstablishmentType("Ukjent Sted")).toBe(0);
+  });
+
+  it("is case insensitive", () => {
+    expect(classifyEstablishmentType("RESTAURANT OSLO")).toBe(1);
+    expect(classifyEstablishmentType("Kebab House")).toBe(5);
+  });
+});
+
+describe("giniImpurity", () => {
+  it("returns 0 for pure nodes", () => {
+    expect(giniImpurity(10, 0)).toBe(0);
+    expect(giniImpurity(0, 10)).toBe(0);
+    expect(giniImpurity(0, 0)).toBe(0);
+  });
+
+  it("returns 0.5 for perfectly balanced split", () => {
+    expect(giniImpurity(5, 5)).toBeCloseTo(0.5, 5);
+  });
+
+  it("returns intermediate values for imbalanced splits", () => {
+    const imp = giniImpurity(3, 7);
+    expect(imp).toBeGreaterThan(0);
+    expect(imp).toBeLessThan(0.5);
+  });
+});
+
+describe("decision tree", () => {
+  it("builds a leaf for small datasets", () => {
+    const rng = mulberry32(42);
+    const tree = buildDecisionTree([[1], [2]], [1, 0], 4, 5, rng);
+    expect(typeof tree).toBe("number");
+    expect(tree).toBeCloseTo(0.5, 5);
+  });
+
+  it("builds a leaf for pure datasets", () => {
+    const rng = mulberry32(42);
+    const tree = buildDecisionTree([[1], [2], [3]], [1, 1, 1], 4, 1, rng);
+    expect(typeof tree).toBe("number");
+    expect(tree).toBe(1);
+  });
+
+  it("learns to split linearly separable 1D data", () => {
+    const X: number[][] = [];
+    const y: number[] = [];
+    for (let i = 0; i < 50; i++) {
+      X.push([i / 100]);
+      y.push(0);
+    }
+    for (let i = 50; i < 100; i++) {
+      X.push([i / 100]);
+      y.push(1);
+    }
+    const rng = mulberry32(42);
+    const tree = buildDecisionTree(X, y, 4, 2, rng);
+
+    // Should predict low for low values and high for high values
+    const lowPred = predictTree(tree, [0.1]);
+    const highPred = predictTree(tree, [0.9]);
+    expect(lowPred).toBeLessThan(0.3);
+    expect(highPred).toBeGreaterThan(0.7);
+  });
+});
+
+describe("tree ensemble", () => {
+  it("trains multiple trees and produces valid probabilities", () => {
+    const X: number[][] = [];
+    const y: number[] = [];
+    for (let i = 0; i < 30; i++) {
+      X.push([0.6 + Math.random() * 0.4, Math.random()]);
+      y.push(1);
+    }
+    for (let i = 0; i < 270; i++) {
+      X.push([Math.random() * 0.5, Math.random()]);
+      y.push(0);
+    }
+
+    const rng = mulberry32(42);
+    const trees = trainTreeEnsemble(X, y, 5, 3, 5, 0.8, rng);
+    expect(trees.length).toBe(5);
+
+    const prob = predictEnsemble(trees, [0.8, 0.5]);
+    expect(prob).toBeGreaterThanOrEqual(0);
+    expect(prob).toBeLessThanOrEqual(1);
+  });
+
+  it("achieves reasonable AUC on synthetic data", () => {
+    const X: number[][] = [];
+    const y: number[] = [];
+    for (let i = 0; i < 30; i++) {
+      X.push([0.6 + Math.random() * 0.4, Math.random()]);
+      y.push(1);
+    }
+    for (let i = 0; i < 270; i++) {
+      X.push([Math.random() * 0.5, Math.random()]);
+      y.push(0);
+    }
+
+    const rng = mulberry32(42);
+    const trees = trainTreeEnsemble(X, y, 10, 4, 5, 0.8, rng);
+    const probs = X.map((x) => predictEnsemble(trees, x));
+    const auc = computeAucRoc(probs, y);
+    expect(auc).toBeGreaterThan(0.6);
+  });
+});
+
+describe("calibrateThreshold", () => {
+  it("returns 0.5 when all candidates produce the same F1", () => {
+    // All probabilities the same → F1 the same for any threshold above
+    const probs = [0.3, 0.3, 0.3, 0.3];
+    const labels = [1, 0, 1, 0];
+    const candidates = [0.1, 0.2, 0.3, 0.4, 0.5];
+    const best = calibrateThreshold(probs, labels, candidates);
+    // 0.1 and 0.2 predict all positive (F1 > 0), 0.4 and 0.5 predict all negative (F1 = 0)
+    // 0.3 is the boundary — depends on >= implementation
+    expect(best).toBeLessThanOrEqual(0.3);
+  });
+
+  it("finds optimal threshold for well-separated probabilities", () => {
+    const probs = [0.9, 0.8, 0.2, 0.1];
+    const labels = [1, 1, 0, 0];
+    const candidates = [0.1, 0.3, 0.5, 0.7, 0.9];
+    const best = calibrateThreshold(probs, labels, candidates);
+    // Any threshold between 0.2 and 0.8 should give perfect F1
+    expect(best).toBeGreaterThanOrEqual(0.3);
+    expect(best).toBeLessThanOrEqual(0.7);
+  });
+
+  it("prefers lower threshold for imbalanced data (more positives caught)", () => {
+    // 1 positive, 3 negatives. Low threshold catches the positive but may have FP.
+    const probs = [0.6, 0.4, 0.3, 0.2];
+    const labels = [1, 0, 0, 0];
+    const candidates = [0.1, 0.3, 0.5, 0.7];
+    const best = calibrateThreshold(probs, labels, candidates);
+    // Threshold 0.5 or 0.3 should give better F1 than 0.7
+    expect(best).toBeLessThanOrEqual(0.5);
+  });
+});

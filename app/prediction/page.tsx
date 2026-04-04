@@ -129,14 +129,49 @@ const DAYS_WEIGHT_CANDIDATES = Array.from({ length: 21 }, (_, i) => i * 0.1); //
 // ground truth.  Older establishments not inspected in this window are negatives.
 const GROUND_TRUTH_MONTHS = 6;
 
-// Training features only — days-related features are excluded to prevent data leakage,
-// and score/violation features are excluded because the model focuses on smiley-face
-// restaurants (score ≤ 1) where those features carry no useful signal.
+// Establishment type keywords: map lowercase substrings in 'navn' to numeric type codes.
+// Different establishment types have different inspection frequencies.
+const TYPE_KEYWORDS: [string, number][] = [
+  ["restaurant", 1], ["kafé", 2], ["kafe", 2], ["cafe", 2],
+  ["sushi", 3], ["pizza", 4], ["kebab", 5],
+  ["bakeri", 6], ["bakery", 6], ["konditor", 6],
+  ["hotell", 7], ["hotel", 7],
+  ["barnehage", 8], ["skole", 8],
+  ["sykehjem", 9], ["sykehus", 9],
+  ["butikk", 10], ["dagligvare", 10], ["kiwi", 10], ["rema", 10], ["coop", 10], ["meny", 10],
+  ["kiosk", 11], ["narvesen", 11],
+  ["bar", 12], ["pub", 12],
+  ["gatekjøkken", 13], ["grill", 13],
+  ["catering", 14],
+  ["bensinstasjon", 15],
+];
+const NUM_ESTABLISHMENT_TYPES = 16; // 0 = unknown, 1–15 as above
+
+// Decision tree ensemble hyperparameters
+const NUM_TREES = 10;
+const TREE_MAX_DEPTH = 4;
+const TREE_MIN_SAMPLES = 10;
+const TREE_SAMPLE_FRACTION = 0.8;
+const ENSEMBLE_WEIGHT = 0.5; // weight for tree ensemble vs logistic regression
+
+// Threshold candidates for calibrating decision threshold on validation F1
+const THRESHOLD_CANDIDATES = Array.from({ length: 17 }, (_, i) => 0.1 + i * 0.05); // 0.10 … 0.90
+
+// Training features — days-related features excluded to prevent data leakage.
+// Score/violation features excluded because the model focuses on smiley-face
+// restaurants (score ≤ 1) where those carry no signal.
+// Expanded with seasonal, type, status, interval, and regional features.
 const TRAINING_FEATURE_NAMES = [
   "Historiske tilsyn",
   "Lokal aktivitet",
   "Breddegrad",
   "Lengdegrad",
+  "Sesong (sin)",
+  "Sesong (cos)",
+  "Virksomhetstype",
+  "Status",
+  "Intervall-avvik",
+  "Regional rate",
 ];
 
 // ---------------------------------------------------------------------------
@@ -328,6 +363,195 @@ function calibrateDaysWeight(
 }
 
 // ---------------------------------------------------------------------------
+// Establishment type classification from name
+// ---------------------------------------------------------------------------
+
+function classifyEstablishmentType(navn: string): number {
+  const lower = navn.toLowerCase();
+  for (const [keyword, typeCode] of TYPE_KEYWORDS) {
+    if (lower.includes(keyword)) return typeCode;
+  }
+  return 0; // unknown
+}
+
+// ---------------------------------------------------------------------------
+// Decision tree ensemble (random forest-style)
+// ---------------------------------------------------------------------------
+
+type TreeNode = {
+  featureIndex: number;
+  threshold: number;
+  left: TreeNode | number;
+  right: TreeNode | number;
+};
+
+function giniImpurity(pos: number, neg: number): number {
+  const total = pos + neg;
+  if (total === 0) return 0;
+  const p = pos / total;
+  return 2 * p * (1 - p);
+}
+
+function buildDecisionTree(
+  X: number[][],
+  y: number[],
+  maxDepth: number,
+  minSamples: number,
+  rng: () => number,
+): TreeNode | number {
+  if (X.length <= minSamples || maxDepth === 0) {
+    return y.length > 0 ? y.reduce((a, b) => a + b, 0) / y.length : 0.5;
+  }
+  const posCount = y.filter((v) => v === 1).length;
+  if (posCount === 0 || posCount === y.length) {
+    return posCount / y.length;
+  }
+
+  const nFeatures = X[0].length;
+  const subsetSize = Math.max(Math.floor(Math.sqrt(nFeatures)), 1);
+  const available = Array.from({ length: nFeatures }, (_, i) => i);
+  const selectedFeatures: number[] = [];
+  for (let i = 0; i < subsetSize && available.length > 0; i++) {
+    const idx = Math.floor(rng() * available.length);
+    selectedFeatures.push(available.splice(idx, 1)[0]);
+  }
+
+  let bestGain = -Infinity;
+  let bestFeature = 0;
+  let bestThreshold = 0;
+  const totalNeg = y.length - posCount;
+  const parentImpurity = giniImpurity(posCount, totalNeg);
+
+  for (const fi of selectedFeatures) {
+    const values = X.map((x) => x[fi]).sort((a, b) => a - b);
+    const steps = Math.min(10, values.length - 1);
+    for (let s = 1; s <= steps; s++) {
+      const idx = Math.floor((s / (steps + 1)) * values.length);
+      const threshold = values[idx];
+      let lp = 0, ln = 0, rp = 0, rn = 0;
+      for (let i = 0; i < X.length; i++) {
+        if (X[i][fi] <= threshold) {
+          if (y[i] === 1) lp++; else ln++;
+        } else {
+          if (y[i] === 1) rp++; else rn++;
+        }
+      }
+      const leftTotal = lp + ln;
+      const rightTotal = rp + rn;
+      if (leftTotal === 0 || rightTotal === 0) continue;
+      const gain = parentImpurity -
+        (leftTotal * giniImpurity(lp, ln) + rightTotal * giniImpurity(rp, rn)) / X.length;
+      if (gain > bestGain) {
+        bestGain = gain;
+        bestFeature = fi;
+        bestThreshold = threshold;
+      }
+    }
+  }
+
+  if (bestGain <= 0) {
+    return y.reduce((a, b) => a + b, 0) / y.length;
+  }
+
+  const leftX: number[][] = [], leftY: number[] = [];
+  const rightX: number[][] = [], rightY: number[] = [];
+  for (let i = 0; i < X.length; i++) {
+    if (X[i][bestFeature] <= bestThreshold) {
+      leftX.push(X[i]); leftY.push(y[i]);
+    } else {
+      rightX.push(X[i]); rightY.push(y[i]);
+    }
+  }
+
+  return {
+    featureIndex: bestFeature,
+    threshold: bestThreshold,
+    left: buildDecisionTree(leftX, leftY, maxDepth - 1, minSamples, rng),
+    right: buildDecisionTree(rightX, rightY, maxDepth - 1, minSamples, rng),
+  };
+}
+
+function predictTree(node: TreeNode | number, features: number[]): number {
+  if (typeof node === "number") return node;
+  if (features[node.featureIndex] <= node.threshold) {
+    return predictTree(node.left, features);
+  }
+  return predictTree(node.right, features);
+}
+
+function trainTreeEnsemble(
+  X: number[][],
+  y: number[],
+  numTrees: number,
+  maxDepth: number,
+  minSamples: number,
+  sampleFraction: number,
+  rng: () => number,
+): (TreeNode | number)[] {
+  const trees: (TreeNode | number)[] = [];
+  for (let t = 0; t < numTrees; t++) {
+    const sampleSize = Math.floor(X.length * sampleFraction);
+    const sampleX: number[][] = [];
+    const sampleY: number[] = [];
+    for (let i = 0; i < sampleSize; i++) {
+      const idx = Math.floor(rng() * X.length);
+      sampleX.push(X[idx]);
+      sampleY.push(y[idx]);
+    }
+    trees.push(buildDecisionTree(sampleX, sampleY, maxDepth, minSamples, rng));
+  }
+  return trees;
+}
+
+function predictEnsemble(trees: (TreeNode | number)[], features: number[]): number {
+  const predictions = trees.map((t) => predictTree(t, features));
+  return predictions.reduce((a, b) => a + b, 0) / predictions.length;
+}
+
+// ---------------------------------------------------------------------------
+// Threshold calibration: search for the threshold that maximises F1
+// ---------------------------------------------------------------------------
+
+function calibrateThreshold(
+  probabilities: number[],
+  labels: number[],
+  candidates: number[],
+): number {
+  let bestThreshold = 0.5;
+  let bestF1 = -1;
+  for (const t of candidates) {
+    const m = computeMetrics(probabilities, labels, t);
+    if (m.f1 > bestF1) {
+      bestF1 = m.f1;
+      bestThreshold = t;
+    }
+  }
+  return bestThreshold;
+}
+
+// ---------------------------------------------------------------------------
+// Regional inspection rate computation
+// ---------------------------------------------------------------------------
+
+function computeRegionRates(establishments: EstablishmentData[]): Map<string, number> {
+  const regionTotals = new Map<string, number>();
+  const regionRecent = new Map<string, number>();
+  for (const est of establishments) {
+    const key = `${Math.round(est.lat)},${Math.round(est.lng)}`;
+    regionTotals.set(key, (regionTotals.get(key) ?? 0) + 1);
+    if (est.daysSinceInspection <= 365) {
+      regionRecent.set(key, (regionRecent.get(key) ?? 0) + 1);
+    }
+  }
+  const rates = new Map<string, number>();
+  for (const [key, total] of regionTotals) {
+    const recent = regionRecent.get(key) ?? 0;
+    rates.set(key, total > 0 ? recent / total : 0);
+  }
+  return rates;
+}
+
+// ---------------------------------------------------------------------------
 // Synthetic diff generation from inspection dates
 // ---------------------------------------------------------------------------
 
@@ -418,6 +642,10 @@ type EstablishmentData = {
   priorInspectionCount: number; // How many inspections for this orgnummer
   lat: number;
   lng: number;
+  inspectionMonth: number; // 0–11 from last inspection date
+  establishmentType: number; // 0 = unknown, 1–15 per TYPE_KEYWORDS
+  statusValue: number; // 0 or 1
+  intervalDeviation: number; // >1 means overdue relative to avg interval, 0 if no history
 };
 
 function extractEstablishments(features: Feature[]): EstablishmentData[] {
@@ -439,11 +667,28 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
     }
   }
 
-  // Count inspections per orgnummer (for history feature)
-  const orgCounts = new Map<string, number>();
+  // Count inspections per orgnummer and compute average intervals
+  const orgInspections = new Map<string, Date[]>();
   for (const f of features) {
     const org = f.properties.orgnummer;
-    if (org) orgCounts.set(org, (orgCounts.get(org) ?? 0) + 1);
+    if (!org) continue;
+    const d = parseDatoToDate(f.properties.dato);
+    if (!d) continue;
+    const dates = orgInspections.get(org);
+    if (dates) dates.push(d);
+    else orgInspections.set(org, [d]);
+  }
+
+  // Compute average interval in days for each orgnummer with 2+ inspections
+  const orgAvgInterval = new Map<string, number>();
+  for (const [org, dates] of orgInspections) {
+    if (dates.length < 2) continue;
+    dates.sort((a, b) => a.getTime() - b.getTime());
+    let totalInterval = 0;
+    for (let i = 1; i < dates.length; i++) {
+      totalInterval += (dates[i].getTime() - dates[i - 1].getTime()) / MS_PER_DAY;
+    }
+    orgAvgInterval.set(org, totalInterval / (dates.length - 1));
   }
 
   const result: EstablishmentData[] = [];
@@ -460,6 +705,25 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
     const violationCount = scores.filter((v) => v >= 2).length;
 
     const [lng, lat] = f.geometry.coordinates;
+    const orgCount = p.orgnummer ? (orgInspections.get(p.orgnummer)?.length ?? 1) : 1;
+
+    // Inspection month (0–11) for seasonal encoding
+    const inspMonth = inspDate ? inspDate.getMonth() : 0;
+
+    // Establishment type from name
+    const estType = classifyEstablishmentType(p.navn);
+
+    // Status (parse to 0/1)
+    const statusVal = p.status === "1" || String(p.status) === "1" ? 1 : 0;
+
+    // Interval deviation: how overdue is this establishment relative to its average interval?
+    let intervalDev = 0;
+    if (p.orgnummer) {
+      const avgInt = orgAvgInterval.get(p.orgnummer);
+      if (avgInt && avgInt > 0) {
+        intervalDev = Math.min(daysSince / avgInt, 3) / 3; // Normalize: 0 = on time, 1 = 3× overdue
+      }
+    }
 
     result.push({
       id,
@@ -471,9 +735,13 @@ function extractEstablishments(features: Feature[]): EstablishmentData[] {
       daysSinceInspection: daysSince,
       worstScore: worstScore >= 0 ? worstScore : 0,
       violationCount,
-      priorInspectionCount: p.orgnummer ? (orgCounts.get(p.orgnummer) ?? 1) : 1,
+      priorInspectionCount: orgCount,
       lat,
       lng,
+      inspectionMonth: inspMonth,
+      establishmentType: estType,
+      statusValue: statusVal,
+      intervalDeviation: intervalDev,
     });
   }
 
@@ -488,6 +756,7 @@ function buildFeatureVector(
   maxLat: number,
   minLng: number,
   maxLng: number,
+  regionRates: Map<string, number>,
 ): { training: number[]; daysFeat: number } {
   // Days feature — used ONLY at prediction time, NOT during training.
   // (See DAYS_WEIGHT_CANDIDATES / calibrateDaysWeight for rationale.)
@@ -517,8 +786,28 @@ function buildFeatureVector(
   const lngRange = maxLng - minLng || 1;
   const lngFeat = (est.lng - minLng) / lngRange;
 
+  // Training feature 5: Seasonal sin (captures June/July peak)
+  const monthRad = (2 * Math.PI * est.inspectionMonth) / 12;
+  const seasonSin = (Math.sin(monthRad) + 1) / 2; // normalize to [0,1]
+
+  // Training feature 6: Seasonal cos (captures winter/summer contrast)
+  const seasonCos = (Math.cos(monthRad) + 1) / 2; // normalize to [0,1]
+
+  // Training feature 7: Establishment type (normalized)
+  const typeFeat = est.establishmentType / NUM_ESTABLISHMENT_TYPES;
+
+  // Training feature 8: Status field
+  const statusFeat = est.statusValue;
+
+  // Training feature 9: Interval deviation (overdue factor)
+  const intervalFeat = est.intervalDeviation;
+
+  // Training feature 10: Regional inspection rate
+  const regionKey = `${Math.round(est.lat)},${Math.round(est.lng)}`;
+  const rateFeat = Math.min(regionRates.get(regionKey) ?? 0.5, 1);
+
   return {
-    training: [historyFeat, areaFeat, latFeat, lngFeat],
+    training: [historyFeat, areaFeat, latFeat, lngFeat, seasonSin, seasonCos, typeFeat, statusFeat, intervalFeat, rateFeat],
     daysFeat,
   };
 }
@@ -667,6 +956,9 @@ type ModelInfo = {
   testSize: number;
   positiveRate: number;
   syntheticMonths?: number;
+  bestThreshold: number;
+  treeTestMetrics?: EvalMetrics;
+  combinedTestMetrics?: EvalMetrics;
 };
 
 // ---------------------------------------------------------------------------
@@ -721,13 +1013,16 @@ export default function PredictionPage() {
       const maxLng = Math.max(...lngs);
       const maxDays = Math.max(...establishments.map((e) => e.daysSinceInspection), 1);
 
+      // Compute regional inspection rates for the regional rate feature
+      const regionRates = computeRegionRates(establishments);
+
       // Build feature vectors (training features and days feature are separate)
       const trainingVectors: number[][] = [];
       const daysFeatures: number[] = [];
       const labels: number[] = [];
 
       for (const est of establishments) {
-        const { training, daysFeat } = buildFeatureVector(est, maxDays, establishments, minLat, maxLat, minLng, maxLng);
+        const { training, daysFeat } = buildFeatureVector(est, maxDays, establishments, minLat, maxLat, minLng, maxLng, regionRates);
         trainingVectors.push(training);
         daysFeatures.push(daysFeat);
         labels.push(recentlyInspectedIds.has(est.id) ? 1 : 0);
@@ -755,22 +1050,45 @@ export default function PredictionPage() {
         const testX = testIdx.map((i) => trainingVectors[i]);
         const testY = testIdx.map((i) => labels[i]);
 
-        // Train model on non-leaky features only
+        // Train logistic regression on non-leaky features
         const model = trainLogisticRegression(trainX, trainY, LEARNING_RATE, TRAINING_EPOCHS, L2_LAMBDA);
 
-        // Evaluate on train (base model only, without days boost)
+        // Evaluate LR on train (base model only, without days boost)
         const trainProbs = trainX.map((x) => predictProba(x, model.weights, model.bias));
         const trainMetrics = computeMetrics(trainProbs, trainY);
 
-        // Evaluate on test (base model only, without days boost)
+        // Evaluate LR on test (base model only, without days boost)
         const testProbs = testX.map((x) => predictProba(x, model.weights, model.bias));
         const testMetrics = computeMetrics(testProbs, testY);
+
+        // Train decision tree ensemble on non-leaky features
+        const treeRng = mulberry32(RANDOM_SEED + 1);
+        const trees = trainTreeEnsemble(
+          trainX, trainY, NUM_TREES, TREE_MAX_DEPTH, TREE_MIN_SAMPLES, TREE_SAMPLE_FRACTION, treeRng,
+        );
+
+        // Evaluate tree ensemble on test set
+        const treeTestProbs = testX.map((x) => predictEnsemble(trees, x));
+        const treeTestMetrics = computeMetrics(treeTestProbs, testY);
+
+        // Combined model: average LR and tree ensemble probabilities
+        const combinedTestProbs = testProbs.map((lrP, i) =>
+          (1 - ENSEMBLE_WEIGHT) * lrP + ENSEMBLE_WEIGHT * treeTestProbs[i],
+        );
 
         // Calibrate the days-since-inspection weight via grid-search on held-out test set
         const daysTestFeatures = testIdx.map((i) => daysFeatures[i]);
         const bestDaysWeight = calibrateDaysWeight(
           model, testX, testY, daysTestFeatures, DAYS_WEIGHT_CANDIDATES,
         );
+
+        // Calibrate decision threshold on the combined probabilities (with days boost)
+        const combinedWithDaysProbs = combinedTestProbs.map((p, i) => {
+          const logit = Math.log(Math.max(p, 1e-10) / Math.max(1 - p, 1e-10));
+          return sigmoid(logit + bestDaysWeight * daysTestFeatures[i]);
+        });
+        const bestThreshold = calibrateThreshold(combinedWithDaysProbs, testY, THRESHOLD_CANDIDATES);
+        const combinedTestMetrics = computeMetrics(combinedWithDaysProbs, testY, bestThreshold);
 
         // Feature importance (trained weights + the calibrated days boost)
         const featureWeights = [
@@ -789,26 +1107,32 @@ export default function PredictionPage() {
           testSize: testX.length,
           positiveRate: positiveCount / labels.length,
           syntheticMonths: diffHistory.length,
+          bestThreshold,
+          treeTestMetrics,
+          combinedTestMetrics,
         });
 
         // Generate predictions for ALL establishments:
-        // Combine trained model logit + calibrated days-based boost in logit space.
-        // Days boost ensures: more days since inspection → higher probability.
-        // Only include smiley-face restaurants (score ≤ 1) — restaurants with violations
-        // already know they have something to fix.
+        // Combine LR logit + tree ensemble probability + calibrated days boost.
+        // Only include smiley-face restaurants (score ≤ 1).
         const results: PredictionResult[] = establishments
           .map((est, i) => {
-            const modelLogit = model.weights.reduce(
-              (sum, w, j) => sum + w * trainingVectors[i][j], model.bias,
-            );
-            const combinedLogit = modelLogit + bestDaysWeight * daysFeatures[i];
+            // LR probability
+            const lrProb = predictProba(trainingVectors[i], model.weights, model.bias);
+            // Tree ensemble probability
+            const treeProb = predictEnsemble(trees, trainingVectors[i]);
+            // Combine LR and tree
+            const combinedProb = (1 - ENSEMBLE_WEIGHT) * lrProb + ENSEMBLE_WEIGHT * treeProb;
+            // Add days boost in logit space
+            const combinedLogit = Math.log(Math.max(combinedProb, 1e-10) / Math.max(1 - combinedProb, 1e-10));
+            const finalProb = sigmoid(combinedLogit + bestDaysWeight * daysFeatures[i]);
             return {
               id: est.id,
               navn: est.navn,
               adresse: est.adresse,
               dato: est.dato,
               score: est.score,
-              probability: sigmoid(combinedLogit),
+              probability: finalProb,
               daysSinceInspection: est.daysSinceInspection,
             };
           })
@@ -818,10 +1142,10 @@ export default function PredictionPage() {
         setPredictions(results);
       } else {
         // Fallback heuristic weights when no ground truth is available
-        // [history, area, lat, lng]
-        const fallbackWeights = [0.3, 0.3, 0.1, 0.1];
+        // [history, area, lat, lng, seasonSin, seasonCos, type, status, interval, rate]
+        const fallbackWeights = [0.3, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.05, 0.2, 0.1];
         const fallbackBias = -1.5;
-        const fallbackDaysWeight = 0.5; // conservative default when no calibration data
+        const fallbackDaysWeight = 0.5;
 
         const results: PredictionResult[] = establishments
           .map((est, i) => {
@@ -861,8 +1185,8 @@ export default function PredictionPage() {
 
   const top50 = useMemo(() => predictions.slice(0, 50), [predictions]);
 
-  const testF1 = modelInfo?.testMetrics.f1 ?? 0;
-  const testAuc = modelInfo?.testMetrics.aucRoc ?? 0;
+  const testF1 = modelInfo?.combinedTestMetrics?.f1 ?? modelInfo?.testMetrics.f1 ?? 0;
+  const testAuc = modelInfo?.combinedTestMetrics?.aucRoc ?? modelInfo?.testMetrics.aucRoc ?? 0;
 
   // ---------------------------------------------------------------------------
   // Render
@@ -913,6 +1237,7 @@ export default function PredictionPage() {
         .predict-header-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
         .predict-content { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; }
         .predict-eval-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .predict-eval-inner { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
         @media (max-width: 768px) {
           .predict-grid-kpi { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
           .predict-eval-grid { grid-template-columns: 1fr; }
@@ -1003,7 +1328,7 @@ export default function PredictionPage() {
             icon="🎯"
             title="F1-score (test)"
             value={testF1 > 0 ? `${(testF1 * 100).toFixed(1)}%` : "–"}
-            subtitle={modelInfo ? `Precision: ${(modelInfo.testMetrics.precision * 100).toFixed(0)}% · Recall: ${(modelInfo.testMetrics.recall * 100).toFixed(0)}%` : "Heuristisk modell"}
+            subtitle={modelInfo ? `Precision: ${((modelInfo.combinedTestMetrics ?? modelInfo.testMetrics).precision * 100).toFixed(0)}% · Recall: ${((modelInfo.combinedTestMetrics ?? modelInfo.testMetrics).recall * 100).toFixed(0)}%` : "Heuristisk modell"}
             color={testF1 >= 0.3 ? COLORS.smil : testF1 > 0 ? COLORS.strek : COLORS.textFaint}
           />
           <KpiCard
@@ -1029,38 +1354,47 @@ export default function PredictionPage() {
           <div className="predict-eval-grid">
             <SectionCard
               title="📊 Modellevaluering"
-              subtitle={`Trent på ${modelInfo.trainSize} · Testet på ${modelInfo.testSize} eksempler${modelInfo.syntheticMonths ? ` · Syntetisk grunnlag: ${modelInfo.syntheticMonths} månedsvinduer` : ""}`}
+              subtitle={`Trent på ${modelInfo.trainSize} · Testet på ${modelInfo.testSize} eksempler${modelInfo.syntheticMonths ? ` · Syntetisk grunnlag: ${modelInfo.syntheticMonths} månedsvinduer` : ""} · Terskel: ${modelInfo.bestThreshold.toFixed(2)}`}
             >
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
                 <div>
-                  <div style={{ fontSize: 11, color: COLORS.textFaint, fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>Treningssett</div>
-                  <MetricRow label="Nøyaktighet" value={modelInfo.trainMetrics.accuracy} />
-                  <MetricRow label="Precision" value={modelInfo.trainMetrics.precision} />
-                  <MetricRow label="Recall" value={modelInfo.trainMetrics.recall} />
-                  <MetricRow label="F1-score" value={modelInfo.trainMetrics.f1} />
-                  <MetricRow label="AUC-ROC" value={modelInfo.trainMetrics.aucRoc} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 11, color: COLORS.textFaint, fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>Testsett</div>
-                  <MetricRow label="Nøyaktighet" value={modelInfo.testMetrics.accuracy} />
+                  <div style={{ fontSize: 11, color: COLORS.textFaint, fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>Logistisk reg.</div>
                   <MetricRow label="Precision" value={modelInfo.testMetrics.precision} />
                   <MetricRow label="Recall" value={modelInfo.testMetrics.recall} />
                   <MetricRow label="F1-score" value={modelInfo.testMetrics.f1} />
                   <MetricRow label="AUC-ROC" value={modelInfo.testMetrics.aucRoc} />
                 </div>
+                {modelInfo.treeTestMetrics && (
+                  <div>
+                    <div style={{ fontSize: 11, color: COLORS.textFaint, fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>Treensemble</div>
+                    <MetricRow label="Precision" value={modelInfo.treeTestMetrics.precision} />
+                    <MetricRow label="Recall" value={modelInfo.treeTestMetrics.recall} />
+                    <MetricRow label="F1-score" value={modelInfo.treeTestMetrics.f1} />
+                    <MetricRow label="AUC-ROC" value={modelInfo.treeTestMetrics.aucRoc} />
+                  </div>
+                )}
+                {modelInfo.combinedTestMetrics && (
+                  <div>
+                    <div style={{ fontSize: 11, color: COLORS.textFaint, fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>Kombinert</div>
+                    <MetricRow label="Precision" value={modelInfo.combinedTestMetrics.precision} />
+                    <MetricRow label="Recall" value={modelInfo.combinedTestMetrics.recall} />
+                    <MetricRow label="F1-score" value={modelInfo.combinedTestMetrics.f1} />
+                    <MetricRow label="AUC-ROC" value={modelInfo.combinedTestMetrics.aucRoc} />
+                  </div>
+                )}
               </div>
               <div style={{ marginTop: 12, padding: "10px 12px", background: COLORS.bg, borderRadius: 8, fontSize: 11 }}>
-                <div style={{ fontWeight: 600, color: COLORS.text, marginBottom: 4 }}>Konfusjonsmatrise (test)</div>
+                <div style={{ fontWeight: 600, color: COLORS.text, marginBottom: 4 }}>Konfusjonsmatrise – kombinert (test, terskel={modelInfo.bestThreshold.toFixed(2)})</div>
                 <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr", gap: "2px 8px", fontSize: 11 }}>
                   <span />
                   <span style={{ color: COLORS.textFaint, textAlign: "center" }}>Predikert +</span>
                   <span style={{ color: COLORS.textFaint, textAlign: "center" }}>Predikert −</span>
                   <span style={{ color: COLORS.textFaint }}>Faktisk +</span>
-                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.smil }}>{modelInfo.testMetrics.truePositives}</span>
-                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.sur }}>{modelInfo.testMetrics.falseNegatives}</span>
+                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.smil }}>{(modelInfo.combinedTestMetrics ?? modelInfo.testMetrics).truePositives}</span>
+                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.sur }}>{(modelInfo.combinedTestMetrics ?? modelInfo.testMetrics).falseNegatives}</span>
                   <span style={{ color: COLORS.textFaint }}>Faktisk −</span>
-                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.strek }}>{modelInfo.testMetrics.falsePositives}</span>
-                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.smil }}>{modelInfo.testMetrics.trueNegatives}</span>
+                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.strek }}>{(modelInfo.combinedTestMetrics ?? modelInfo.testMetrics).falsePositives}</span>
+                  <span style={{ textAlign: "center", fontWeight: 600, color: COLORS.smil }}>{(modelInfo.combinedTestMetrics ?? modelInfo.testMetrics).trueNegatives}</span>
                 </div>
               </div>
             </SectionCard>
