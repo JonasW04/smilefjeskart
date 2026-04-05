@@ -1,5 +1,33 @@
 [
   {
+    "generatedAt": "2026-04-05T06:57:44.679Z",
+    "previousDownload": "2026-04-03T07:00:18.901Z",
+    "summary": {
+      "previousTotal": 8421,
+      "currentTotal": 8421,
+      "newCount": 0,
+      "changedCount": 1,
+      "removedCount": 0
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006072207470431126PSSDL_Tilsynsobjekt",
+        "orgnummer": "974190737",
+        "navn": "Ljosland Skisenter",
+        "adresse": "Hola på Kleiva 2, 4540, Åseral",
+        "dato": "04042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-04-03T07:00:18.901Z",
     "previousDownload": "2026-04-02T07:03:58.938Z",
     "summary": {
