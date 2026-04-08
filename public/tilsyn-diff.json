@@ -1,5 +1,117 @@
 [
   {
+    "generatedAt": "2026-04-08T07:10:00.320Z",
+    "previousDownload": "2026-04-07T07:07:10.307Z",
+    "summary": {
+      "previousTotal": 8421,
+      "currentTotal": 8416,
+      "newCount": 0,
+      "changedCount": 7,
+      "removedCount": 5
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006061505054091190OHSBF_Tilsynsobjekt",
+        "orgnummer": "982037735",
+        "navn": "Jordbærpikene Solsiden",
+        "adresse": "Beddingen 10, 7042, Trondheim",
+        "dato": "07042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006062047499491189NTKOO_Tilsynsobjekt",
+        "orgnummer": "975378853",
+        "navn": "Mamma Mia pizzeria",
+        "adresse": "Helleveien 277, 5039, Bergen",
+        "dato": "07042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1606080943523673252TTJCH_Tilsynsobjekt",
+        "orgnummer": "916854161",
+        "navn": "Fresh Fast Food",
+        "adresse": "Tmv-Kaia 1, 7042, Trondheim",
+        "dato": "07042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006061506294051189DRYIU_Tilsynsobjekt",
+        "orgnummer": "986560904",
+        "navn": "Søstrene Karlsen",
+        "adresse": "Tmv-Kaia 25, 7042, Trondheim",
+        "dato": "07042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1909201312427170127CBPQD_Tilsynsobjekt",
+        "orgnummer": "923247424",
+        "navn": "Jordbærpikene Oasen Haugesund AS",
+        "adresse": "Austbøvegen 16, 5542, Karmsund",
+        "dato": "07042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2007081305179813157RHWGI_Tilsynsobjekt",
+        "orgnummer": "925333557",
+        "navn": "Elgsjø Kafe",
+        "adresse": "Kongsbergveien 629, 3684, Notodden",
+        "dato": "07042026",
+        "karakter": 0,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2106281057233430128IGFBE_Tilsynsobjekt",
+        "orgnummer": "994914375",
+        "navn": "Zarathustra Meyhane",
+        "adresse": "Thorvald Meyers gate 80, 0550, Oslo",
+        "dato": "07042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1903281001273920128TIKJJ_Tilsynsobjekt",
+      "Z2009301448524930128LTIYH_Tilsynsobjekt",
+      "Z2201251423562470128BKAVU_Tilsynsobjekt",
+      "Z2311211412304841046PTNVE_Tilsynsobjekt",
+      "Z2309041025436470127IOBNR_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-04-07T07:07:10.307Z",
     "previousDownload": "2026-04-05T06:57:44.679Z",
     "summary": {
