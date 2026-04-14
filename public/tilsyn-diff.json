@@ -1,5 +1,64 @@
 [
   {
+    "generatedAt": "2026-04-14T07:22:07.516Z",
+    "previousDownload": "2026-04-13T07:52:38.941Z",
+    "summary": {
+      "previousTotal": 8418,
+      "currentTotal": 8414,
+      "newCount": 0,
+      "changedCount": 3,
+      "removedCount": 4
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1403041244545163251FOADC_Tilsynsobjekt",
+        "orgnummer": "972046337",
+        "navn": "Victoria Pub",
+        "adresse": "Markens gate 19, 4611, Kristiansand S",
+        "dato": "13042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1602171256563003198PHUJW_Tilsynsobjekt",
+        "orgnummer": "991864865",
+        "navn": "Lustrabui - Kafe/utsalg Luster",
+        "adresse": "Bringebakkane 1, 6872, Luster",
+        "dato": "13042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2304171525042951040YPAQD_Tilsynsobjekt",
+        "orgnummer": "917819335",
+        "navn": "Lucy restaurant og kafe",
+        "adresse": "Marken 11, 5017, Bergen",
+        "dato": "13042026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1612120932438560385WCWHV_Tilsynsobjekt",
+      "Z2408102355050500128RAVSJ_Tilsynsobjekt",
+      "Z2411151134522922107FYPVD_Tilsynsobjekt",
+      "Z2512190819236580127HZQLH_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-04-13T07:52:38.941Z",
     "previousDownload": "2026-04-12T07:06:20.207Z",
     "summary": {
