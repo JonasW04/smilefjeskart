@@ -1,5 +1,195 @@
 [
   {
+    "generatedAt": "2026-04-19T07:10:15.264Z",
+    "previousDownload": "2026-04-17T07:23:13.499Z",
+    "summary": {
+      "previousTotal": 8428,
+      "currentTotal": 8428,
+      "newCount": 4,
+      "changedCount": 9,
+      "removedCount": 4
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2510021259483510128ODBIL_Tilsynsobjekt",
+        "orgnummer": "836072642",
+        "navn": "Master Mat food AS",
+        "adresse": "Sundgata 1, 6003, Ålesund",
+        "dato": "16042026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2510101006301070128JCSWL_Tilsynsobjekt",
+        "orgnummer": "930244783",
+        "navn": "Hokus Pokus Sivertsen",
+        "adresse": "Storgata 52, 8430, Myre",
+        "dato": "17042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603151608216960128BSIKG_Tilsynsobjekt",
+        "orgnummer": "937183615",
+        "navn": "Sammalt AS",
+        "adresse": "Reddal 20, 4886, Grimstad",
+        "dato": "17042026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2202101550121192024RUEHM_Tilsynsobjekt",
+        "orgnummer": "998362512",
+        "navn": "Crow bar & grill",
+        "adresse": "Torggata 32, 0183, Oslo",
+        "dato": "17042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006120021205201126TNDHV_Tilsynsobjekt",
+        "orgnummer": "977400104",
+        "navn": "Sunnmørsbadet Fosnavåg kafe",
+        "adresse": "Lisjebøvegen 10, 6091, Fosnavåg",
+        "dato": "17042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006121304058731127RBATE_Tilsynsobjekt",
+        "orgnummer": "971702214",
+        "navn": "Hagestua - Fru Haugans Hotel",
+        "adresse": "Strandgata 39, 8656, Mosjøen",
+        "dato": "16042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1612050926145193252XIWVF_Tilsynsobjekt",
+        "orgnummer": "998114357",
+        "navn": "Festningen Hotel & Resort",
+        "adresse": "Kongsvinger festning 22, 2213, Kongsvinger",
+        "dato": "17042026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1909181412074970128CKAAP_Tilsynsobjekt",
+        "orgnummer": "920951600",
+        "navn": "Khushi Indian Cuisine",
+        "adresse": "Seilduksgata 5, 0553, Oslo",
+        "dato": "17042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2007021151290073154RWTRN_Tilsynsobjekt",
+        "orgnummer": "922351007",
+        "navn": "Grooskafe",
+        "adresse": "Grooseveien 79, 4879, Grimstad",
+        "dato": "17042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2012021354312970127RCKSE_Tilsynsobjekt",
+        "orgnummer": "925664634",
+        "navn": "Lee’s China Wok",
+        "adresse": "Storgaten 73, 3060, Svelvik",
+        "dato": "17042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2104151057205800128MOYYZ_Tilsynsobjekt",
+        "orgnummer": "920634338",
+        "navn": "Nye Peloton",
+        "adresse": "Torggata 35, 0183, Oslo",
+        "dato": "17042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2306261255481710127STILG_Tilsynsobjekt",
+        "orgnummer": "831863552",
+        "navn": "Los Tacos Trondheim",
+        "adresse": "Olav Tryggvasons gate 8, 7011, Trondheim",
+        "dato": "17042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2403080941103150127CDBUI_Tilsynsobjekt",
+        "orgnummer": "933005828",
+        "navn": "Peppes Kristiansand sentrum",
+        "adresse": "Gyldenløves gate 7, 4611, Kristiansand S",
+        "dato": "17042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1803201121375133252JHKPQ_Tilsynsobjekt",
+      "Z2204261307155571033EXGOV_Tilsynsobjekt",
+      "Z2502031814315131024RZTLY_Tilsynsobjekt",
+      "Z2604161238171920239QLXCR_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-04-17T07:23:13.499Z",
     "previousDownload": "2026-04-15T07:22:37.780Z",
     "summary": {
