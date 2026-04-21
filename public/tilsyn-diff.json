@@ -1,5 +1,213 @@
 [
   {
+    "generatedAt": "2026-04-21T07:25:18.990Z",
+    "previousDownload": "2026-04-20T07:55:38.403Z",
+    "summary": {
+      "previousTotal": 8428,
+      "currentTotal": 8422,
+      "newCount": 3,
+      "changedCount": 11,
+      "removedCount": 9
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2604161238171920239QLXCR_Tilsynsobjekt",
+        "orgnummer": "936102832",
+        "navn": "Iman Grill",
+        "adresse": "Korsegårdveien 48, 1809, Askim",
+        "dato": "16042026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604161406413911071XOBOZ_Tilsynsobjekt",
+        "orgnummer": "971702214",
+        "navn": "Restaurant Ellen",
+        "adresse": "Strandgata 39, 8656, Mosjøen",
+        "dato": "16042026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2509111034396070127CCYWT_Tilsynsobjekt",
+        "orgnummer": "935861489",
+        "navn": "Pizzaria Mosjøen AS",
+        "adresse": "Tordenskjolds gate 48, 8656, Mosjøen",
+        "dato": "15042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1312040948309003163PEKTD_Tilsynsobjekt",
+        "orgnummer": "811614742",
+        "navn": "Delicatessen Aker Brygge",
+        "adresse": "Holmens gate 2, 0250, Oslo",
+        "dato": "20042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1211280957522470381SHUUF_Tilsynsobjekt",
+        "orgnummer": "977503914",
+        "navn": "Kalas og Canasta",
+        "adresse": "Nedre Bakklandet 5, 7014, Trondheim",
+        "dato": "17042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1503262022595723252SPWWU_Tilsynsobjekt",
+        "orgnummer": "914825628",
+        "navn": "Folkets Steakhouse",
+        "adresse": "Kaptein Dreyers veg 6, 2270, Flisa",
+        "dato": "15042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006061506365041126NTULC_Tilsynsobjekt",
+        "orgnummer": "980368734",
+        "navn": "Sponhuset",
+        "adresse": "Fagerheim alle 101, 7040, Trondheim",
+        "dato": "17042026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006061505516231189UHALK_Tilsynsobjekt",
+        "orgnummer": "986865799",
+        "navn": "Antikvariatet Musikkafe og Bokbar",
+        "adresse": "Nedre Bakklandet 4, 7014, Trondheim",
+        "dato": "17042026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1407031016416593252UUZRA_Tilsynsobjekt",
+        "orgnummer": "974545063",
+        "navn": "Qvales kafe",
+        "adresse": "Chr. Qvales gate 36, 8656, Mosjøen",
+        "dato": "16042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1904081059459873101UNZLR_Tilsynsobjekt",
+        "orgnummer": "971977094",
+        "navn": "Brevik Kro og Pizza",
+        "adresse": "Brevikveien 224, 1554, Son",
+        "dato": "20042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1902271251239540127STYIH_Tilsynsobjekt",
+        "orgnummer": "911945592",
+        "navn": "Biltema Norge AS Avdeling Mosjøen",
+        "adresse": "Dolstadgata 17, 8663, Mosjøen",
+        "dato": "16042026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1903121417507453178PLEYZ_Tilsynsobjekt",
+        "orgnummer": "922326215",
+        "navn": "Lamesa Asian fusion",
+        "adresse": "Torolv Kveldulvsons gate 18, 8800, Sandnessjøen",
+        "dato": "15042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2107140906364700127JSXRD_Tilsynsobjekt",
+        "orgnummer": "925942561",
+        "navn": "Sensei Thai & Sushi",
+        "adresse": "Smågan 2, 8656, Mosjøen",
+        "dato": "15042026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2204251324361430128HALIG_Tilsynsobjekt",
+        "orgnummer": "827953652",
+        "navn": "Påpir",
+        "adresse": "Storgata 1, 8006, Bodø",
+        "dato": "20042026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z2211151454146212025LDZKZ_Tilsynsobjekt",
+      "Z2011162249374910127CHXPM_Tilsynsobjekt",
+      "Z2308231035091191063DNFIM_Tilsynsobjekt",
+      "Z2202281133293850378DZENX_Tilsynsobjekt",
+      "Z2202281131392570378OVYCU_Tilsynsobjekt",
+      "Z2411041331205652024TGFXB_Tilsynsobjekt",
+      "Z2411251307380962109RRQWS_Tilsynsobjekt",
+      "Z2409181159371760127TGDVE_Tilsynsobjekt",
+      "Z2401031300449182024OBSPT_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-04-20T07:55:38.403Z",
     "previousDownload": "2026-04-19T07:10:15.264Z",
     "summary": {
