@@ -1,5 +1,38 @@
 [
   {
+    "generatedAt": "2026-05-04T08:21:10.659Z",
+    "previousDownload": "2026-05-01T08:05:50.071Z",
+    "summary": {
+      "previousTotal": 8424,
+      "currentTotal": 8406,
+      "newCount": 0,
+      "changedCount": 0,
+      "removedCount": 18
+    },
+    "newInspections": [],
+    "changedInspections": [],
+    "removedIds": [
+      "Z2105051138318202024WYSWF_Tilsynsobjekt",
+      "Z2105051138315582024NCUHK_Tilsynsobjekt",
+      "Z2010271311011280128AUSXK_Tilsynsobjekt",
+      "Z2209141251234692106AOERS_Tilsynsobjekt",
+      "Z2209080844233780127ODLKJ_Tilsynsobjekt",
+      "Z2303170826421051061TFKAN_Tilsynsobjekt",
+      "Z2303291637581590127XKUHO_Tilsynsobjekt",
+      "Z2403211419403880128SOUPZ_Tilsynsobjekt",
+      "Z2406201810558081013SOFYE_Tilsynsobjekt",
+      "Z2411031715525472025LHZQL_Tilsynsobjekt",
+      "Z2409281627263370128UFLCU_Tilsynsobjekt",
+      "Z2409281528513660128GILPV_Tilsynsobjekt",
+      "Z2412191141284762102YEDOK_Tilsynsobjekt",
+      "Z2502241333382662108BFGVU_Tilsynsobjekt",
+      "Z2506171201072411029IDDIJ_Tilsynsobjekt",
+      "Z2412111529113350127HTUWO_Tilsynsobjekt",
+      "Z2509120958287522024HHGPK_Tilsynsobjekt",
+      "Z2310041303001990128PHCQK_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-05-01T08:05:50.071Z",
     "previousDownload": "2026-04-30T08:08:28.207Z",
     "summary": {
