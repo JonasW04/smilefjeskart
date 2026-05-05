@@ -1,5 +1,102 @@
 [
   {
+    "generatedAt": "2026-05-05T07:58:25.833Z",
+    "previousDownload": "2026-05-04T08:21:10.659Z",
+    "summary": {
+      "previousTotal": 8406,
+      "currentTotal": 8403,
+      "newCount": 0,
+      "changedCount": 6,
+      "removedCount": 3
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006061505516231189UHALK_Tilsynsobjekt",
+        "orgnummer": "986865799",
+        "navn": "Antikvariatet Musikkafe og Bokbar",
+        "adresse": "Nedre Bakklandet 4, 7014, Trondheim",
+        "dato": "04052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006062043461341127DDOTR_Tilsynsobjekt",
+        "orgnummer": "981006089",
+        "navn": "Bella Paris",
+        "adresse": "Nygårdsgaten 84, 5008, Bergen",
+        "dato": "04052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006052059541281190XOTDZ_Tilsynsobjekt",
+        "orgnummer": "971945729",
+        "navn": "Koteng Hagesenter AS Plantasjen Skullerud, Karis Cafe",
+        "adresse": "General Ruges vei 107, 0694, Oslo",
+        "dato": "04052026",
+        "karakter": 0,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1902181144100010128VLDDL_Tilsynsobjekt",
+        "orgnummer": "922261148",
+        "navn": "Jordbærpikene Roseby",
+        "adresse": "Lingedalsvegen 6, 6415, Molde",
+        "dato": "04052026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2511280917281040127UQQIK_Tilsynsobjekt",
+        "orgnummer": "931810383",
+        "navn": "Fast on Eva pizza",
+        "adresse": "Storgata 74, 3674, Notodden",
+        "dato": "04052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006062043347581126XFAJP_Tilsynsobjekt",
+        "orgnummer": "985744203",
+        "navn": "Peppes Pizza Åsane",
+        "adresse": "Åsamyrane 82, 5116, Ulset",
+        "dato": "04052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1006050041304541189HUUZC_Tilsynsobjekt",
+      "Z2004151051373943131FXOIX_Tilsynsobjekt",
+      "Z2505080929342410127OOPZJ_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-05-04T08:21:10.659Z",
     "previousDownload": "2026-05-01T08:05:50.071Z",
     "summary": {
