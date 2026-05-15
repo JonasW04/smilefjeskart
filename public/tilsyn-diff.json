@@ -1,5 +1,22 @@
 [
   {
+    "generatedAt": "2026-05-15T08:41:38.836Z",
+    "previousDownload": "2026-05-14T08:30:00.241Z",
+    "summary": {
+      "previousTotal": 8418,
+      "currentTotal": 8416,
+      "newCount": 0,
+      "changedCount": 0,
+      "removedCount": 2
+    },
+    "newInspections": [],
+    "changedInspections": [],
+    "removedIds": [
+      "Z1006072022279331189WZHFV_Tilsynsobjekt",
+      "Z2411071134572490128CBFUI_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-05-14T08:30:00.241Z",
     "previousDownload": "2026-05-13T08:36:46.458Z",
     "summary": {
