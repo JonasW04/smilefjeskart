@@ -1,5 +1,177 @@
 [
   {
+    "generatedAt": "2026-05-16T07:53:53.945Z",
+    "previousDownload": "2026-05-15T08:41:38.836Z",
+    "summary": {
+      "previousTotal": 8416,
+      "currentTotal": 8418,
+      "newCount": 2,
+      "changedCount": 10,
+      "removedCount": 0
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2605151648051600240ZOXLO_Tilsynsobjekt",
+        "orgnummer": "934586069",
+        "navn": "Olsrød Café",
+        "adresse": "Gauterødveien 6, 3154, Tolvsrød",
+        "dato": "15052026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603271644398201062IXPQS_Tilsynsobjekt",
+        "orgnummer": "926541617",
+        "navn": "Ali’s Grill",
+        "adresse": "Schleppegrells gate 9, 0556, Oslo",
+        "dato": "15052026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006211221140020119VRGIL_Tilsynsobjekt",
+        "orgnummer": "895779822",
+        "navn": "Milano Nardo",
+        "adresse": "Hans Baucks veg 1, 7033, Trondheim",
+        "dato": "15052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006070417048281189XLNEB_Tilsynsobjekt",
+        "orgnummer": "976909186",
+        "navn": "Sogndalstrand Kulturhotell AS - kjøkken",
+        "adresse": "Strandgaten 22, 4380, Hauge i Dalane",
+        "dato": "15052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006060856304561127LWUZA_Tilsynsobjekt",
+        "orgnummer": "984791216",
+        "navn": "Resepten Cafe",
+        "adresse": "Kilengaten 18, 3117, Tønsberg",
+        "dato": "15052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1011260802420530188GLAKR_Tilsynsobjekt",
+        "orgnummer": "980857743",
+        "navn": "Gamle Eidsfoss Kro",
+        "adresse": "Bråtagata 52, 3095, Eidsfoss",
+        "dato": "15052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1111281332404391083ASBYF_Tilsynsobjekt",
+        "orgnummer": "992004851",
+        "navn": "Leos Lekeland Lade",
+        "adresse": "Ladebekken 6, 7041, Trondheim",
+        "dato": "15052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": -1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1611170637118933251NUUHS_Tilsynsobjekt",
+        "orgnummer": "917517355",
+        "navn": "Mr.Uy",
+        "adresse": "Jernbanesvingen 6, 2821, Gjøvik",
+        "dato": "15052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1704241120210282024BEJFH_Tilsynsobjekt",
+        "orgnummer": "996127346",
+        "navn": "Subway Kilden",
+        "adresse": "Kilden 1, 3118, Tønsberg",
+        "dato": "15052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1804011232177963252SNUGS_Tilsynsobjekt",
+        "orgnummer": "920662900",
+        "navn": "Wok & Grill",
+        "adresse": "Keiser Wilhelms gate 39, 6003, Ålesund",
+        "dato": "15052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2309111659089220127GZJYZ_Tilsynsobjekt",
+        "orgnummer": "922183996",
+        "navn": "Jafs Holmestrand",
+        "adresse": "Hvittingfossveien 201, 3089, Holmestrand",
+        "dato": "15052026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2407051335031420127GVIRB_Tilsynsobjekt",
+        "orgnummer": "833561642",
+        "navn": "Strandhuset",
+        "adresse": "Langgaten 3, 3080, Holmestrand",
+        "dato": "15052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-05-15T08:41:38.836Z",
     "previousDownload": "2026-05-14T08:30:00.241Z",
     "summary": {
