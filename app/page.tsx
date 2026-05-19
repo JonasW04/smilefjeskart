@@ -682,6 +682,22 @@ export default function Home() {
           >
             📊 Analyse
           </Link>
+          <Link
+            href="/prediction"
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              background: "white",
+              cursor: "pointer",
+              textDecoration: "none",
+              color: "inherit",
+              fontSize: 14,
+            }}
+            title="ML-prediksjon av neste tilsyn"
+          >
+            🔮 Prediksjon
+          </Link>
           <button
             aria-expanded={showInfo}
             onClick={() => setShowInfo((s) => !s)}
