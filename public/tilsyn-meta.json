@@ -1,13 +1,13 @@
 {
-  "lastDownload": "2026-05-21T09:00:35.674Z",
-  "totalFeatures": 8418,
+  "lastDownload": "2026-05-22T08:51:53.784Z",
+  "totalFeatures": 8416,
   "downloadHistory": [
     {
-      "downloadedAt": "2026-05-21T09:00:35.674Z",
-      "totalFeatures": 8418,
-      "newCount": 2,
-      "changedCount": 36,
-      "removedCount": 3
+      "downloadedAt": "2026-05-22T08:51:53.784Z",
+      "totalFeatures": 8416,
+      "newCount": 3,
+      "changedCount": 19,
+      "removedCount": 5
     }
   ]
 }
