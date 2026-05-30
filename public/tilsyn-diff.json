@@ -1,5 +1,233 @@
 [
   {
+    "generatedAt": "2026-05-30T08:19:53.387Z",
+    "previousDownload": "2026-05-29T09:39:34.133Z",
+    "summary": {
+      "previousTotal": 8422,
+      "currentTotal": 8421,
+      "newCount": 2,
+      "changedCount": 14,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2605271111258351063HTCXV_Tilsynsobjekt",
+        "orgnummer": "935322561",
+        "navn": "Pizzeria Napoli Hope",
+        "adresse": "Litlåsvegen 3, 5955, Lindås",
+        "dato": "28052026",
+        "karakter": 2,
+        "karakter1": -1,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2508181106447410127DFIQH_Tilsynsobjekt",
+        "orgnummer": "973140272",
+        "navn": "Burger King Flekkefjord",
+        "adresse": "Jernbaneveien 12, 4405, Flekkefjord",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1403101415484982025IBDGU_Tilsynsobjekt",
+        "orgnummer": "983043054",
+        "navn": "Cimperial",
+        "adresse": "Smiegata 1, 2750, Gran",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1008311005245951064OKPWC_Tilsynsobjekt",
+        "orgnummer": "973152998",
+        "navn": "Godt Brød",
+        "adresse": "Eiganesveien 9, 4008, Stavanger",
+        "dato": "29052026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1009091354502201065CSFOB_Tilsynsobjekt",
+        "orgnummer": "992232080",
+        "navn": "Valaker kafe Søvika",
+        "adresse": "Søvikvegen 31, 6280, Søvik",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1608230944318022024NWVZZ_Tilsynsobjekt",
+        "orgnummer": "982298032",
+        "navn": "Scandic Stavanger Park",
+        "adresse": "Prestegårdsbakken 1, 4005, Stavanger",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1807030809378472025TFKNI_Tilsynsobjekt",
+        "orgnummer": "988584835",
+        "navn": "Bjartmars Favorittkro",
+        "adresse": "Utheimsveien 97, 6532, Averøy",
+        "dato": "29052026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1902111430076490128PVTCG_Tilsynsobjekt",
+        "orgnummer": "911982692",
+        "navn": "Digs",
+        "adresse": "Krambugata 2, 7011, Trondheim",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2101290931100080385TGZZA_Tilsynsobjekt",
+        "orgnummer": "913141482",
+        "navn": "Pedersen Bakeri - Kafe Jekta",
+        "adresse": "Karlsøyvegen 12, 9015, Tromsø",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1912130834575712024TAEVG_Tilsynsobjekt",
+        "orgnummer": "997224051",
+        "navn": "Jako sushi restaurant",
+        "adresse": "Jernbanegata 5, 2821, Gjøvik",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2107151427104160128KFYKR_Tilsynsobjekt",
+        "orgnummer": "927066890",
+        "navn": "Elvepromenade",
+        "adresse": "Elvegaten 20, 4400, Flekkefjord",
+        "dato": "29052026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2302061009222552024PMMPN_Tilsynsobjekt",
+        "orgnummer": "925602906",
+        "navn": "Braud Digernes",
+        "adresse": "Digernes næringsområde 9, 6260, Skodje",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2302151408349850128JREQW_Tilsynsobjekt",
+        "orgnummer": "993482080",
+        "navn": "A.M. VIK AS",
+        "adresse": "Syvdefjordvegen 504, 6140, Syvde",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2409031321048350128FYQYK_Tilsynsobjekt",
+        "orgnummer": "926545701",
+        "navn": "Koriander Fredrikstad",
+        "adresse": "Jens Wilhelmsens gate 7, 1671, Kråkerøy",
+        "dato": "29052026",
+        "karakter": 3,
+        "karakter1": 0,
+        "karakter2": 3,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2501172034514080128IYDJH_Tilsynsobjekt",
+        "orgnummer": "934230469",
+        "navn": "Friends Restaurant og Bar",
+        "adresse": "Vesleslåttvegen 19, 3580, Geilo",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2505120905301290127DNEGU_Tilsynsobjekt",
+        "orgnummer": "935290554",
+        "navn": "Latina AS",
+        "adresse": "Kirkeveien 1, 4580, Lyngdal",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1406030911263143252GSDXF_Tilsynsobjekt",
+      "Z1006070522454751127ZTGUJ_Tilsynsobjekt",
+      "Z2106241543177583110BHJLW_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-05-29T09:39:34.133Z",
     "previousDownload": "2026-05-28T09:49:55.350Z",
     "summary": {
