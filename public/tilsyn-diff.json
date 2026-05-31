@@ -1,5 +1,37 @@
 [
   {
+    "generatedAt": "2026-05-31T08:36:34.167Z",
+    "previousDownload": "2026-05-30T08:19:53.387Z",
+    "summary": {
+      "previousTotal": 8421,
+      "currentTotal": 8418,
+      "newCount": 0,
+      "changedCount": 1,
+      "removedCount": 3
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1903112134181510127AGUFK_Tilsynsobjekt",
+        "orgnummer": "971726520",
+        "navn": "Bakrommet kafé",
+        "adresse": "Rasvågveien 330, 4432, Hidrasund",
+        "dato": "30052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1006062043461341127DDOTR_Tilsynsobjekt",
+      "Z1705301524107883251JXRZC_Tilsynsobjekt",
+      "Z2208111627296900127UMDEF_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-05-30T08:19:53.387Z",
     "previousDownload": "2026-05-29T09:39:34.133Z",
     "summary": {
