@@ -1,5 +1,90 @@
 [
   {
+    "generatedAt": "2026-06-02T10:09:22.762Z",
+    "previousDownload": "2026-06-01T11:13:17.511Z",
+    "summary": {
+      "previousTotal": 8418,
+      "currentTotal": 8419,
+      "newCount": 5,
+      "changedCount": 0,
+      "removedCount": 4
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z1006051340399391190LDHBL_Tilsynsobjekt",
+        "orgnummer": "971671017",
+        "navn": "Renaa Matbaren",
+        "adresse": "Steinkargata 10, 4006, Stavanger",
+        "dato": "20012022",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2304271037399720128HTOWX_Tilsynsobjekt",
+        "orgnummer": "931238922",
+        "navn": "Backstube Stavanger Sentralstasjon",
+        "adresse": "Jernbaneveien 3, 4005, Stavanger",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605121523321712025BHMPG_Tilsynsobjekt",
+        "orgnummer": "936514871",
+        "navn": "Bryggen Kro",
+        "adresse": "Syvdefjordvegen 540, 6140, Syvde",
+        "dato": "29052026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2601271006472680128IUTGD_Tilsynsobjekt",
+        "orgnummer": "936316239",
+        "navn": "Meadi Eritreisk Restaurant",
+        "adresse": "Elias Smiths vei 20, 1337, Sandvika",
+        "dato": "01062026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604081655429711071IFUMT_Tilsynsobjekt",
+        "orgnummer": "835696782",
+        "navn": "Maxin Chicken Grønland T",
+        "adresse": "Grønland 1, 0188, Oslo",
+        "dato": "01062026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [],
+    "removedIds": [
+      "Z2009291449538490127BNXJF_Tilsynsobjekt",
+      "Z2409110746161441014JJBCY_Tilsynsobjekt",
+      "Z2402261209394300127HYTDN_Tilsynsobjekt",
+      "Z2306291040113270128TINIP_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-06-01T11:13:17.511Z",
     "previousDownload": "2026-05-31T08:36:34.167Z",
     "summary": {
