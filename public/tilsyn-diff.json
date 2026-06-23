@@ -1,5 +1,233 @@
 [
   {
+    "generatedAt": "2026-06-23T09:26:22.199Z",
+    "previousDownload": "2026-06-22T11:39:08.629Z",
+    "summary": {
+      "previousTotal": 8451,
+      "currentTotal": 8453,
+      "newCount": 5,
+      "changedCount": 11,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2606191110359190128QQFTJ_Tilsynsobjekt",
+        "orgnummer": "937437927",
+        "navn": "Digg Pizza Skagen",
+        "adresse": "Skagen 6, 4006, Stavanger",
+        "dato": "19062026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2502271005412342025IDHUY_Tilsynsobjekt",
+        "orgnummer": "915692087",
+        "navn": "Hansines Bakeri - kafé",
+        "adresse": "Nusfjordveien 94, 8380, Ramberg",
+        "dato": "18062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603240848500662025VWOVA_Tilsynsobjekt",
+        "orgnummer": "915170390",
+        "navn": "Høland Pizza",
+        "adresse": "Trandumveien 8, 1940, Bjørkelangen",
+        "dato": "22062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2306091025270412024OSFTB_Tilsynsobjekt",
+        "orgnummer": "996694542",
+        "navn": "Hårstad kro",
+        "adresse": "Sørnessveien 1571, 7746, Hasvåg",
+        "dato": "19062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2512090912347290128KGWIV_Tilsynsobjekt",
+        "orgnummer": "935466075",
+        "navn": "Em Oi",
+        "adresse": "Brugata 15, 0186, Oslo",
+        "dato": "22062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1101260948226041040ACDFQ_Tilsynsobjekt",
+        "orgnummer": "992282916",
+        "navn": "Guangdong House",
+        "adresse": "Marken 11, 5017, Bergen",
+        "dato": "22062026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006051340399391190LDHBL_Tilsynsobjekt",
+        "orgnummer": "971671017",
+        "navn": "Renaa Matbaren",
+        "adresse": "Steinkargata 10, 4006, Stavanger",
+        "dato": "19062026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1805071053510373151GSVTQ_Tilsynsobjekt",
+        "orgnummer": "916215878",
+        "navn": "Mølla Bar",
+        "adresse": "Hvistendalsgate 4, 9800, Vadsø",
+        "dato": "22062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2002131108159063168ZYJZW_Tilsynsobjekt",
+        "orgnummer": "980583120",
+        "navn": "Ramberg Resort",
+        "adresse": "Flakstadveien 361, 8380, Ramberg",
+        "dato": "18062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2203101144134340128BFVVK_Tilsynsobjekt",
+        "orgnummer": "928416275",
+        "navn": "Kången",
+        "adresse": "Lunden 3, 4480, Kvinesdal",
+        "dato": "22062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2304141500376730128YZDGN_Tilsynsobjekt",
+        "orgnummer": "926026291",
+        "navn": "Heim",
+        "adresse": "Oppsåttveien 12, 8373, Ballstad",
+        "dato": "17062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2403211429228050128RBBMM_Tilsynsobjekt",
+        "orgnummer": "916215878",
+        "navn": "Mølla Bar og Spiseri",
+        "adresse": "Kirkegata 19, 9800, Vadsø",
+        "dato": "22062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2411121235460510128PMOBR_Tilsynsobjekt",
+        "orgnummer": "917217343",
+        "navn": "Monesgrillen Pizza & Thaimat",
+        "adresse": "Mandalsveien 2671, 4513, Mandal",
+        "dato": "22062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2505151158157771031EFTWT_Tilsynsobjekt",
+        "orgnummer": "931909010",
+        "navn": "Cleopatra House",
+        "adresse": "Grønland 22, 0188, Oslo",
+        "dato": "19062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2504101236260140128CZAGU_Tilsynsobjekt",
+        "orgnummer": "935472377",
+        "navn": "Daglig Deig - Pastificio Panetteria",
+        "adresse": "Nedre Bakklandet 58, 7014, Trondheim",
+        "dato": "22062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": -1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2604201251215000128UXXTK_Tilsynsobjekt",
+        "orgnummer": "933041697",
+        "navn": "Lersbrygga Pizza & Grill",
+        "adresse": "Lersbrygga 5, 3077, Sande i Vestfold",
+        "dato": "22062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1403232044366703252PLUWJ_Tilsynsobjekt",
+      "Z1902011957070420127IVXBC_Tilsynsobjekt",
+      "Z2401290941031140128FKMLG_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-06-22T11:39:08.629Z",
     "previousDownload": "2026-06-21T09:39:55.442Z",
     "summary": {
