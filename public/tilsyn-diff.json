@@ -1,5 +1,192 @@
 [
   {
+    "generatedAt": "2026-06-27T08:28:51.506Z",
+    "previousDownload": "2026-06-26T08:55:19.368Z",
+    "summary": {
+      "previousTotal": 8466,
+      "currentTotal": 8464,
+      "newCount": 0,
+      "changedCount": 13,
+      "removedCount": 2
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006060856359691189XRQGF_Tilsynsobjekt",
+        "orgnummer": "815751442",
+        "navn": "Spiseriet Indisk Tandoori",
+        "adresse": "Storgata 51, 3256, Larvik",
+        "dato": "25062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1102031537157740114KZJQO_Tilsynsobjekt",
+        "orgnummer": "973149520",
+        "navn": "Myklevold Avdeling Narvik Storsenter",
+        "adresse": "Kongens gate 66, 8514, Narvik",
+        "dato": "26062026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006090118436831190BDTHR_Tilsynsobjekt",
+        "orgnummer": "980952320",
+        "navn": "Eggedal Borgerstue",
+        "adresse": "Eggedalsveien 1483, 3359, Eggedal",
+        "dato": "26062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1208221308593673113PDTSP_Tilsynsobjekt",
+        "orgnummer": "974083299",
+        "navn": "Linken Restaurant og Bar",
+        "adresse": "Kongens gate 64, 8514, Narvik",
+        "dato": "26062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006090600490511190IETYN_Tilsynsobjekt",
+        "orgnummer": "874103322",
+        "navn": "Ørland Kysthotell",
+        "adresse": "Rådhusgata 10, 7130, Brekstad",
+        "dato": "24062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1608261128473223154NWUUF_Tilsynsobjekt",
+        "orgnummer": "917613354",
+        "navn": "Cafe 1889",
+        "adresse": "Christian Skredsvigs vei 160, 3359, Eggedal",
+        "dato": "26062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1612190934370952025POMLY_Tilsynsobjekt",
+        "orgnummer": "877269752",
+        "navn": "Balkan Larvik",
+        "adresse": "Prinsegata 11, 3256, Larvik",
+        "dato": "25062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1811071045244513128VAZEL_Tilsynsobjekt",
+        "orgnummer": "973149520",
+        "navn": "Duus Matverk",
+        "adresse": "Kongens gate 66, 8514, Narvik",
+        "dato": "26062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1901150759106882024BLXFA_Tilsynsobjekt",
+        "orgnummer": "971793538",
+        "navn": "Øiseth Hotell",
+        "adresse": "Engerdalsveien 67, 2485, Rendalen",
+        "dato": "26062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2101081431355392025EALDG_Tilsynsobjekt",
+        "orgnummer": "925565245",
+        "navn": "Torino Restaurant",
+        "adresse": "Stasjonsveien 9, 7290, Støren",
+        "dato": "26062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2310191142043140128QGZXS_Tilsynsobjekt",
+        "orgnummer": "915418473",
+        "navn": "UNI Izakaya",
+        "adresse": "Nedstegata 25, 5600, Norheimsund",
+        "dato": "25062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2310071750556840127PDBOG_Tilsynsobjekt",
+        "orgnummer": "931514164",
+        "navn": "La Dolce Vita ved Perazzone & Vaudagna",
+        "adresse": "Kongens gate 49, 8514, Narvik",
+        "dato": "26062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2507171044504152024PFPLV_Tilsynsobjekt",
+        "orgnummer": "998386241",
+        "navn": "Parthenon Pizza & Grillbar",
+        "adresse": "Osterhaus' gate 14, 0183, Oslo",
+        "dato": "16062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1612071253132003214ZSYIL_Tilsynsobjekt",
+      "Z2604281434396920128UGJCN_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-06-26T08:55:19.368Z",
     "previousDownload": "2026-06-25T08:51:47.080Z",
     "summary": {
