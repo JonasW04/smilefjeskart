@@ -1,5 +1,117 @@
 [
   {
+    "generatedAt": "2026-06-30T08:59:47.320Z",
+    "previousDownload": "2026-06-29T10:30:05.911Z",
+    "summary": {
+      "previousTotal": 8464,
+      "currentTotal": 8461,
+      "newCount": 1,
+      "changedCount": 6,
+      "removedCount": 4
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2603271026339992024IHGQU_Tilsynsobjekt",
+        "orgnummer": "880373412",
+        "navn": "Lyngørporten restaurant",
+        "adresse": "Sliperiveien 29, 4912, Gjeving",
+        "dato": "29062026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006072203457301189OIAMU_Tilsynsobjekt",
+        "orgnummer": "992340878",
+        "navn": "Rederiet Hotel",
+        "adresse": "Jochum Lunds plass 6, 4550, Farsund",
+        "dato": "29062026",
+        "karakter": 2,
+        "karakter1": -1,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1812171410311333252IXNSL_Tilsynsobjekt",
+        "orgnummer": "920641458",
+        "navn": "Grains Majorstuen",
+        "adresse": "Valkyriegata 21, 0366, Oslo",
+        "dato": "29062026",
+        "karakter": 3,
+        "karakter1": 0,
+        "karakter2": 3,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2103121241099760127PPPOE_Tilsynsobjekt",
+        "orgnummer": "913064178",
+        "navn": "Lillavendel Landhandel og Kafe",
+        "adresse": "Helgeroveien 1104, 3295, Helgeroa",
+        "dato": "25062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2212200945384370127VKDTC_Tilsynsobjekt",
+        "orgnummer": "920541739",
+        "navn": "Litt over have",
+        "adresse": "Sliperiveien 17, 4912, Gjeving",
+        "dato": "29062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604081655429711071IFUMT_Tilsynsobjekt",
+        "orgnummer": "835696782",
+        "navn": "Maxin Chicken Grønland T",
+        "adresse": "Grønland 1, 0188, Oslo",
+        "dato": "26062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2512011012338971028KOARO_Tilsynsobjekt",
+        "orgnummer": "927486261",
+        "navn": "Klostergården Tautra",
+        "adresse": "Klostergårdsvegen 92, 7633, Frosta",
+        "dato": "29062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1402241413476720392LVQNX_Tilsynsobjekt",
+      "Z1805301303078453251KSELE_Tilsynsobjekt",
+      "Z2406031725015991022RPOPO_Tilsynsobjekt",
+      "Z1901281502452612025MCDOZ_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-06-29T10:30:05.911Z",
     "previousDownload": "2026-06-28T08:45:48.623Z",
     "summary": {
