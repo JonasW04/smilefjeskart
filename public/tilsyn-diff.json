@@ -1,5 +1,206 @@
 [
   {
+    "generatedAt": "2026-07-03T08:52:47.407Z",
+    "previousDownload": "2026-07-02T08:46:13.286Z",
+    "summary": {
+      "previousTotal": 8464,
+      "currentTotal": 8467,
+      "newCount": 5,
+      "changedCount": 9,
+      "removedCount": 2
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2605121350465970127YJMRU_Tilsynsobjekt",
+        "orgnummer": "937717172",
+        "navn": "Knarren Brygge",
+        "adresse": "Berge 8, 7242, Knarrlagsund",
+        "dato": "30062026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607011808412080240ZKLKB_Tilsynsobjekt",
+        "orgnummer": "934823400",
+        "navn": "Høyt & Lavt Vestfold",
+        "adresse": "Lågendalsveien 3388, 3277, Steinsholt",
+        "dato": "01072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603240917424090127ECFYO_Tilsynsobjekt",
+        "orgnummer": "924573279",
+        "navn": "Lønsj Cafe",
+        "adresse": "Storebotn 12, 5309, Kleppestø",
+        "dato": "20012026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2511061056308890128CLLPL_Tilsynsobjekt",
+        "orgnummer": "936442218",
+        "navn": "Kanalen kafe AS",
+        "adresse": "Kjerkevågen 2, 4521, Lindesnes",
+        "dato": "02072026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2606191701194850128IPFPN_Tilsynsobjekt",
+        "orgnummer": "991227369",
+        "navn": "Midtre Gauldal frivillighetssentral",
+        "adresse": "Svartøyveien 13, 7290, Støren",
+        "dato": "26062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1311210812549903169XKQCA_Tilsynsobjekt",
+        "orgnummer": "976655044",
+        "navn": "Dalia kebab",
+        "adresse": "Vaskerelven 33, 5014, Bergen",
+        "dato": "02072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1102181010015953251QQNUU_Tilsynsobjekt",
+        "orgnummer": "872131612",
+        "navn": "Matstova Oppstryn",
+        "adresse": "Strynevegen 1938, 6799, Oppstryn",
+        "dato": "02072026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1606301326348250240AXEJZ_Tilsynsobjekt",
+        "orgnummer": "914923131",
+        "navn": "Hjorten Hotell",
+        "adresse": "Skolegata 10, 7240, Hitra",
+        "dato": "02072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1605060956518903251GMVPY_Tilsynsobjekt",
+        "orgnummer": "915465757",
+        "navn": "Bakeriet Pub og Kafe",
+        "adresse": "Værnesveien 397, 7318, Agdenes",
+        "dato": "02072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1604261307100692024CSKXS_Tilsynsobjekt",
+        "orgnummer": "916817576",
+        "navn": "Landnota Bar & Spiseri",
+        "adresse": "Sjøgata 4, 7114, Råkvåg",
+        "dato": "01072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1612021507017683252XRXBX_Tilsynsobjekt",
+        "orgnummer": "917217343",
+        "navn": "Kruer tha lay",
+        "adresse": "Bålyveien 27, 4521, Lindesnes",
+        "dato": "02072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1804241315061073159BZEHA_Tilsynsobjekt",
+        "orgnummer": "975076466",
+        "navn": "Erdalen Bygdemølle",
+        "adresse": "Strynevegen 2276, 6799, Oppstryn",
+        "dato": "02072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1811190912427463252CBNLN_Tilsynsobjekt",
+        "orgnummer": "974737647",
+        "navn": "MF Austrått",
+        "adresse": "Agdenesveien 820, 7318, AGDENES",
+        "dato": "02072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1811190914212753252XYZZG_Tilsynsobjekt",
+        "orgnummer": "974737647",
+        "navn": "MF Vestrått",
+        "adresse": "Agdenesveien 820, 7318, Agdenes",
+        "dato": "02072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1408130809149143106RTIVY_Tilsynsobjekt",
+      "Z1505050751081733251RLVKI_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-07-02T08:46:13.286Z",
     "previousDownload": "2026-07-01T09:33:42.815Z",
     "summary": {
