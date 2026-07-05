@@ -1,5 +1,171 @@
 [
   {
+    "generatedAt": "2026-07-05T08:44:29.372Z",
+    "previousDownload": "2026-07-04T08:27:07.038Z",
+    "summary": {
+      "previousTotal": 8467,
+      "currentTotal": 8466,
+      "newCount": 5,
+      "changedCount": 6,
+      "removedCount": 6
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2604281434396920128UGJCN_Tilsynsobjekt",
+        "orgnummer": "936677185",
+        "navn": "Juniper Wessels Plass",
+        "adresse": "Akersgata 18, 0158, Oslo",
+        "dato": "09062026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 2,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603231325395982024EMGKR_Tilsynsobjekt",
+        "orgnummer": "817365922",
+        "navn": "Lara Øy Restaurant",
+        "adresse": "Rådhusgata 8, 7260, Sistranda",
+        "dato": "02072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2601211034127110128HWFLO_Tilsynsobjekt",
+        "orgnummer": "913183037",
+        "navn": "Tarebua Pub",
+        "adresse": "Tareveien 7, 4563, Borhaug",
+        "dato": "03072026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607031003461561070JOEHA_Tilsynsobjekt",
+        "orgnummer": "930475238",
+        "navn": "Skuta restaurant",
+        "adresse": "Børøysundveien 15, 7247, Hestvika",
+        "dato": "03072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604291259583450127RLFSP_Tilsynsobjekt",
+        "orgnummer": "937564864",
+        "navn": "Sabrura Jessheim",
+        "adresse": "Storgata 6, 2050, Jessheim",
+        "dato": "03072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006070522386781126WFFIQ_Tilsynsobjekt",
+        "orgnummer": "975810925",
+        "navn": "Hotel Loenfjord",
+        "adresse": "Fjordvegen 1047, 6789, Loen",
+        "dato": "03072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1101260948226041040ACDFQ_Tilsynsobjekt",
+        "orgnummer": "992282916",
+        "navn": "Guangdong House",
+        "adresse": "Marken 11, 5017, Bergen",
+        "dato": "03072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1403211412001370379STZKR_Tilsynsobjekt",
+        "orgnummer": "912270602",
+        "navn": "Råkvåg Gjestgiveri og Marina",
+        "adresse": "Holsundveien 11, 7114, Råkvåg",
+        "dato": "02072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1812171410311333252IXNSL_Tilsynsobjekt",
+        "orgnummer": "920641458",
+        "navn": "Grains Majorstuen",
+        "adresse": "Valkyriegata 21, 0366, Oslo",
+        "dato": "03072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1904110850044963114EIGIX_Tilsynsobjekt",
+        "orgnummer": "922606129",
+        "navn": "Kjerringa me’Straumen AS",
+        "adresse": "Øvergata 18, 7670, Inderøy",
+        "dato": "02072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2601081303088900128HJVFG_Tilsynsobjekt",
+        "orgnummer": "936640257",
+        "navn": "Thai & Taste",
+        "adresse": "Rådhusgata 37, 4200, Sauda",
+        "dato": "03072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1810121042439013252RMGIO_Tilsynsobjekt",
+      "Z1906260704211590127LZQVH_Tilsynsobjekt",
+      "Z2205061127494102105EJYSI_Tilsynsobjekt",
+      "Z2301042159530560127SDYUQ_Tilsynsobjekt",
+      "Z2406171101065150128RIOMX_Tilsynsobjekt",
+      "Z2405271827206770127UNBBA_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-07-04T08:27:07.038Z",
     "previousDownload": "2026-07-03T08:52:47.407Z",
     "summary": {
