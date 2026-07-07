@@ -1,5 +1,49 @@
 [
   {
+    "generatedAt": "2026-07-07T09:32:11.562Z",
+    "previousDownload": "2026-07-06T09:59:47.601Z",
+    "summary": {
+      "previousTotal": 8466,
+      "currentTotal": 8466,
+      "newCount": 1,
+      "changedCount": 1,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2512151343243052025AIWKG_Tilsynsobjekt",
+        "orgnummer": "929966937",
+        "navn": "Hauklandstranda AS",
+        "adresse": "Uttakleivveien 72, 8370, Leknes",
+        "dato": "21102025",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": -1,
+        "karakter3": -1,
+        "karakter4": -1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1503061136160913251MFMOG_Tilsynsobjekt",
+        "orgnummer": "913542487",
+        "navn": "Sagene Pizzeria og Kebab",
+        "adresse": "Arendalsgata 3, 0463, Oslo",
+        "dato": "06072026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2604281434396920128UGJCN_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-07-06T09:59:47.601Z",
     "previousDownload": "2026-07-05T08:44:29.372Z",
     "summary": {
