@@ -1,5 +1,208 @@
 [
   {
+    "generatedAt": "2026-07-11T07:43:09.061Z",
+    "previousDownload": "2026-07-10T09:22:10.507Z",
+    "summary": {
+      "previousTotal": 8470,
+      "currentTotal": 8470,
+      "newCount": 4,
+      "changedCount": 10,
+      "removedCount": 4
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2607061043272091048SWMMA_Tilsynsobjekt",
+        "orgnummer": "995527308",
+        "navn": "Majas Surdeigsbakeri",
+        "adresse": "Romberggata 13, 3256, Larvik",
+        "dato": "10072026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603041408348430128EMZWD_Tilsynsobjekt",
+        "orgnummer": "937067011",
+        "navn": "Kaupanger Storkiosk",
+        "adresse": "Mannhellervegen 857, 6854, Kaupanger",
+        "dato": "09072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2606301230329240128QWXHA_Tilsynsobjekt",
+        "orgnummer": "935848679",
+        "navn": "Pincho Nation Lillestrøm",
+        "adresse": "Kanalveien 10, 2004, Lillestrøm",
+        "dato": "10072026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604161629426000127SBNFF_Tilsynsobjekt",
+        "orgnummer": "937534051",
+        "navn": "Lykkestua",
+        "adresse": "Arnestadveien 2, 1390, Vollen",
+        "dato": "10072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1301101236032273112TFAZZ_Tilsynsobjekt",
+        "orgnummer": "999103928",
+        "navn": "Gamle Helgeroa Marina",
+        "adresse": "Nordgata 12, 3295, Helgeroa",
+        "dato": "10072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1801290917524393122EKLTU_Tilsynsobjekt",
+        "orgnummer": "973762818",
+        "navn": "Vertshuset Sydvesten",
+        "adresse": "Strandebakken 88, 3295, Helgeroa",
+        "dato": "10072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1908051259202980128KGLMP_Tilsynsobjekt",
+        "orgnummer": "917518661",
+        "navn": "Jegertunet Feriesenter",
+        "adresse": "Jegertunet 91, 4990, Søndeled",
+        "dato": "10072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2008191228492723179MERTK_Tilsynsobjekt",
+        "orgnummer": "924859490",
+        "navn": "Lensmannsgården",
+        "adresse": "Namsosvegen 2498, 7750, Namdalseid",
+        "dato": "10072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2205161459245320128XWKUT_Tilsynsobjekt",
+        "orgnummer": "929193075",
+        "navn": "Penny Lane by Villa",
+        "adresse": "Vollen marina 40, 1390, Vollen",
+        "dato": "10072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2205190926336110127CJPNM_Tilsynsobjekt",
+        "orgnummer": "929244354",
+        "navn": "Seilerhytta Restaurant AS",
+        "adresse": "Ødegårdsveien 20, 3261, Larvik",
+        "dato": "10072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2306181431090100128FAADN_Tilsynsobjekt",
+        "orgnummer": "931141635",
+        "navn": "Æra - Camp Nord",
+        "adresse": "Ullstindvegen 736, 9023, Krokelvdalen",
+        "dato": "09072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2409041105595031026KUUAA_Tilsynsobjekt",
+        "orgnummer": "927850796",
+        "navn": "Blå Ugle",
+        "adresse": "Bibliotekgata 16, 1473, Lørenskog",
+        "dato": "10072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2406131041425401029VXDDU_Tilsynsobjekt",
+        "orgnummer": "932485842",
+        "navn": "T&D Bakeri",
+        "adresse": "Mannhellervegen 859, 6854, Kaupanger",
+        "dato": "09072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1703061007325543252IERBU_Tilsynsobjekt",
+        "orgnummer": "816792282",
+        "navn": "Sjøhuset på Sand AS",
+        "adresse": "Nordenden 4, 4230, Sand",
+        "dato": "10072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1505051240454552025MRYBT_Tilsynsobjekt",
+      "Z2408131003196332024CIFHF_Tilsynsobjekt",
+      "Z2408060917341990127EUVVT_Tilsynsobjekt",
+      "Z2606221311122841035DNONV_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-07-10T09:22:10.507Z",
     "previousDownload": "2026-07-09T09:29:33.818Z",
     "summary": {
