@@ -1,5 +1,218 @@
 [
   {
+    "generatedAt": "2026-07-15T07:53:17.642Z",
+    "previousDownload": "2026-07-14T07:50:07.534Z",
+    "summary": {
+      "previousTotal": 8470,
+      "currentTotal": 8470,
+      "newCount": 1,
+      "changedCount": 14,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2607091541580071069DJIZH_Tilsynsobjekt",
+        "orgnummer": "974757486",
+        "navn": "Kafé Rotunden",
+        "adresse": "Lars Thørings veg 10, 9006, Tromsø",
+        "dato": "13072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006052055205071189POFZG_Tilsynsobjekt",
+        "orgnummer": "885777112",
+        "navn": "Kaffistova, Hotell Bondeheimen",
+        "adresse": "Kristian IVs gate 2, 0159, Oslo",
+        "dato": "14072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006051340289181127GYYHC_Tilsynsobjekt",
+        "orgnummer": "972180432",
+        "navn": "Patrioten Bistro",
+        "adresse": "Hillevågsveien 102, 4016, Stavanger",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006120608429671126WUVHC_Tilsynsobjekt",
+        "orgnummer": "972880728",
+        "navn": "Viltkroa - Måbødalen Camping",
+        "adresse": "Eidfjordvegen 115, 5784, Øvre Eidfjord",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006120608400071126CJXLW_Tilsynsobjekt",
+        "orgnummer": "976148398",
+        "navn": "Liseth pensjonat og hyttetun Bjørg og Lars Liseth",
+        "adresse": "Lisetvegen 219, 5785, Vøringsfoss",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006120608183361189FLSXM_Tilsynsobjekt",
+        "orgnummer": "971689900",
+        "navn": "Fossli Hotel",
+        "adresse": "Fosslivegen 252, 5785, Vøringsfoss",
+        "dato": "14072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1806190859210012025XAFUD_Tilsynsobjekt",
+        "orgnummer": "971679115",
+        "navn": "Dyranut Fjellstova - servering",
+        "adresse": "Hardangervidda 498, 5785, Vøringsfoss",
+        "dato": "14072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1801231248236452024XYUSF_Tilsynsobjekt",
+        "orgnummer": "973214810",
+        "navn": "Halne Fjellstugu",
+        "adresse": "Hardangervidda 229, 5785, Vøringsfoss",
+        "dato": "14072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1503061136160913251MFMOG_Tilsynsobjekt",
+        "orgnummer": "913542487",
+        "navn": "Sagene Pizzeria og Kebab",
+        "adresse": "Arendalsgata 3, 0463, Oslo",
+        "dato": "09072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1810010947467893121KHOLB_Tilsynsobjekt",
+        "orgnummer": "971704047",
+        "navn": "Heia gjestegård",
+        "adresse": "Heiavegen 1234, 7870, Grong",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2310030910467621048PTNWG_Tilsynsobjekt",
+        "orgnummer": "931773313",
+        "navn": "Leela Indian Restaurant & Bar",
+        "adresse": "Torget 7, 5014, Bergen",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2406200822191702107AHEEL_Tilsynsobjekt",
+        "orgnummer": "992069066",
+        "navn": "Color Superspeed 2 - Bar, Dekk 8",
+        "adresse": "Revet 8, 3263, Larvik",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2406200821384972107CHPYH_Tilsynsobjekt",
+        "orgnummer": "992069066",
+        "navn": "Color Superspeed 2 - Bar, Dekk 7",
+        "adresse": "Revet 8, 3263, Larvik",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2406200820474452107CSCIU_Tilsynsobjekt",
+        "orgnummer": "992069066",
+        "navn": "Color Superspeed 2 - Kafe",
+        "adresse": "Revet 8, 3263, Larvik",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2406200819001252107IMRQS_Tilsynsobjekt",
+        "orgnummer": "992069066",
+        "navn": "Color Superspeed 2 - Buffét restaurant",
+        "adresse": "Revet 8, 3263, Larvik",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1607221355592092025DBNOA_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-07-14T07:50:07.534Z",
     "previousDownload": "2026-07-13T08:53:19.620Z",
     "summary": {
