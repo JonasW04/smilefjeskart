@@ -1,5 +1,90 @@
 [
   {
+    "generatedAt": "2026-07-16T07:59:20.992Z",
+    "previousDownload": "2026-07-15T07:53:17.642Z",
+    "summary": {
+      "previousTotal": 8470,
+      "currentTotal": 8468,
+      "newCount": 1,
+      "changedCount": 4,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2604261146253801072TGUZF_Tilsynsobjekt",
+        "orgnummer": "828531042",
+        "navn": "Khalles Corner Metro",
+        "adresse": "Bibliotekgata 30, 1473, Lørenskog",
+        "dato": "15072026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006120609083341127BIQLY_Tilsynsobjekt",
+        "orgnummer": "989514342",
+        "navn": "Trolltunga Hotell",
+        "adresse": "Vasstun 1, 5750, Odda",
+        "dato": "15072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006100301533381190BOLCH_Tilsynsobjekt",
+        "orgnummer": "990822425",
+        "navn": "Privaten Cafe",
+        "adresse": "Storgaten 25, 3484, Holmsbu",
+        "dato": "15072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2204201229116143102UJPKE_Tilsynsobjekt",
+        "orgnummer": "928606562",
+        "navn": "Fjellstua Café",
+        "adresse": "Sollivegen 12, 9020, Tromsdalen",
+        "dato": "15072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2411271114096351029ACZBD_Tilsynsobjekt",
+        "orgnummer": "934246020",
+        "navn": "Cafe Rose",
+        "adresse": "Røldalsvegen 18, 5750, Odda",
+        "dato": "15072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2203020844178972024QYXYQ_Tilsynsobjekt",
+      "Z2306212237228730128OFVSO_Tilsynsobjekt",
+      "Z2108292341566250128PWDWR_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-07-15T07:53:17.642Z",
     "previousDownload": "2026-07-14T07:50:07.534Z",
     "summary": {
