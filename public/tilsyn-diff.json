@@ -1,5 +1,190 @@
 [
   {
+    "generatedAt": "2026-07-17T07:55:11.978Z",
+    "previousDownload": "2026-07-16T07:59:20.992Z",
+    "summary": {
+      "previousTotal": 8468,
+      "currentTotal": 8471,
+      "newCount": 3,
+      "changedCount": 10,
+      "removedCount": 0
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2502240905106042025FROAV_Tilsynsobjekt",
+        "orgnummer": "931907158",
+        "navn": "Selmastua",
+        "adresse": "Aglapsveien 399, 9307, Finnsnes",
+        "dato": "14072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607141033103232025KMHON_Tilsynsobjekt",
+        "orgnummer": "993875899",
+        "navn": "Senja Fjordhotell",
+        "adresse": "Dragøyveien 17, 9392, Stonglandseidet",
+        "dato": "16072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604141426180460128VSOOX_Tilsynsobjekt",
+        "orgnummer": "974294915",
+        "navn": "Museumskafe på Stein skole",
+        "adresse": "Kongsvingervegen 1682, 2160, Vormsund",
+        "dato": "16072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1312110959060873105PLCQJ_Tilsynsobjekt",
+        "orgnummer": "989268368",
+        "navn": "Strandbaren Stokkøya Sjøsenter",
+        "adresse": "Troningveien 7, 7178, Stokkøy",
+        "dato": "15072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006112007126041127WOVLH_Tilsynsobjekt",
+        "orgnummer": "972144819",
+        "navn": "Gekkens Restaurant Og Cafe",
+        "adresse": "Holmen 15, 6899, Balestrand",
+        "dato": "16072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1707030902185472024TITJN_Tilsynsobjekt",
+        "orgnummer": "971923563",
+        "navn": "Tranøybotn Camping Hyttekroa",
+        "adresse": "Tranøyveien 2002, 9304, Vangsvik",
+        "dato": "15072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006112007113311190ZIZAC_Tilsynsobjekt",
+        "orgnummer": "971678356",
+        "navn": "Dragsvik Fjord Hotel",
+        "adresse": "Dragsvik 6, 6899, Balestrand",
+        "dato": "16072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2303311035251031050ZZGAD_Tilsynsobjekt",
+        "orgnummer": "922161623",
+        "navn": "Segelsund",
+        "adresse": "Holvikvegen 130, 7856, Jøa",
+        "dato": "16072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1412080828381600377IEQCY_Tilsynsobjekt",
+        "orgnummer": "989268368",
+        "navn": "Resepsjons cafè",
+        "adresse": "Troningveien 7, 7178, Stokkøy",
+        "dato": "15072026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2406051406540662108GBPJY_Tilsynsobjekt",
+        "orgnummer": "931374141",
+        "navn": "Pearl by Harbor",
+        "adresse": "Holmen 8, 6899, Balestrand",
+        "dato": "16072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2409271432397470128RCKGG_Tilsynsobjekt",
+        "orgnummer": "934108752",
+        "navn": "Faksdal Brygge",
+        "adresse": "Faksdalsjøen 25, 7856, Jøa",
+        "dato": "16072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2506041438523460239KQUCE_Tilsynsobjekt",
+        "orgnummer": "933861686",
+        "navn": "House of Shawarma",
+        "adresse": "Strømsveien 54, 2010, Strømmen",
+        "dato": "16072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2506092147498910127TPHZC_Tilsynsobjekt",
+        "orgnummer": "935447682",
+        "navn": "Kuringen Kuringen AS",
+        "adresse": "Stokksundveien 1288, 7177, Revsnes",
+        "dato": "15072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-07-16T07:59:20.992Z",
     "previousDownload": "2026-07-15T07:53:17.642Z",
     "summary": {
