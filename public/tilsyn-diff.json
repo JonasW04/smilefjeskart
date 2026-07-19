@@ -1,5 +1,60 @@
 [
   {
+    "generatedAt": "2026-07-19T08:03:27.597Z",
+    "previousDownload": "2026-07-18T07:29:51.730Z",
+    "summary": {
+      "previousTotal": 8471,
+      "currentTotal": 8472,
+      "newCount": 1,
+      "changedCount": 2,
+      "removedCount": 0
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2512231609283652025MAESR_Tilsynsobjekt",
+        "orgnummer": "993425796",
+        "navn": "Bergtatt Bistro",
+        "adresse": "Myrovegen 15, 3570, Ål",
+        "dato": "14072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1401230939224730396DNPDQ_Tilsynsobjekt",
+        "orgnummer": "996205576",
+        "navn": "Yummy Time Pizza",
+        "adresse": "Kongsgårdbakken 3, 4005, Stavanger",
+        "dato": "17072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006112324583231126LTGHS_Tilsynsobjekt",
+        "orgnummer": "971675101",
+        "navn": "Kokkestua",
+        "adresse": "Glassverkvegen 9, 3520, Jevnaker",
+        "dato": "17072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-07-18T07:29:51.730Z",
     "previousDownload": "2026-07-17T07:55:11.978Z",
     "summary": {
