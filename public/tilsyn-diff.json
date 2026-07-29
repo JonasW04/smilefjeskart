@@ -1,5 +1,180 @@
 [
   {
+    "generatedAt": "2026-07-29T08:24:52.473Z",
+    "previousDownload": "2026-07-28T08:19:01.904Z",
+    "summary": {
+      "previousTotal": 8474,
+      "currentTotal": 8476,
+      "newCount": 4,
+      "changedCount": 8,
+      "removedCount": 2
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2603231308489630128GQKMM_Tilsynsobjekt",
+        "orgnummer": "937023332",
+        "navn": "Jordbærpikene Byporten",
+        "adresse": "Jernbanetorget 6, 0154, Oslo",
+        "dato": "27072026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2512051644434212025YMBGT_Tilsynsobjekt",
+        "orgnummer": "919228660",
+        "navn": "Bistro Budapest",
+        "adresse": "Vulkan 5, 0178, Oslo",
+        "dato": "28072026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2606080958487170128ZDZBK_Tilsynsobjekt",
+        "orgnummer": "937692463",
+        "navn": "Magnolia Cafè & Catering AS",
+        "adresse": "Torggata 4, 2408, Elverum",
+        "dato": "28072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605261042460712024LYDEF_Tilsynsobjekt",
+        "orgnummer": "921594496",
+        "navn": "Pronto di Olivia",
+        "adresse": "Jernbanetorget 1, 0154, Oslo",
+        "dato": "28072026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006120608506971127IYEEH_Tilsynsobjekt",
+        "orgnummer": "977673984",
+        "navn": "Ullensvang Gjesteheim",
+        "adresse": "Osen 3, 5781, Lofthus",
+        "dato": "28072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006060857338281127VWLSY_Tilsynsobjekt",
+        "orgnummer": "993164992",
+        "navn": "Kafka - isbar øvre torg",
+        "adresse": "Torget 7, 3210, Sandefjord",
+        "dato": "28072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006121126057351190YWOOV_Tilsynsobjekt",
+        "orgnummer": "972959146",
+        "navn": "Sutøya Feriepark Kro",
+        "adresse": "Hallingdalsvegen 5676, 3540, Nesbyen",
+        "dato": "22072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2112041137162230128PIIMA_Tilsynsobjekt",
+        "orgnummer": "927719533",
+        "navn": "Helt Vilt",
+        "adresse": "Vulkan 5, 0178, Oslo",
+        "dato": "28072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1804080946006243251JMIFC_Tilsynsobjekt",
+        "orgnummer": "988295973",
+        "navn": "Lofthus Ekspedisjonen",
+        "adresse": "Sjoarvegen 27, 5781, Lofthus",
+        "dato": "28072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1412080828381600377IEQCY_Tilsynsobjekt",
+        "orgnummer": "989268368",
+        "navn": "Resepsjons cafè",
+        "adresse": "Troningveien 7, 7178, Stokkøy",
+        "dato": "27072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2405231334510802103OYHWG_Tilsynsobjekt",
+        "orgnummer": "993164992",
+        "navn": "Kafka - isbar midttorget",
+        "adresse": "Torget 7, 3210, Sandefjord",
+        "dato": "28072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2407300039220630127ERAWC_Tilsynsobjekt",
+        "orgnummer": "933830594",
+        "navn": "Hopsjøbrygga restaurant",
+        "adresse": "Hopsjøveien 1, 7250, Melandsjø",
+        "dato": "24072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1706011109073503163KPYND_Tilsynsobjekt",
+      "Z2312210925040831050RJLKY_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-07-28T08:19:01.904Z",
     "previousDownload": "2026-07-27T09:35:13.676Z",
     "summary": {
