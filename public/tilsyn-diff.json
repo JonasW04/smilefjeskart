@@ -1,5 +1,166 @@
 [
   {
+    "generatedAt": "2026-07-30T08:10:51.844Z",
+    "previousDownload": "2026-07-29T08:24:52.473Z",
+    "summary": {
+      "previousTotal": 8476,
+      "currentTotal": 8479,
+      "newCount": 4,
+      "changedCount": 7,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2604241256063790127GCQUR_Tilsynsobjekt",
+        "orgnummer": "937536968",
+        "navn": "Munkholmen",
+        "adresse": "Vestre Kanalkai 19, 7010, Trondheim",
+        "dato": "29072026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2602111114216431071FENBI_Tilsynsobjekt",
+        "orgnummer": "937124562",
+        "navn": "Drømmen din",
+        "adresse": "Sørhauggata 127, 5527, Haugesund",
+        "dato": "29072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2512102105303840127LZIBN_Tilsynsobjekt",
+        "orgnummer": "936708811",
+        "navn": "Baker Hansen",
+        "adresse": "Thorvald Meyers gate 28, 0555, Oslo",
+        "dato": "29072026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605230937326320127VNUBG_Tilsynsobjekt",
+        "orgnummer": "933426963",
+        "navn": "Nidaros Pilegrimsgård",
+        "adresse": "Kjøpmannsgata 1, 7013, Trondheim",
+        "dato": "29072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1903071002228342024CYHXH_Tilsynsobjekt",
+        "orgnummer": "993312665",
+        "navn": "Haugesund Pizzeria",
+        "adresse": "Haraldsgata 178, 5525, Haugesund",
+        "dato": "29072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2001170919026400127RHLUA_Tilsynsobjekt",
+        "orgnummer": "924397411",
+        "navn": "Fly Chicken",
+        "adresse": "Torggata 9, 0181, Oslo",
+        "dato": "29072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1909260917574373159MCYWP_Tilsynsobjekt",
+        "orgnummer": "981306945",
+        "navn": "Fløskjæret kafe og pub",
+        "adresse": "Søre garden 4, 5970, Byrknesøy",
+        "dato": "29072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2305051004020431010VNYOO_Tilsynsobjekt",
+        "orgnummer": "923982353",
+        "navn": "Digg Pizza Engen",
+        "adresse": "Engen 14, 5011, Bergen",
+        "dato": "29072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2402132031554850128SNEBL_Tilsynsobjekt",
+        "orgnummer": "932985667",
+        "navn": "Bare hyggelig",
+        "adresse": "Skåregata 155, 5527, Haugesund",
+        "dato": "29072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2405241718547750127NMWBS_Tilsynsobjekt",
+        "orgnummer": "933401529",
+        "navn": "Burgerheim Engen",
+        "adresse": "Engen 6, 5011, Bergen",
+        "dato": "29072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604151355121440239QYONF_Tilsynsobjekt",
+        "orgnummer": "935725607",
+        "navn": "Jafs Strømmen DA",
+        "adresse": "Strømsveien 100, 2010, Strømmen",
+        "dato": "29072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z2210101406438760128IPEHM_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-07-29T08:24:52.473Z",
     "previousDownload": "2026-07-28T08:19:01.904Z",
     "summary": {
