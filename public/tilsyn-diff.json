@@ -1,5 +1,138 @@
 [
   {
+    "generatedAt": "2026-07-31T08:38:07.550Z",
+    "previousDownload": "2026-07-30T08:10:51.844Z",
+    "summary": {
+      "previousTotal": 8479,
+      "currentTotal": 8481,
+      "newCount": 2,
+      "changedCount": 7,
+      "removedCount": 0
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2602241212026120128JYJBD_Tilsynsobjekt",
+        "orgnummer": "936081959",
+        "navn": "Ettertraktet kafé",
+        "adresse": "Ibsens gate 26, 5053, Bergen",
+        "dato": "30072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2504111307368941028YEHKW_Tilsynsobjekt",
+        "orgnummer": "934907809",
+        "navn": "Stavissimo Trattoria & Catering",
+        "adresse": "Bryggeslengen 6, 3290, Stavern",
+        "dato": "30072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1401171218032710371EASDX_Tilsynsobjekt",
+        "orgnummer": "998537010",
+        "navn": "Atelier Asian Tapas",
+        "adresse": "Vulkan 5, 0178, Oslo",
+        "dato": "30072026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1412150945184713124GKDCO_Tilsynsobjekt",
+        "orgnummer": "912958507",
+        "navn": "Blom Restaurant",
+        "adresse": "Langbryggen 9, 4841, Arendal",
+        "dato": "30072026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1007011425545851030MOACG_Tilsynsobjekt",
+        "orgnummer": "994261126",
+        "navn": "Solplassen Cafe",
+        "adresse": "Rakkeveien 101, 3294, Stavern",
+        "dato": "30072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1706261432038253252DUIEF_Tilsynsobjekt",
+        "orgnummer": "919168250",
+        "navn": "Scandic Lillestrøm og Bruket Restaurant",
+        "adresse": "Stillverksveien 28, 2004, Lillestrøm",
+        "dato": "30072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2011121338498670128ALEUR_Tilsynsobjekt",
+        "orgnummer": "925957704",
+        "navn": "Sabrura Orkanger",
+        "adresse": "Orkdalsveien 113, 7300, Orkanger",
+        "dato": "30072026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2406051114210790128NGBXY_Tilsynsobjekt",
+        "orgnummer": "928676404",
+        "navn": "Kompis Orkanger",
+        "adresse": "Kari Gravroks gate 40, 7300, Orkanger",
+        "dato": "30072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2408011303252391011JQAEQ_Tilsynsobjekt",
+        "orgnummer": "933621014",
+        "navn": "Bloom & Brew",
+        "adresse": "Vulkan 28, 0178, Oslo",
+        "dato": "30072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-07-30T08:10:51.844Z",
     "previousDownload": "2026-07-29T08:24:52.473Z",
     "summary": {
