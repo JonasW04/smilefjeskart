@@ -1,5 +1,86 @@
 [
   {
+    "generatedAt": "2026-08-01T08:07:09.195Z",
+    "previousDownload": "2026-07-31T08:38:07.550Z",
+    "summary": {
+      "previousTotal": 8481,
+      "currentTotal": 8483,
+      "newCount": 2,
+      "changedCount": 3,
+      "removedCount": 0
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2204241620569320128MMNQB_Tilsynsobjekt",
+        "orgnummer": "926022938",
+        "navn": "Lægreids Høyfjellssæter",
+        "adresse": "Hardangervidda 91, 3595, Haugastøl",
+        "dato": "30072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607281556056702025ADMHZ_Tilsynsobjekt",
+        "orgnummer": "915230415",
+        "navn": "Snikkeriet i Rosendal",
+        "adresse": "Rosendalsvegen 13, 5470, Rosendal",
+        "dato": "31072026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1705031500337720240DHMVQ_Tilsynsobjekt",
+        "orgnummer": "873924942",
+        "navn": "Kafe Troldhaugen",
+        "adresse": "Troldhaugvegen 65, 5232, Paradis",
+        "dato": "31072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006121125435361127TVNBD_Tilsynsobjekt",
+        "orgnummer": "915403166",
+        "navn": "Geilojordet",
+        "adresse": "Skurdalsvegen 3, 3580, Geilo",
+        "dato": "30072026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2411190938179270127MVICU_Tilsynsobjekt",
+        "orgnummer": "830764372",
+        "navn": "Bearhouse Hemsedal",
+        "adresse": "Lykkjavegen 1, 3560, Hemsedal",
+        "dato": "31072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "1"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-07-31T08:38:07.550Z",
     "previousDownload": "2026-07-30T08:10:51.844Z",
     "summary": {
