@@ -1,5 +1,62 @@
 [
   {
+    "generatedAt": "2026-08-04T08:24:34.350Z",
+    "previousDownload": "2026-08-03T09:27:23.784Z",
+    "summary": {
+      "previousTotal": 8483,
+      "currentTotal": 8483,
+      "newCount": 1,
+      "changedCount": 2,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2605061909528570127PFQXM_Tilsynsobjekt",
+        "orgnummer": "921847122",
+        "navn": "Lett Aker Brygge",
+        "adresse": "Grundingen 3, 0250, Oslo",
+        "dato": "03082026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1409020831299393252EOOYI_Tilsynsobjekt",
+        "orgnummer": "991181423",
+        "navn": "Åpent Bakeri Paleet",
+        "adresse": "Karl Johans gate 39, 0162, Oslo",
+        "dato": "03082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2011121338498670128ALEUR_Tilsynsobjekt",
+        "orgnummer": "925957704",
+        "navn": "Sabrura Orkanger",
+        "adresse": "Orkdalsveien 113, 7300, Orkanger",
+        "dato": "03082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1411041338219333149AXIGG_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-03T09:27:23.784Z",
     "previousDownload": "2026-08-02T08:08:50.361Z",
     "summary": {
