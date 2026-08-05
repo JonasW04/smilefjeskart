@@ -1,5 +1,196 @@
 [
   {
+    "generatedAt": "2026-08-05T08:22:24.415Z",
+    "previousDownload": "2026-08-04T08:24:34.350Z",
+    "summary": {
+      "previousTotal": 8483,
+      "currentTotal": 8479,
+      "newCount": 1,
+      "changedCount": 12,
+      "removedCount": 5
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2604240955216690128PIWCP_Tilsynsobjekt",
+        "orgnummer": "937581041",
+        "navn": "Digg Pizza Oasen",
+        "adresse": "Folke Bernadottes vei 52, 5147, Fyllingsdalen",
+        "dato": "04082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1410152331274483252YIHFC_Tilsynsobjekt",
+        "orgnummer": "814307042",
+        "navn": "Colonialen Fetevare",
+        "adresse": "Strandgaten 18, 5013, Bergen",
+        "dato": "04082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006120325036611190AMVLW_Tilsynsobjekt",
+        "orgnummer": "973525271",
+        "navn": "Møllen Restaurant og Pizzeria",
+        "adresse": "Ola Setroms veg 12, 7340, Oppdal",
+        "dato": "04082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1406241104176243251ALMYE_Tilsynsobjekt",
+        "orgnummer": "898869032",
+        "navn": "iSushi Fyllingsdalen",
+        "adresse": "Folke Bernadottes vei 44, 5147, Fyllingsdalen",
+        "dato": "04082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006112007164871190RYLMG_Tilsynsobjekt",
+        "orgnummer": "974107384",
+        "navn": "Turtagrø Hotel - servering",
+        "adresse": "Sognefjellsvegen 6667, 6877, Fortun",
+        "dato": "04082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1608011006050700386CYXHJ_Tilsynsobjekt",
+        "orgnummer": "986651616",
+        "navn": "Trollheimsporten",
+        "adresse": "Gamle Festavegen 30, 7340, Oppdal",
+        "dato": "04082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006121211148191189KFZXZ_Tilsynsobjekt",
+        "orgnummer": "972787027",
+        "navn": "Låven Garvikstrondi",
+        "adresse": "Garvikstrondi 540, 3840, Seljord",
+        "dato": "04082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1801291715414483252ZOAHM_Tilsynsobjekt",
+        "orgnummer": "998177901",
+        "navn": "Oppdal Turisthotell - Perrongen",
+        "adresse": "Turistvegen 31, 7340, Oppdal",
+        "dato": "04082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1407211310280793173SOVYF_Tilsynsobjekt",
+        "orgnummer": "977007984",
+        "navn": "Cafe Olea",
+        "adresse": "Heddalsvegen 412, 3676, Notodden",
+        "dato": "04082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2010231027578860240BNTNZ_Tilsynsobjekt",
+        "orgnummer": "990796912",
+        "navn": "Samvirkelaget Café",
+        "adresse": "Aunevegen 3, 7340, Oppdal",
+        "dato": "04082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2101131204269662024IQHTW_Tilsynsobjekt",
+        "orgnummer": "988302651",
+        "navn": "Far East Take Away",
+        "adresse": "Pedersgata 12, 4013, Stavanger",
+        "dato": "04082026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2111221512197870390AYPXC_Tilsynsobjekt",
+        "orgnummer": "923001514",
+        "navn": "Folkemunne kafe Knarvik senter",
+        "adresse": "Kvernhusmyrane 3, 5914, Isdalstø",
+        "dato": "04082026",
+        "karakter": 2,
+        "karakter1": 1,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2301101012327442024WIOVX_Tilsynsobjekt",
+        "orgnummer": "926376519",
+        "navn": "Nes Gard",
+        "adresse": "Lustravegen 2400, 6875, Høyheimsvik",
+        "dato": "04082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1908200928422512025DNUVH_Tilsynsobjekt",
+      "Z2209161402538631019YQQIA_Tilsynsobjekt",
+      "Z2501130947095790127MWWOW_Tilsynsobjekt",
+      "Z2506101739088870127BAKZZ_Tilsynsobjekt",
+      "Z2510071026255250128FSIIB_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-04T08:24:34.350Z",
     "previousDownload": "2026-08-03T09:27:23.784Z",
     "summary": {
