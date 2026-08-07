@@ -1,5 +1,154 @@
 [
   {
+    "generatedAt": "2026-08-07T07:02:11.602Z",
+    "previousDownload": "2026-08-06T08:19:47.114Z",
+    "summary": {
+      "previousTotal": 8472,
+      "currentTotal": 8469,
+      "newCount": 0,
+      "changedCount": 10,
+      "removedCount": 3
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006112007202241126UMOVW_Tilsynsobjekt",
+        "orgnummer": "878827562",
+        "navn": "Borgund Hyttesenter og Camping",
+        "adresse": "Lærdalsvegen 2652, 6888, Borgund",
+        "dato": "06082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1705190915036943251BAIKY_Tilsynsobjekt",
+        "orgnummer": "918430768",
+        "navn": "Pers Brygge",
+        "adresse": "Lyngørsida 20, 4910, Lyngør",
+        "dato": "06082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1707101716440313251PIPJG_Tilsynsobjekt",
+        "orgnummer": "918456554",
+        "navn": "Aurlandsdalen Turisthytte DNT",
+        "adresse": "Aurdalsvegen 61, 5745, Aurland",
+        "dato": "06082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1601201306404622025JHOXG_Tilsynsobjekt",
+        "orgnummer": "977934230",
+        "navn": "Selstali Seter, servering",
+        "adresse": "Gjøystdalvegen 256, 3656, Atrå",
+        "dato": "06082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1707200926278533234JNTOR_Tilsynsobjekt",
+        "orgnummer": "973222007",
+        "navn": "Kjelen Kafe",
+        "adresse": "Ripnesveien 40, 8056, Saltstraumen",
+        "dato": "06082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1806250843234603251TIRWI_Tilsynsobjekt",
+        "orgnummer": "921038291",
+        "navn": "Baker Brun Sletten Senter",
+        "adresse": "Vilhelm Bjerknes' vei 4, 5081, Bergen",
+        "dato": "06082026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2006151941206410128BMRBK_Tilsynsobjekt",
+        "orgnummer": "997995562",
+        "navn": "Cafè smia",
+        "adresse": "Vrangfossvegen 113, 3825, Lunde",
+        "dato": "06082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2405081001586511019AIRUG_Tilsynsobjekt",
+        "orgnummer": "933387739",
+        "navn": "Lunde slusekro",
+        "adresse": "Slusevegen 40, 3825, Lunde",
+        "dato": "06082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2507041126543562108WYRMF_Tilsynsobjekt",
+        "orgnummer": "835189422",
+        "navn": "Garveriet Snåsa",
+        "adresse": "Strandvegen 19, 7760, Snåsa",
+        "dato": "05082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604291359579250240UMPIX_Tilsynsobjekt",
+        "orgnummer": "933189767",
+        "navn": "Art Sushi Sarpsborg",
+        "adresse": "Glengsgata 30, 1706, Sarpsborg",
+        "dato": "06082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1905150844249262025EHMUW_Tilsynsobjekt",
+      "Z1905071409043642025MDVII_Tilsynsobjekt",
+      "Z2411061521240251023XGZFR_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-06T08:19:47.114Z",
     "previousDownload": "2026-08-05T08:22:24.415Z",
     "summary": {
