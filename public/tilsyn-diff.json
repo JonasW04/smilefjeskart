@@ -1,5 +1,218 @@
 [
   {
+    "generatedAt": "2026-08-12T07:11:54.223Z",
+    "previousDownload": "2026-08-11T06:53:02.414Z",
+    "summary": {
+      "previousTotal": 8471,
+      "currentTotal": 8472,
+      "newCount": 2,
+      "changedCount": 13,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2606031505436232024YHBGD_Tilsynsobjekt",
+        "orgnummer": "971938595",
+        "navn": "Palmehaven Kafeteria",
+        "adresse": "Austbøvegen 16, 5542, Karmsund",
+        "dato": "10082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605041215328730127GPRPT_Tilsynsobjekt",
+        "orgnummer": "974073463",
+        "navn": "Bergshaven Bakeri og Konditori AS Avdeling Sørlandsenteret.",
+        "adresse": "Barstølveien 35, 4636, Kristiansand S",
+        "dato": "11082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1603181547333003251KHDTW_Tilsynsobjekt",
+        "orgnummer": "916931832",
+        "navn": "Skyskraperen Restaurant",
+        "adresse": "Byfjellene 18, 5014, Bergen",
+        "dato": "11082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006072203211421127KMIPE_Tilsynsobjekt",
+        "orgnummer": "986188622",
+        "navn": "Cafe Generalen",
+        "adresse": "Ravnedalsveien 34, 4616, Kristiansand S",
+        "dato": "11082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006112007368301126PEVXH_Tilsynsobjekt",
+        "orgnummer": "978943241",
+        "navn": "Bøyum Camping",
+        "adresse": "Fjærlandsfjorden 39, 6848, Fjærland",
+        "dato": "11082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1911080930331940393FURSI_Tilsynsobjekt",
+        "orgnummer": "914715245",
+        "navn": "Fjærland Fjordstove Hotell",
+        "adresse": "Fjærlandsfjorden 258, 6848, Fjærland",
+        "dato": "11082026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2003040607011560128ELHMU_Tilsynsobjekt",
+        "orgnummer": "924605103",
+        "navn": "Futura Bowling",
+        "adresse": "Industriveien 17, 6517, Kristiansund N",
+        "dato": "11082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2003120622252290127AVYAE_Tilsynsobjekt",
+        "orgnummer": "924797835",
+        "navn": "Jensesund Havnekro",
+        "adresse": "Vestre Bolæren, 3133, DUKEN",
+        "dato": "11082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2302061125481960128UXEDM_Tilsynsobjekt",
+        "orgnummer": "930505730",
+        "navn": "Inkåleisn Kafé",
+        "adresse": "Fjærlandsfjorden 300, 6848, Fjærland",
+        "dato": "11082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2401250840457611044PHZKH_Tilsynsobjekt",
+        "orgnummer": "832726362",
+        "navn": "Kebab House",
+        "adresse": "Hamnegata 45, 6413, Molde",
+        "dato": "10082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2406171028296811022GSENO_Tilsynsobjekt",
+        "orgnummer": "933025063",
+        "navn": "Goma Pizza og Grill",
+        "adresse": "Gomagata 17, 6512, Kristiansund N",
+        "dato": "11082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2406050942380962024CVXYD_Tilsynsobjekt",
+        "orgnummer": "913452569",
+        "navn": "McDonald’s Roseby",
+        "adresse": "Fannestrandvegen 49, 6415, Molde",
+        "dato": "11082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2403061020031390127NIEBH_Tilsynsobjekt",
+        "orgnummer": "932995700",
+        "navn": "O’Learys Molde",
+        "adresse": "Storgata 9, 6413, Molde",
+        "dato": "10082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2401311218387660128TUWJB_Tilsynsobjekt",
+        "orgnummer": "931424459",
+        "navn": "Ghassan Pizza",
+        "adresse": "Lindholmveien 1, 3145, Tjøme",
+        "dato": "11082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607281556056702025ADMHZ_Tilsynsobjekt",
+        "orgnummer": "915230415",
+        "navn": "Snikkeriet i Rosendal",
+        "adresse": "Rosendalsvegen 13, 5470, Rosendal",
+        "dato": "11082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1006052056283341189HPKVM_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-11T06:53:02.414Z",
     "previousDownload": "2026-08-10T07:15:07.248Z",
     "summary": {
