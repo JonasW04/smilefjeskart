@@ -1,5 +1,154 @@
 [
   {
+    "generatedAt": "2026-08-14T07:12:24.231Z",
+    "previousDownload": "2026-08-13T07:15:24.664Z",
+    "summary": {
+      "previousTotal": 8477,
+      "currentTotal": 8476,
+      "newCount": 1,
+      "changedCount": 9,
+      "removedCount": 2
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2608131242154210240KVWOQ_Tilsynsobjekt",
+        "orgnummer": "937380291",
+        "navn": "Lahori kjøkken AS",
+        "adresse": "Norbygata 56, 0190, Oslo",
+        "dato": "13082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006120516388241127MDJAS_Tilsynsobjekt",
+        "orgnummer": "984861133",
+        "navn": "Peppes Pizza Amfi Moa",
+        "adresse": "Moavegen 1, 6018, Ålesund",
+        "dato": "13082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1210301217131003132DJZDN_Tilsynsobjekt",
+        "orgnummer": "999112471",
+        "navn": "Spisestua Moa",
+        "adresse": "Langelandsvegen 25, 6010, Ålesund",
+        "dato": "13082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1403200903316672025CNSTU_Tilsynsobjekt",
+        "orgnummer": "913209001",
+        "navn": "Restaurant Flor’n",
+        "adresse": "Mølstervegen 44, 5705, Voss",
+        "dato": "13082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1607121427320373102FRBCK_Tilsynsobjekt",
+        "orgnummer": "916825331",
+        "navn": "Segla Grill og Pub",
+        "adresse": "Arnakkveien 1, 9388, Fjordgard",
+        "dato": "12082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1702201306061262024PDBCF_Tilsynsobjekt",
+        "orgnummer": "989841491",
+        "navn": "Mefjord Brygge",
+        "adresse": "Mefjordveien 1947, 9386, Senjahopen",
+        "dato": "12082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1907221109280332024FKEVM_Tilsynsobjekt",
+        "orgnummer": "812035002",
+        "navn": "Orkland Bowling",
+        "adresse": "Åsvegen 21, 7300, Orkanger",
+        "dato": "13082026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1405051133174633136WBZYG_Tilsynsobjekt",
+        "orgnummer": "995228483",
+        "navn": "Damphuset",
+        "adresse": "Gammelosveien 2, 7300, Orkanger",
+        "dato": "13082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2507011533351880127GCDDS_Tilsynsobjekt",
+        "orgnummer": "935418097",
+        "navn": "Lille Sitha Cafe AS",
+        "adresse": "Waldemar Thranes gate 55, 0173, Oslo",
+        "dato": "13082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2512021539072520128WSVEI_Tilsynsobjekt",
+        "orgnummer": "936308031",
+        "navn": "Dow’s Take Away",
+        "adresse": "Rådhusveien 4, 9845, Tana",
+        "dato": "13082026",
+        "karakter": 3,
+        "karakter1": 3,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1606070822527750392UGNDV_Tilsynsobjekt",
+      "Z2508061527210690128CRRLQ_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-13T07:15:24.664Z",
     "previousDownload": "2026-08-12T07:11:54.223Z",
     "summary": {
