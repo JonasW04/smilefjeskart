@@ -1,5 +1,104 @@
 [
   {
+    "generatedAt": "2026-08-15T06:23:28.296Z",
+    "previousDownload": "2026-08-14T07:12:24.231Z",
+    "summary": {
+      "previousTotal": 8476,
+      "currentTotal": 8474,
+      "newCount": 2,
+      "changedCount": 4,
+      "removedCount": 4
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z1006080424095181127WFGFH_Tilsynsobjekt",
+        "orgnummer": "979526059",
+        "navn": "Elias Pizza",
+        "adresse": "Dikeveien 28, 1661, Rolvsøy",
+        "dato": "10112025",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2608050905103251056EIDZL_Tilsynsobjekt",
+        "orgnummer": "933401154",
+        "navn": "Roan wok og grill",
+        "adresse": "Roansveien 6, 7180, Roan",
+        "dato": "13082026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1102181010015953251QQNUU_Tilsynsobjekt",
+        "orgnummer": "872131612",
+        "navn": "Matstova Oppstryn",
+        "adresse": "Strynevegen 1938, 6799, Oppstryn",
+        "dato": "14082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1806111242595733252ZUUDY_Tilsynsobjekt",
+        "orgnummer": "918905731",
+        "navn": "Flipzone Åsane",
+        "adresse": "Liamyrane 16, 5132, Nyborg",
+        "dato": "14082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2111221512197870390AYPXC_Tilsynsobjekt",
+        "orgnummer": "923001514",
+        "navn": "Folkemunne kafe Knarvik senter",
+        "adresse": "Kvernhusmyrane 3, 5914, Isdalstø",
+        "dato": "13082026",
+        "karakter": 0,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2404050945159580128ERVBM_Tilsynsobjekt",
+        "orgnummer": "929637526",
+        "navn": "Høgås Kafe",
+        "adresse": "Høgåsveien 35, 1383, Asker",
+        "dato": "14082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1201121204585020116ZASKY_Tilsynsobjekt",
+      "Z1302070746301893134ZYDLK_Tilsynsobjekt",
+      "Z1511021515514253251ZHOZC_Tilsynsobjekt",
+      "Z2303130941160380127JVJLF_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-14T07:12:24.231Z",
     "previousDownload": "2026-08-13T07:15:24.664Z",
     "summary": {
