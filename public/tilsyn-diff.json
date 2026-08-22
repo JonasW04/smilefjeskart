@@ -1,5 +1,155 @@
 [
   {
+    "generatedAt": "2026-08-22T06:25:23.259Z",
+    "previousDownload": "2026-08-21T06:32:28.700Z",
+    "summary": {
+      "previousTotal": 8484,
+      "currentTotal": 8484,
+      "newCount": 3,
+      "changedCount": 7,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2608201639183980239GVOXM_Tilsynsobjekt",
+        "orgnummer": "931400827",
+        "navn": "Namsum Thaimat",
+        "adresse": "Hovinveien 39, 0661, Oslo",
+        "dato": "20082026",
+        "karakter": 3,
+        "karakter1": 2,
+        "karakter2": 3,
+        "karakter3": 0,
+        "karakter4": 2,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605111109280720127ABMGD_Tilsynsobjekt",
+        "orgnummer": null,
+        "navn": "Almas Gårdsutsalg og Kafe",
+        "adresse": "Lilleholtveien 2, 4905, Tvedestrand",
+        "dato": "21082026",
+        "karakter": 2,
+        "karakter1": -1,
+        "karakter2": 1,
+        "karakter3": 2,
+        "karakter4": 2,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2606262245484100128YKMMR_Tilsynsobjekt",
+        "orgnummer": "936427049",
+        "navn": "Eidsfoss kro AS",
+        "adresse": "Bråtagata 47, 3095, Eidsfoss",
+        "dato": "21082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006061505540031190NYJNR_Tilsynsobjekt",
+        "orgnummer": "985452474",
+        "navn": "Rosenborg Bakeri Solsiden",
+        "adresse": "Beddingen 10, 7042, Trondheim",
+        "dato": "21082026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1404081252458673252ARFRU_Tilsynsobjekt",
+        "orgnummer": "912699439",
+        "navn": "Egon Asker",
+        "adresse": "Torvveien 1, 1383, Asker",
+        "dato": "21082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1502251527221863251YDATK_Tilsynsobjekt",
+        "orgnummer": "815012992",
+        "navn": "Glass",
+        "adresse": "Torget 1, 6413, Molde",
+        "dato": "21082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1907221109280332024FKEVM_Tilsynsobjekt",
+        "orgnummer": "812035002",
+        "navn": "Orkland Bowling",
+        "adresse": "Åsvegen 21, 7300, Orkanger",
+        "dato": "21082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2010131454046520127CMXCN_Tilsynsobjekt",
+        "orgnummer": "821135672",
+        "navn": "Baker Hansen Asker",
+        "adresse": "Bankveien 10, 1383, Asker",
+        "dato": "21082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2407261337515320127WLWCS_Tilsynsobjekt",
+        "orgnummer": "931028731",
+        "navn": "Ouch",
+        "adresse": "Løkkeveien 9, 4008, Stavanger",
+        "dato": "21082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2502201447209952109RJXGR_Tilsynsobjekt",
+        "orgnummer": "834534932",
+        "navn": "Hys Sushi & Asian Dining",
+        "adresse": "Hovinveien 39, 0661, Oslo",
+        "dato": "21082026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1508120900321500379NYPXO_Tilsynsobjekt",
+      "Z1408111545595510393PDUYS_Tilsynsobjekt",
+      "Z2408051445167232103UJPXW_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-21T06:32:28.700Z",
     "previousDownload": "2026-08-20T06:31:21.731Z",
     "summary": {
