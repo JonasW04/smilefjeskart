@@ -1,5 +1,127 @@
 [
   {
+    "generatedAt": "2026-08-25T06:32:07.586Z",
+    "previousDownload": "2026-08-24T06:39:42.617Z",
+    "summary": {
+      "previousTotal": 8484,
+      "currentTotal": 8486,
+      "newCount": 3,
+      "changedCount": 5,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2607301043307011037SFGTK_Tilsynsobjekt",
+        "orgnummer": "937422571",
+        "navn": "Bayt Setti",
+        "adresse": "Grønland 14, 0188, Oslo",
+        "dato": "21082026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605181031222300127BNACE_Tilsynsobjekt",
+        "orgnummer": "898869032",
+        "navn": "iSushi x Roxys Åsane",
+        "adresse": "Åsamyrane 88, 5116, Ulset",
+        "dato": "24082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604292142455430128XELTC_Tilsynsobjekt",
+        "orgnummer": "937407769",
+        "navn": "Vøyenenga Pub og Pizza",
+        "adresse": "Vøyenengtunet 4, 1339, Vøyenenga",
+        "dato": "18082026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1809181640328013251RXIOD_Tilsynsobjekt",
+        "orgnummer": "921423438",
+        "navn": "Køl Molde",
+        "adresse": "Torget 1, 6413, Molde",
+        "dato": "21082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2002210927288232024JZFYD_Tilsynsobjekt",
+        "orgnummer": "923981411",
+        "navn": "Dampbakeriet Markensgate",
+        "adresse": "Markens gate 40, 4612, Kristiansand S",
+        "dato": "24082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2105140731359850128AXQNV_Tilsynsobjekt",
+        "orgnummer": "926973746",
+        "navn": "Frøken Nilsen’s Kafé",
+        "adresse": "Skagøysundveien 267, 9140, Rebbenes",
+        "dato": "08082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2211020827029642025KKGVG_Tilsynsobjekt",
+        "orgnummer": "993378933",
+        "navn": "Åkrafjordtunet AS",
+        "adresse": "Åkrafjordvegen 1105, 5596, Markhus",
+        "dato": "24082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2304261421525961052CJSHU_Tilsynsobjekt",
+        "orgnummer": "930999318",
+        "navn": "Daily Dose Cafe",
+        "adresse": "Hovlandsveien 1, 4985, Vegårshei",
+        "dato": "24082026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1506171318069380385JYHCU_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-24T06:39:42.617Z",
     "previousDownload": "2026-08-23T06:26:42.945Z",
     "summary": {
