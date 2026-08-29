@@ -1,5 +1,75 @@
 [
   {
+    "generatedAt": "2026-08-29T12:01:43.391Z",
+    "previousDownload": "2026-08-28T17:57:07.592Z",
+    "summary": {
+      "previousTotal": 8485,
+      "currentTotal": 8486,
+      "newCount": 2,
+      "changedCount": 2,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2608272225420081035LKTZE_Tilsynsobjekt",
+        "orgnummer": "937696825",
+        "navn": "Digg Burger Grønland",
+        "adresse": "Grønland 18, 0188, Oslo",
+        "dato": "27082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2608281300501141066ZOKYB_Tilsynsobjekt",
+        "orgnummer": "936220134",
+        "navn": "Falafel n’ Juice Majorstuen",
+        "adresse": "Bogstadveien 51, 0366, Oslo",
+        "dato": "28082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006072023013651189OYLUB_Tilsynsobjekt",
+        "orgnummer": "972404276",
+        "navn": "Sølenstua",
+        "adresse": "Sundveien 1030, 2440, Engerdal",
+        "dato": "28082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2608251438004181071GVQHC_Tilsynsobjekt",
+        "orgnummer": "837571812",
+        "navn": "Manger Pizzeria",
+        "adresse": "Idrettsvegen 7, 5936, Manger",
+        "dato": "28082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z2410250916569421014VQPOV_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-28T17:57:07.592Z",
     "previousDownload": "2026-08-27T17:10:14.599Z",
     "summary": {
