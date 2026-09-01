@@ -1,5 +1,90 @@
 [
   {
+    "generatedAt": "2026-09-01T10:51:59.689Z",
+    "previousDownload": "2026-08-31T12:16:29.734Z",
+    "summary": {
+      "previousTotal": 8486,
+      "currentTotal": 8485,
+      "newCount": 2,
+      "changedCount": 3,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2608311103141100127IPPYV_Tilsynsobjekt",
+        "orgnummer": "937506279",
+        "navn": "Almas gårdsutsalg og kafe",
+        "adresse": "Lilleholtveien 2, 4905, Tvedestrand",
+        "dato": "31082026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2606142253059840128LGZFF_Tilsynsobjekt",
+        "orgnummer": "937638132",
+        "navn": "Hjemmewok",
+        "adresse": "Østre Nesttunvegen 2, 5221, Nesttun",
+        "dato": "31082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006082305579421189DHYVJ_Tilsynsobjekt",
+        "orgnummer": "976328604",
+        "navn": "Telemark-svingen",
+        "adresse": "Stokkevannveien 3, 3962, Stathelle",
+        "dato": "31082026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2201071635280730128VWORY_Tilsynsobjekt",
+        "orgnummer": "925060070",
+        "navn": "Espresso House Nordregate",
+        "adresse": "Nordre gate 18, 0551, Oslo",
+        "dato": "31082026",
+        "karakter": 2,
+        "karakter1": 1,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2111221205378133104XUCVT_Tilsynsobjekt",
+        "orgnummer": "972059439",
+        "navn": "Frognerstranda Kro",
+        "adresse": "Frognerstranda 4, 0250, Oslo",
+        "dato": "31082026",
+        "karakter": 3,
+        "karakter1": 2,
+        "karakter2": 3,
+        "karakter3": 3,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2507251337384981013YIVNZ_Tilsynsobjekt",
+      "Z2606221110288862024LHUIJ_Tilsynsobjekt",
+      "Z2605111109280720127ABMGD_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-08-31T12:16:29.734Z",
     "previousDownload": "2026-08-30T10:58:36.772Z",
     "summary": {
