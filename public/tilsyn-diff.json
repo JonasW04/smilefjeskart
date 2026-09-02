@@ -1,5 +1,194 @@
 [
   {
+    "generatedAt": "2026-09-02T10:17:00.315Z",
+    "previousDownload": "2026-09-01T10:51:59.689Z",
+    "summary": {
+      "previousTotal": 8485,
+      "currentTotal": 8484,
+      "newCount": 2,
+      "changedCount": 11,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2509172005476280128GLFAT_Tilsynsobjekt",
+        "orgnummer": "936093515",
+        "navn": "Ole B AS",
+        "adresse": "Søvikvegen 19, 5215, Lysekloster",
+        "dato": "01092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607101146042562024WKBLM_Tilsynsobjekt",
+        "orgnummer": "974185482",
+        "navn": "Tataki",
+        "adresse": "Torgveien 2, 1400, Ski",
+        "dato": "01092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1503180855291012025MTKFP_Tilsynsobjekt",
+        "orgnummer": "974180987",
+        "navn": "Holms bakeri og spiseri",
+        "adresse": "Stokmovegen 2, 7500, Stjørdal",
+        "dato": "01092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1603011040331552025DUGOE_Tilsynsobjekt",
+        "orgnummer": "971901772",
+        "navn": "Mirawa House",
+        "adresse": "Vestre Brugate 1, 3300, Hokksund",
+        "dato": "01092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006050006434881190BYVOH_Tilsynsobjekt",
+        "orgnummer": "974705451",
+        "navn": "Nibio Svanhovd",
+        "adresse": "Svanhovd 23, 9925, Svanvik",
+        "dato": "01092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1612080859245702024MTZNQ_Tilsynsobjekt",
+        "orgnummer": "972376191",
+        "navn": "China Palace Restaurant Stjørdal",
+        "adresse": "Kjøpmannsgata 5, 7500, Stjørdal",
+        "dato": "01092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1711061242545120239XHALP_Tilsynsobjekt",
+        "orgnummer": "919501480",
+        "navn": "Maritz Kafeteria",
+        "adresse": "Brugata 6, 6390, Vestnes",
+        "dato": "01092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1705291238452483163KJBZK_Tilsynsobjekt",
+        "orgnummer": "972033103",
+        "navn": "Egon Tårnet",
+        "adresse": "Otto Nielsens veg 4, 7052, Trondheim",
+        "dato": "01092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1803091056132283155WDDLE_Tilsynsobjekt",
+        "orgnummer": "990377634",
+        "navn": "Amore Restaurant Vestnes",
+        "adresse": "Kaigata 25, 6390, Vestnes",
+        "dato": "01092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1903061350070613189ASXPJ_Tilsynsobjekt",
+        "orgnummer": "920493939",
+        "navn": "Union pizza og grill Avdeling Vestfossen",
+        "adresse": "Storgata 58, 3320, Vestfossen",
+        "dato": "01092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2111221205378133104XUCVT_Tilsynsobjekt",
+        "orgnummer": "972059439",
+        "navn": "Frognerstranda Kro",
+        "adresse": "Frognerstranda 4, 0250, Oslo",
+        "dato": "01092026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2603171554493211067VGFUG_Tilsynsobjekt",
+        "orgnummer": "936128785",
+        "navn": "Nesbru Kebab",
+        "adresse": "Fekjan 15, 1394, Nesbru",
+        "dato": "01092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": -1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2606171343497821067MGSKF_Tilsynsobjekt",
+        "orgnummer": "831901632",
+        "navn": "Milan restaurant",
+        "adresse": "Lilleåsgata 5, 3340, Åmot",
+        "dato": "01092026",
+        "karakter": 0,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1006112044238281189JKDCM_Tilsynsobjekt",
+      "Z2405021018217472024PKMKL_Tilsynsobjekt",
+      "Z2602091353263940128CEMLM_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-09-01T10:51:59.689Z",
     "previousDownload": "2026-08-31T12:16:29.734Z",
     "summary": {
