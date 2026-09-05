@@ -1,5 +1,166 @@
 [
   {
+    "generatedAt": "2026-09-05T09:43:45.928Z",
+    "previousDownload": "2026-09-04T10:18:23.308Z",
+    "summary": {
+      "previousTotal": 8491,
+      "currentTotal": 8497,
+      "newCount": 7,
+      "changedCount": 4,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z1507231404078423124ELDSW_Tilsynsobjekt",
+        "orgnummer": "911643014",
+        "navn": "Bakklandet pizza & grill, RAS Restaurant Bakklandet og RAS-grill",
+        "adresse": "Nedre Bakklandet 56, 7014, Trondheim",
+        "dato": "08072024",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2608101420020330127ARESC_Tilsynsobjekt",
+        "orgnummer": "937624972",
+        "navn": "Zayt & Zaatar",
+        "adresse": "Rådmann Paulsens gate 38, 1473, Lørenskog",
+        "dato": "04092026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605111804334240127FRNJC_Tilsynsobjekt",
+        "orgnummer": "936890229",
+        "navn": "Glo Matbar",
+        "adresse": "Vangsgata 31, 5700, Voss",
+        "dato": "04092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2606161058026411037WOMAF_Tilsynsobjekt",
+        "orgnummer": "937537166",
+        "navn": "Puffi",
+        "adresse": "Sluppenvegen 11, 7037, Trondheim",
+        "dato": "04092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607282211065320128KKJHN_Tilsynsobjekt",
+        "orgnummer": "938128162",
+        "navn": "Trønderburger",
+        "adresse": "Sluppenvegen 11, 7037, Trondheim",
+        "dato": "04092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603261648178040128LESVJ_Tilsynsobjekt",
+        "orgnummer": "934252462",
+        "navn": "Ro-Bua",
+        "adresse": "Utvordveien 2616, 7777, Nord-Statland",
+        "dato": "04092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605081340555890127TZLQS_Tilsynsobjekt",
+        "orgnummer": "937608438",
+        "navn": "Café Døla",
+        "adresse": "Dølasletta 7, 3408, Tranby",
+        "dato": "04092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006082001421331127VWAAO_Tilsynsobjekt",
+        "orgnummer": "978694705",
+        "navn": "Lancelot",
+        "adresse": "Torvveien 4, 1383, Asker",
+        "dato": "04092026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006062045038201189MRONY_Tilsynsobjekt",
+        "orgnummer": "995141671",
+        "navn": "Pergola Mat og Vinbar",
+        "adresse": "Nedre Korskirkeallmenningen 9, 5017, Bergen",
+        "dato": "03092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1608031717123340368UZOCS_Tilsynsobjekt",
+        "orgnummer": "914368847",
+        "navn": "La Trattoria",
+        "adresse": "Gamle Drammensvei 105, 3420, Lierskogen",
+        "dato": "04092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2608201639183980239GVOXM_Tilsynsobjekt",
+        "orgnummer": "931400827",
+        "navn": "Namsum Thaimat",
+        "adresse": "Hovinveien 39, 0661, Oslo",
+        "dato": "04092026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1506251357194853252URDKZ_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-09-04T10:18:23.308Z",
     "previousDownload": "2026-09-03T10:27:43.721Z",
     "summary": {
