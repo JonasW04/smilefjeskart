@@ -1,5 +1,164 @@
 [
   {
+    "generatedAt": "2026-09-08T10:20:56.309Z",
+    "previousDownload": "2026-09-07T11:09:20.903Z",
+    "summary": {
+      "previousTotal": 8497,
+      "currentTotal": 8500,
+      "newCount": 3,
+      "changedCount": 8,
+      "removedCount": 0
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2607031152512152025DDJXR_Tilsynsobjekt",
+        "orgnummer": "973140272",
+        "navn": "Burger King Stavanger",
+        "adresse": "Torget 7, 4006, Stavanger",
+        "dato": "04092026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603181151210522025VHRRJ_Tilsynsobjekt",
+        "orgnummer": "923930035",
+        "navn": "Soulcake Strømmen Cafe",
+        "adresse": "Støperiveien 5, 2010, Strømmen",
+        "dato": "07092026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607271231071381070SWYBL_Tilsynsobjekt",
+        "orgnummer": "928106551",
+        "navn": "El Greco Byporten",
+        "adresse": "Jernbanetorget 6, 0154, Oslo",
+        "dato": "07092026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006050444336631189OMJDZ_Tilsynsobjekt",
+        "orgnummer": "981405099",
+        "navn": "Bankers Pizza Kanebogen",
+        "adresse": "Skilleveien 5, 9411, Harstad",
+        "dato": "07092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006080255327351126LUFOK_Tilsynsobjekt",
+        "orgnummer": "974007029",
+        "navn": "Egon Lillehammer",
+        "adresse": "Elvegata 12, 2609, Lillehammer",
+        "dato": "07092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1405191320104912025FYHNJ_Tilsynsobjekt",
+        "orgnummer": "996634531",
+        "navn": "Hvelvet restaurant",
+        "adresse": "Stortorget 1, 2609, Lillehammer",
+        "dato": "07092026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1702161727136853107DFJWO_Tilsynsobjekt",
+        "orgnummer": "999099858",
+        "navn": "Max Egertorget",
+        "adresse": "Karl Johans gate 18, 0159, Oslo",
+        "dato": "07092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1906211138052130128XOZAE_Tilsynsobjekt",
+        "orgnummer": "922861455",
+        "navn": "M. Neko",
+        "adresse": "Brubakken 2, 2615, Lillehammer",
+        "dato": "07092026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2106220840556990128TGTDE_Tilsynsobjekt",
+        "orgnummer": "927493047",
+        "navn": "Stefano La Piazzetta Wergeland",
+        "adresse": "Bendixens vei 69, 5067, Bergen",
+        "dato": "03092026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2201071635280730128VWORY_Tilsynsobjekt",
+        "orgnummer": "925060070",
+        "navn": "Espresso House Nordregate",
+        "adresse": "Nordre gate 18, 0551, Oslo",
+        "dato": "07092026",
+        "karakter": 0,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1504271330015113160DLJWB_Tilsynsobjekt",
+        "orgnummer": "995123592",
+        "navn": "Nesttun kebab",
+        "adresse": "Nesttunvegen 99, 5221, Nesttun",
+        "dato": "07092026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-09-07T11:09:20.903Z",
     "previousDownload": "2026-09-06T09:58:55.802Z",
     "summary": {
