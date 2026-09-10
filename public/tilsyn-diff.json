@@ -1,5 +1,131 @@
 [
   {
+    "generatedAt": "2026-09-10T10:19:29.818Z",
+    "previousDownload": "2026-09-09T10:29:16.563Z",
+    "summary": {
+      "previousTotal": 8499,
+      "currentTotal": 8495,
+      "newCount": 1,
+      "changedCount": 7,
+      "removedCount": 5
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2609071351470081055QARPI_Tilsynsobjekt",
+        "orgnummer": "935827477",
+        "navn": "A restaurant AS",
+        "adresse": "Strømsveien 65, 2010, Strømmen",
+        "dato": "07092026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006062043158021127JPEBU_Tilsynsobjekt",
+        "orgnummer": "872239162",
+        "navn": "Le Chef kafé",
+        "adresse": "Nesttunvegen 98, 5221, Nesttun",
+        "dato": "08092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1206220920394820183QFYTF_Tilsynsobjekt",
+        "orgnummer": "989344013",
+        "navn": "Stasjonen Cafe & Restaurant",
+        "adresse": "Jernbanetorget 4, 2609, Lillehammer",
+        "dato": "09092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1405191320104912025FYHNJ_Tilsynsobjekt",
+        "orgnummer": "996634531",
+        "navn": "Hvelvet restaurant",
+        "adresse": "Stortorget 1, 2609, Lillehammer",
+        "dato": "09092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1911041007125692024OYJKJ_Tilsynsobjekt",
+        "orgnummer": "974715724",
+        "navn": "Avd. 7561 Skjold Velferdskantine",
+        "adresse": "Takvassveien 63, 9334, Øverbygd",
+        "dato": "08092026",
+        "karakter": 2,
+        "karakter1": 1,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2412191117417062024NPXVC_Tilsynsobjekt",
+        "orgnummer": "934468252",
+        "navn": "Malo Kebab House",
+        "adresse": "Storgata 61, 2609, Lillehammer",
+        "dato": "08092026",
+        "karakter": 3,
+        "karakter1": 2,
+        "karakter2": 3,
+        "karakter3": 3,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2608201639183980239GVOXM_Tilsynsobjekt",
+        "orgnummer": "931400827",
+        "navn": "Namsum Thaimat",
+        "adresse": "Hovinveien 39, 0661, Oslo",
+        "dato": "09092026",
+        "karakter": 0,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2603181151210522025VHRRJ_Tilsynsobjekt",
+        "orgnummer": "923930035",
+        "navn": "Soulcake Strømmen Cafe",
+        "adresse": "Støperiveien 5, 2010, Strømmen",
+        "dato": "09092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z1504130932207113113ZJZZG_Tilsynsobjekt",
+      "Z1205070923092460230XSDWM_Tilsynsobjekt",
+      "Z1911151432088590239JZIBN_Tilsynsobjekt",
+      "Z2305301316390171037MBIYQ_Tilsynsobjekt",
+      "Z2109271008247170380SAEBH_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-09-09T10:29:16.563Z",
     "previousDownload": "2026-09-08T10:20:56.309Z",
     "summary": {
