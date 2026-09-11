@@ -1,5 +1,153 @@
 [
   {
+    "generatedAt": "2026-09-11T10:19:18.149Z",
+    "previousDownload": "2026-09-10T10:19:29.818Z",
+    "summary": {
+      "previousTotal": 8495,
+      "currentTotal": 8497,
+      "newCount": 3,
+      "changedCount": 7,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2607031428525302024UPIBJ_Tilsynsobjekt",
+        "orgnummer": "985245010",
+        "navn": "Fru Svendsen Kafe, Bakeri og Catering Duna",
+        "adresse": "Kyrkjegata 25, 6150, Ørsta",
+        "dato": "10092026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607150026430520128AOZQJ_Tilsynsobjekt",
+        "orgnummer": "937635435",
+        "navn": "Frolandstaua Diner AS",
+        "adresse": "Frolandsveien 985, 4820, Froland",
+        "dato": "10092026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604080913558611055XULES_Tilsynsobjekt",
+        "orgnummer": "833279262",
+        "navn": "Digg pizza Bogstadveien",
+        "adresse": "Bogstadveien 62, 0366, Oslo",
+        "dato": "10092026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006050518059631127VDIUF_Tilsynsobjekt",
+        "orgnummer": "992377038",
+        "navn": "OBS Kafé Tromsø",
+        "adresse": "Heilovegen 4, 9015, Tromsø",
+        "dato": "10092026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1309021426129510387EUOKM_Tilsynsobjekt",
+        "orgnummer": "912083268",
+        "navn": "Sabi Sushi Hinna",
+        "adresse": "Jåttåvågveien 7, 4020, Stavanger",
+        "dato": "10092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006070442578881190XNFPV_Tilsynsobjekt",
+        "orgnummer": "977360323",
+        "navn": "Thai-thai Steinkjer, Amfi",
+        "adresse": "Sjøfartsgata 2, 7714, Steinkjer",
+        "dato": "10092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1611282111327872025YYUOG_Tilsynsobjekt",
+        "orgnummer": "879275962",
+        "navn": "McDonald’s",
+        "adresse": "Sjøfartsgata 2, 7714, Steinkjer",
+        "dato": "10092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1809161527489663252WWEBR_Tilsynsobjekt",
+        "orgnummer": "921147309",
+        "navn": "Espresso House Steinkjer",
+        "adresse": "Sjøfartsgata 2, 7714, Steinkjer",
+        "dato": "10092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2104141431378682025LGBVL_Tilsynsobjekt",
+        "orgnummer": "922356408",
+        "navn": "El Camino AS Avd. Bogstadveien",
+        "adresse": "Bogstadveien 20, 0355, Oslo",
+        "dato": "10092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2111221205378133104XUCVT_Tilsynsobjekt",
+        "orgnummer": "972059439",
+        "navn": "Frognerstranda Kro",
+        "adresse": "Frognerstranda 4, 0250, Oslo",
+        "dato": "09092026",
+        "karakter": 0,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z2407241125454511031GTJYL_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-09-10T10:19:29.818Z",
     "previousDownload": "2026-09-09T10:29:16.563Z",
     "summary": {
