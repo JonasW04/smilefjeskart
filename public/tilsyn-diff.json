@@ -1,5 +1,177 @@
 [
   {
+    "generatedAt": "2026-09-19T10:01:48.940Z",
+    "previousDownload": "2026-09-18T10:18:54.478Z",
+    "summary": {
+      "previousTotal": 8502,
+      "currentTotal": 8504,
+      "newCount": 2,
+      "changedCount": 10,
+      "removedCount": 0
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2308151226463620127HJBOS_Tilsynsobjekt",
+        "orgnummer": "931517902",
+        "navn": "Pad Thai",
+        "adresse": "Tørneskogsveien 1, 4380, Hauge i Dalane",
+        "dato": "17092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2504220921563182025VASYC_Tilsynsobjekt",
+        "orgnummer": "911854104",
+        "navn": "Tønsberg pizza",
+        "adresse": "Stoltenbergs gate 31, 3110, Tønsberg",
+        "dato": "18092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006060856317111189XBMSU_Tilsynsobjekt",
+        "orgnummer": "979728468",
+        "navn": "Roar i Bua",
+        "adresse": "Nedre Langgate 42, 3126, Tønsberg",
+        "dato": "18092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1502231040324833251PNTJH_Tilsynsobjekt",
+        "orgnummer": "914921163",
+        "navn": "Foyn Restaurant",
+        "adresse": "Nedre Langgate 18, 3126, Tønsberg",
+        "dato": "18092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006061504326591190QMTBA_Tilsynsobjekt",
+        "orgnummer": "974992361",
+        "navn": "Bristol Conditori",
+        "adresse": "Dronningens gate 18, 7011, Trondheim",
+        "dato": "17092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1511301114090793143HJSRK_Tilsynsobjekt",
+        "orgnummer": "916002319",
+        "navn": "Byblos Orientalsk grill",
+        "adresse": "Farmannsveien 8, 3111, Tønsberg",
+        "dato": "18092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1804061515100583148HFZNE_Tilsynsobjekt",
+        "orgnummer": "920055230",
+        "navn": "La border burrito bar",
+        "adresse": "Thomas Angells gate 14, 7011, Trondheim",
+        "dato": "17092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2404301239561111023ROLFA_Tilsynsobjekt",
+        "orgnummer": "932997061",
+        "navn": "Dougs Aker Brygge",
+        "adresse": "Fjordalléen 4, 0250, Oslo",
+        "dato": "17092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2407221019450810127GNTZC_Tilsynsobjekt",
+        "orgnummer": "828825542",
+        "navn": "Kaffidyret",
+        "adresse": "Gamleveien 63, 4380, Hauge i Dalane",
+        "dato": "17092026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2404291056303020128FRXTJ_Tilsynsobjekt",
+        "orgnummer": "933231275",
+        "navn": "Teaology Tønsberg",
+        "adresse": "Jernbanegaten 1, 3110, Tønsberg",
+        "dato": "18092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2408112059266230128TBMQD_Tilsynsobjekt",
+        "orgnummer": "832114472",
+        "navn": "Phoenix",
+        "adresse": "Munkegata 26, 7011, Trondheim",
+        "dato": "17092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1201251525297950181CIGWA_Tilsynsobjekt",
+        "orgnummer": "996903486",
+        "navn": "Gyda Harstad",
+        "adresse": "Samagata 30, 9403, Harstad",
+        "dato": "27072026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "1"
+      }
+    ],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-09-18T10:18:54.478Z",
     "previousDownload": "2026-09-17T10:43:16.109Z",
     "summary": {
