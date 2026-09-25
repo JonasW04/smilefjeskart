@@ -1,5 +1,194 @@
 [
   {
+    "generatedAt": "2026-09-25T10:53:53.575Z",
+    "previousDownload": "2026-09-24T10:49:48.240Z",
+    "summary": {
+      "previousTotal": 8502,
+      "currentTotal": 8506,
+      "newCount": 7,
+      "changedCount": 6,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2302061045419490127WHBDM_Tilsynsobjekt",
+        "orgnummer": "930656895",
+        "navn": "Pincho Nation",
+        "adresse": "Skagenkaien 31, 4006, Stavanger",
+        "dato": "07012026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2609231447006260239RNGVW_Tilsynsobjekt",
+        "orgnummer": "922096503",
+        "navn": "Kanel Avdeling Råholt",
+        "adresse": "Gladbakkvegen 1, 2070, Råholt",
+        "dato": "23092026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604272056247840128RTGNS_Tilsynsobjekt",
+        "orgnummer": "937784430",
+        "navn": "Matfatet Ringsaker AS",
+        "adresse": "Brugata 8, 2380, Brumunddal",
+        "dato": "24092026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605081050555530127TKHZV_Tilsynsobjekt",
+        "orgnummer": "937293070",
+        "navn": "Dala Lunsjverket",
+        "adresse": "Øvregate 4, 2380, Brumunddal",
+        "dato": "24092026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604280342210680128YFBNT_Tilsynsobjekt",
+        "orgnummer": "936354378",
+        "navn": "67 Grill",
+        "adresse": "Thorvald Meyers gate 73, 0552, Oslo",
+        "dato": "24092026",
+        "karakter": 3,
+        "karakter1": 2,
+        "karakter2": 3,
+        "karakter3": 3,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2606292326186980128LJDHR_Tilsynsobjekt",
+        "orgnummer": "821717752",
+        "navn": "Milano Pizzeria Tromsø",
+        "adresse": "Storgata 75, 9008, Tromsø",
+        "dato": "24092026",
+        "karakter": 2,
+        "karakter1": 1,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604081054300140128USNJR_Tilsynsobjekt",
+        "orgnummer": "937086814",
+        "navn": "Olsen",
+        "adresse": "Østensjøveien 64, 0667, Oslo",
+        "dato": "24092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006090406381351190UUNPD_Tilsynsobjekt",
+        "orgnummer": "971824662",
+        "navn": "Frich’s hotel og spiseri Alvdal",
+        "adresse": "Nord-Østerdalsveien 5148, 2560, Alvdal",
+        "dato": "24092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1410060956214220386XWGOR_Tilsynsobjekt",
+        "orgnummer": "971824662",
+        "navn": "Eta Alvdal",
+        "adresse": "Nord-Østerdalsveien 5148, 2560, Alvdal",
+        "dato": "24092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1811122032102573252FDILE_Tilsynsobjekt",
+        "orgnummer": "921416008",
+        "navn": "Peppes Pizza Brumunddal",
+        "adresse": "Brugata 3, 2380, Brumunddal",
+        "dato": "24092026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1906250931195670380NEJCN_Tilsynsobjekt",
+        "orgnummer": "916701721",
+        "navn": "Handwerk Botaniske",
+        "adresse": "Sars' gate 1, 0562, Oslo",
+        "dato": "24092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2308031346139110127GJPIS_Tilsynsobjekt",
+        "orgnummer": "919836776",
+        "navn": "Mods Thaimat",
+        "adresse": "Torget 8, 9325, Bardufoss",
+        "dato": "23092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2404171032434442025XBGXS_Tilsynsobjekt",
+        "orgnummer": "932300605",
+        "navn": "Vertshuset Konow",
+        "adresse": "Sundts veg 55, 5221, Nesttun",
+        "dato": "24092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1506191332087772024CEFPA_Tilsynsobjekt",
+      "Z1911250941320262025DGQYT_Tilsynsobjekt",
+      "Z2404032013170300128QVUBV_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-09-24T10:49:48.240Z",
     "previousDownload": "2026-09-23T10:32:05.694Z",
     "summary": {
