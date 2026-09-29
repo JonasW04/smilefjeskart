@@ -1,5 +1,54 @@
 [
   {
+    "generatedAt": "2026-09-29T11:52:49.545Z",
+    "previousDownload": "2026-09-28T12:28:48.224Z",
+    "summary": {
+      "previousTotal": 8507,
+      "currentTotal": 8500,
+      "newCount": 0,
+      "changedCount": 2,
+      "removedCount": 7
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z2304260730207052025QLYWZ_Tilsynsobjekt",
+        "orgnummer": "925276758",
+        "navn": "Kanelsnurren Sandnes",
+        "adresse": "Langgata 43, 4306, Sandnes",
+        "dato": "28092026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2208291326391370128HOTRB_Tilsynsobjekt",
+        "orgnummer": "923051597",
+        "navn": "Angry Bite",
+        "adresse": "Nygaten 6, 5017, Bergen",
+        "dato": "28092026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1101211633447131086WAJXK_Tilsynsobjekt",
+      "Z1006090601116061190OJKYZ_Tilsynsobjekt",
+      "Z1901030810177202024PEAXJ_Tilsynsobjekt",
+      "Z2006151555593270128SJFQX_Tilsynsobjekt",
+      "Z2311221308075710127UVNFU_Tilsynsobjekt",
+      "Z2406141324477841020UBMLE_Tilsynsobjekt",
+      "Z2104231621328690127GVQZT_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-09-28T12:28:48.224Z",
     "previousDownload": "2026-09-27T11:06:20.015Z",
     "summary": {
