@@ -56,9 +56,6 @@ export const metadata: Metadata = {
     description:
       "Søk og utforsk Mattilsynets smilefjeskontroller på et interaktivt kart. Se hvilke restauranter, kafeer og spisesteder i Norge som har fått smil, strek eller sur munn.",
   },
-  alternates: {
-    canonical: "https://smilefjeskartet.no",
-  },
   robots: {
     index: true,
     follow: true,
