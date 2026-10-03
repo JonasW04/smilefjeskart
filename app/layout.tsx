@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
 import VercelAnalytics from "./analytics";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
+  weight: ["600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -79,7 +80,7 @@ export default function RootLayout({
   return (
     <html lang="nb">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${figtree.variable} ${bricolage.variable} antialiased`}
       >
         <script
           type="application/ld+json"
@@ -118,49 +119,6 @@ export default function RootLayout({
               description:
                 "Interaktivt kart over Mattilsynets smilefjeskontroller for restauranter og spisesteder i Norge.",
               inLanguage: "nb",
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: [
-                {
-                  "@type": "Question",
-                  name: "Hva er smilefjesordningen til Mattilsynet?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Smilefjesordningen er Mattilsynets ordning for å vise resultater fra hygienekontroller av serveringssteder i Norge. Etter et tilsyn får stedet et smilefjes (bra), strekmunn (må forbedres) eller sur munn (alvorlige avvik).",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Hva betyr smil, strek og sur munn på Smilefjeskartet?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Smil (grønt) betyr at stedet har bestått kontrollen uten vesentlige anmerkninger. Strek (gult) betyr at det er funnet brudd som krever oppfølging. Sur munn (rødt) betyr at det er funnet alvorlige brudd på regelverket.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Hvor kommer dataene på Smilefjeskartet fra?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Dataene hentes fra Mattilsynets offisielle smilefjesdatasett som er offentlig tilgjengelig under NLOD 2.0-lisensen. Kartet oppdateres jevnlig med de nyeste kontrollresultatene.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Kan jeg søke etter en bestemt restaurant på Smilefjeskartet?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Ja, du kan søke etter restauranter, kafeer og spisesteder ved navn, adresse eller organisasjonsnummer i søkefeltet øverst på kartet.",
-                  },
-                },
-              ],
             }),
           }}
         />

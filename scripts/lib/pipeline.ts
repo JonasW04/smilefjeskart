@@ -6,6 +6,7 @@ import Papa from "papaparse";
 import { kategoriForSted, kjedeFraNavn, type Kategori } from "../../lib/classify";
 import { fylkeFraKommunenr } from "../../lib/geo";
 import { totalKarakter } from "../../lib/smile";
+import { sisteTilsyn } from "../../lib/stats";
 import { slugify, titleCase } from "../../lib/text";
 import type { KartData, KartRad, Sted, Tilsyn } from "../../lib/types";
 
@@ -189,10 +190,6 @@ export function assignSlugs(steder: Sted[]): void {
 function round(n: number, d: number): number {
   const f = 10 ** d;
   return Math.round(n * f) / f;
-}
-
-export function sisteTilsyn(s: Sted): Tilsyn {
-  return s.tilsyn[s.tilsyn.length - 1];
 }
 
 export function toKartData(steder: Sted[], kategorier: Kategori[], generert: string): KartData {

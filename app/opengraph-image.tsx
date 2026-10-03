@@ -1,77 +1,26 @@
 import { ImageResponse } from "next/og";
+import { DISPLAY, OG_SIZE, OgBrand, OgFrame, ogOptions, smileyImg } from "@/components/og";
 
-export const runtime = "edge";
-
-export const alt =
-  "Smilefjeskartet – Mattilsynets smilefjeskontroller på kart";
-export const size = { width: 1200, height: 630 };
+export const alt = "Smilefjeskartet – Mattilsynets smilefjeskontroller på kart";
+export const size = OG_SIZE;
 export const contentType = "image/png";
 
 export default function OgImage() {
   return new ImageResponse(
     (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          height: "100%",
-          background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
-          color: "#fff",
-          fontFamily: "system-ui, sans-serif",
-          padding: "60px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            gap: "24px",
-            marginBottom: "40px",
-            fontSize: "80px",
-          }}
-        >
-          <span>😊</span>
-          <span>😐</span>
-          <span>☹️</span>
+      <OgFrame kind="smil">
+        <div style={{ display: "flex", flexDirection: "column", gap: 24, flex: 1 }}>
+          <div style={{ display: "flex", gap: 16 }}>
+            <div style={{ display: "flex", transform: "rotate(-8deg)" }}>{smileyImg("smil", 130)}</div>
+            <div style={{ display: "flex", transform: "rotate(5deg)" }}>{smileyImg("strek", 130)}</div>
+            <div style={{ display: "flex", transform: "rotate(-4deg)" }}>{smileyImg("sur", 130)}</div>
+          </div>
+          <div style={{ display: "flex", fontSize: 84, fontFamily: DISPLAY, lineHeight: 1, letterSpacing: -2 }}>Hvor rent er kjøkkenet?</div>
+          <div style={{ display: "flex", fontSize: 34, opacity: 0.75 }}>Alle Mattilsynets smilefjestilsyn siden 2016 – på kart.</div>
+          <OgBrand />
         </div>
-        <h1
-          style={{
-            fontSize: "64px",
-            fontWeight: 800,
-            margin: 0,
-            textAlign: "center",
-            lineHeight: 1.1,
-          }}
-        >
-          Smilefjeskartet
-        </h1>
-        <p
-          style={{
-            fontSize: "28px",
-            opacity: 0.85,
-            textAlign: "center",
-            marginTop: "20px",
-            maxWidth: "800px",
-            lineHeight: 1.4,
-          }}
-        >
-          Se Mattilsynets smilefjeskontroller for restauranter og spisesteder i
-          Norge på et interaktivt kart
-        </p>
-        <div
-          style={{
-            display: "flex",
-            marginTop: "40px",
-            fontSize: "18px",
-            opacity: 0.6,
-          }}
-        >
-          smilefjeskartet.no
-        </div>
-      </div>
+      </OgFrame>
     ),
-    { ...size },
+    ogOptions(),
   );
 }

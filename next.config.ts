@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Serversider leser generated/steder.json fra disk; sørg for at fila følger med i deployen.
+  outputFileTracingIncludes: {
+    "/**": ["./generated/steder.json", "./assets/fonts/*.ttf"],
+  },
   async headers() {
     return [
       {

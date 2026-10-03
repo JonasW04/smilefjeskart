@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type * as GeoJSON from "geojson";
 import { KATEGORI_NAVN, type Kategori } from "../lib/classify";
+import { sisteTilsyn } from "../lib/stats";
 import { titleCase } from "../lib/text";
 import type { Datasett, Sted } from "../lib/types";
 import {
@@ -17,7 +18,6 @@ import {
   buildSteder,
   isoFromDdmmyyyy,
   parseCsv,
-  sisteTilsyn,
   toKartData,
   type Kommune,
   type Koordinat,
