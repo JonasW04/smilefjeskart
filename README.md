@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smilefjeskartet
 
-## Getting Started
+[smilefjeskartet.no](https://smilefjeskartet.no) viser Mattilsynets smilefjestilsyn på kart, med full historikk per sted, analyse for kommuner/fylker/kjeder og statistiske anslag i Spåkula. E-postvarsling er valgfritt og krever eget oppsett.
 
-First, run the development server:
+## Kom i gang
 
-```bash
+Bruk Node.js 22, som i GitHub Actions:
+
+```sh
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Åpne [localhost:3000](http://localhost:3000). De genererte datafilene er sjekket inn, så kart, analyse og Spåkula fungerer uten API-nøkler. Grunnkartet krever tilgang til OpenFreeMap. Next.js laster ned Google-fontene under bygging.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+npm test
+npm run lint
+npm audit --omit=dev
+npx tsc --noEmit
+npm run build
+npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+CI kjører tester, lint, typesjekk, produksjonsaudit og produksjonsbygg for pull requests og endringer på main. Redis installeres i CI slik at lagringstestene kjører de ekte Lua-skriptene. Lokalt kan de kjøres med `VARSLING_TEST_REDIS=1 npm test` når `redis-server` og `redis-cli` er installert. Lokale arbeidskopier i `.claude/` holdes utenfor lint og typesjekk.
 
-## Learn More
+## Oppdatere data
 
-To learn more about Next.js, take a look at the following resources:
+Kjør i denne rekkefølgen:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+npm run build:data
+npm run build:prediksjon
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`build:data` laster ned Mattilsynets CSV, slår opp kommune/fylke med Brings postnummerregister og geokoder adresser med Kartverket. Første kjøring kan ta tid; koordinater lagres i den lokale cachen `data/geocode-cache.json`. Ugyldig eller utilgjengelig kommuneregister stopper jobben før eksisterende datafiler overskrives.
 
-## Deploy on Vercel
+- `generated/steder.json`: steder og full tilsynshistorikk, leses på serveren.
+- `public/data/kart.json`: kompakt kartdata til nettleseren.
+- `generated/prediksjon.json`: modellrapporter og anslag fra `build:prediksjon`.
+- `public/tilsyn.geojson`, `public/tilsyn-diff.json`, `public/tilsyn-meta.json`: beholdte dataformater for bakoverkompatibilitet.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Workflowen [Update tilsyndata](.github/workflows/update-tilsyndata.yml) kjører hver dag kl. 06:00 UTC og kan startes manuelt. Den publiserer oppdaterte tilsynsdata selv om modelltreningen feiler; Spåkula viser datoen for datagrunnlaget slik at eldre anslag kan gjenkjennes.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## E-postvarsling
+
+Se [oppsett og drift av varsling](docs/varsling.md) for Upstash Redis, Resend, domeneverifisering og miljøvariabler i Vercel/GitHub. Funksjonen er av uten konfigurasjon; resten av nettstedet fungerer som vanlig.
+
+For lokal testing brukes `.env.local` med variablene i veiledningen og `NEXT_PUBLIC_SITE_URL=http://localhost:3000`. Bruk egen testdatabase og testavsender.
+
+```sh
+npm run varsling:admin -- forhandsvis
+npm run varsling:admin -- status
+npm run send:varsler
+```
+
+`forhandsvis` lager e-posteksempler uten sending eller API-nøkler. `status` krever konfigurasjon. `send:varsler` kan sende ekte e-post når nøklene er satt; første kjøring registrerer eksisterende tilsyn uten å sende gamle resultater.
+
+## Hvor koden ligger
+
+- `app/` og `components/`: Next.js-ruter og brukergrensesnitt.
+- `lib/kart.ts`: søk, filtre, kartdata og URL-tilstand.
+- `lib/analyse.ts` og `lib/server/omrader.ts`: analyse, aggregering og områder.
+- `lib/prediksjon/`: modelltrening, tidsserier og evaluering.
+- `lib/varsling/`: abonnementer, e-post og utsending.
+- `scripts/`: databygging og driftskommandoer.
+- `__tests__/`: Vitest-regresjonstester.
+
+Analysen sammenligner ordinære tilsyn og holder oppfølging utenfor, fordi resultatene etter oppfølging ellers gjør sammenligningen misvisende. Kategori og kjede gjettes fra stedsnavn; kommune utledes fra postnummer. Se [Om tjenesten](https://smilefjeskartet.no/om) og forklaringene på analysen for begrensninger i datagrunnlaget.

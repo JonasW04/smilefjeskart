@@ -27,9 +27,11 @@ export default function SiteFooter() {
             ) · Adresser: Kartverket · Kart: OpenStreetMap
           </p>
         </div>
-        <ul className="flex gap-4 font-semibold sm:flex-col sm:gap-1 sm:text-right">
+        <ul className="flex flex-wrap gap-4 font-semibold sm:flex-col sm:gap-1 sm:text-right">
           <li><Link className="link" href="/">Kart</Link></li>
           <li><Link className="link" href="/analyse">Analyse</Link></li>
+          <li><Link className="link" href="/prediksjon">Spåkula</Link></li>
+          <li><Link className="link" href="/varsling">Varsling</Link></li>
           <li><Link className="link" href="/om">Om tjenesten</Link></li>
         </ul>
       </div>

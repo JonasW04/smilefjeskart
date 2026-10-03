@@ -6,13 +6,15 @@ import { usePathname } from "next/navigation";
 export const NAV = [
   { href: "/", label: "Kart", emoji: "🗺️" },
   { href: "/analyse", label: "Analyse", emoji: "📊" },
+  { href: "/prediksjon", label: "Spåkula", emoji: "🔮" },
+  { href: "/varsling", label: "Varsling", emoji: "🔔" },
   { href: "/om", label: "Om", emoji: "💡" },
 ] as const;
 
 export default function NavLinks() {
   const path = usePathname();
   return (
-    <ul className="flex items-center gap-1.5 sm:gap-2">
+    <ul className="flex flex-wrap items-center gap-1.5 sm:gap-2">
       {NAV.map((n) => {
         const active = n.href === "/" ? path === "/" : path.startsWith(n.href);
         return (

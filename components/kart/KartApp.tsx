@@ -1,6 +1,7 @@
 "use client";
 
-import maplibregl, { type GeoJSONSource } from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
+import type { GeoJSONSource } from "maplibre-gl";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Smiley from "@/components/Smiley";
 import { KATEGORI_EMOJI, KATEGORI_NAVN, type Kategori } from "@/lib/classify";
@@ -66,6 +67,8 @@ export default function KartApp() {
   const [kategori, setKategori] = useState<Kategori | "alle">(start.kategori);
   const [valgt, setValgt] = useState<string | null>(start.sted);
   const [kartKlart, setKartKlart] = useState(false);
+  const [kartfeil, setKartfeil] = useState(false);
+  const [kartForsok, setKartForsok] = useState(0);
   const [visFilter, setVisFilter] = useState(false);
   const [finnerMeg, setFinnerMeg] = useState(false);
   const [melding, setMelding] = useState<string | null>(null);
@@ -155,7 +158,10 @@ export default function KartApp() {
   // ---- Kart ----
   useEffect(() => {
     if (!data || !containerRef.current || mapRef.current) return;
-    const map = new maplibregl.Map({
+    let avsluttet = false;
+    let map: maplibregl.Map;
+    try {
+      map = new maplibregl.Map({
       container: containerRef.current,
       style: morkRef.current ? STIL_URL.mork : STIL_URL.lys,
       bounds: NORGE,
@@ -164,20 +170,39 @@ export default function KartApp() {
       },
       attributionControl: { compact: true },
       maxZoom: 18.5,
-    });
+      });
+    } catch {
+      // WebGL kan være utilgjengelig selv om data og søk fungerer.
+      queueMicrotask(() => { if (!avsluttet) setKartfeil(true); });
+      return () => { avsluttet = true; };
+    }
     mapRef.current = map;
     aktivStil.current = morkRef.current;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
 
+    // En blokkert eller hengende karttjeneste skal ikke skjule søk og stedspanelet.
+    const tidsfrist = setTimeout(() => {
+      if (!avsluttet && !map.getLayer("steder-ikon")) setKartfeil(true);
+    }, 15_000);
+    map.on("error", () => {
+      if (!avsluttet && !map.getLayer("steder-ikon")) setKartfeil(true);
+    });
     map.on("style.load", async () => {
-      tilpassGrunnkart(map, morkRef.current);
-      await leggTilSmilefjes(map);
-      if (!map.getSource("steder") && geojsonRef.current) {
-        leggTilLag(map, geojsonRef.current, modusRef.current, morkRef.current);
-        settValgtFilter(map, valgtRef.current);
+      try {
+        tilpassGrunnkart(map, morkRef.current);
+        await leggTilSmilefjes(map);
+        if (avsluttet) return;
+        if (!map.getSource("steder") && geojsonRef.current) {
+          leggTilLag(map, geojsonRef.current, modusRef.current, morkRef.current);
+          settValgtFilter(map, valgtRef.current);
+        }
+        clearTimeout(tidsfrist);
+        nullstillKlynger();
+        setKartfeil(false);
+        setKartKlart(true);
+      } catch {
+        if (!avsluttet) setKartfeil(true);
       }
-      nullstillKlynger();
-      setKartKlart(true);
     });
 
     map.on("click", "steder-ikon", (e) => {
@@ -203,10 +228,15 @@ export default function KartApp() {
     map.on("render", oppdaterKlynger);
 
     return () => {
+      avsluttet = true;
+      clearTimeout(tidsfrist);
+      nullstillKlynger();
+      megMarker.current = null;
+      harFloyddStart.current = false;
       map.remove();
       mapRef.current = null;
     };
-  }, [data, nullstillKlynger, oppdaterKlynger]);
+  }, [data, kartForsok, nullstillKlynger, oppdaterKlynger]);
 
   // Bytt grunnkart når lys/mørk modus endres.
   useEffect(() => {
@@ -353,7 +383,7 @@ export default function KartApp() {
         <div ref={containerRef} className="h-full w-full" aria-label="Kart over serveringssteder" role="region" />
       </div>
 
-      {(!kartKlart || !data) && (
+      {!kartfeil && (!kartKlart || !data) && (
         <div className="absolute inset-0 z-30 grid place-items-center bg-paper">
           {lastefeil ? (
             <p className="card max-w-sm p-5 text-center font-semibold">
@@ -371,6 +401,19 @@ export default function KartApp() {
               <p className="mt-3 font-display text-lg font-extrabold">Teller smilefjes…</p>
             </div>
           )}
+        </div>
+      )}
+
+      {kartfeil && data && (
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-5 pt-32">
+          <div className="card pointer-events-auto max-w-sm space-y-3 p-5 text-center" role="alert">
+            <p className="font-semibold">Klarte ikke å laste bakgrunnskartet. Du kan fortsatt søke etter steder og se tilsynene deres.</p>
+            <button type="button" className="btn" onClick={() => {
+              setKartfeil(false);
+              setKartKlart(false);
+              setKartForsok((forsok) => forsok + 1);
+            }}>Prøv kartet igjen</button>
+          </div>
         </div>
       )}
 

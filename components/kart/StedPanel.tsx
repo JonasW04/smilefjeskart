@@ -37,12 +37,18 @@ export default function StedPanel({ slug, onLukk }: Props) {
   const d = gjeldende.data;
 
   const del = async () => {
+    // Del stedssiden: den har eget delingsbilde og mer innhold enn en kartlenke.
+    const url = `${window.location.origin}/sted/${encodeURIComponent(slug)}`;
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      if (navigator.share && window.matchMedia("(pointer: coarse)").matches) {
+        await navigator.share({ title: d?.navn ?? "Smilefjeskartet", url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
       setKopiert(true);
       setTimeout(() => setKopiert(false), 1800);
     } catch {
-      /* utklippstavle ikke tilgjengelig */
+      /* deling avbrutt eller utklippstavle ikke tilgjengelig */
     }
   };
 

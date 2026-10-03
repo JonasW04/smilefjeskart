@@ -11,23 +11,20 @@ import path from "node:path";
 import type * as GeoJSON from "geojson";
 import { KATEGORI_NAVN, type Kategori } from "../lib/classify";
 import { sisteTilsyn } from "../lib/stats";
-import { titleCase } from "../lib/text";
 import type { Datasett, Sted } from "../lib/types";
+import { lastKommuneregister } from "./lib/kommuneregister";
 import {
   buildGeocodeQuery,
   buildSteder,
   isoFromDdmmyyyy,
   parseCsv,
   toKartData,
-  type Kommune,
   type Koordinat,
   type TilsynRow,
 } from "./lib/pipeline";
 
 const CSV_URL = "https://matnyttig.mattilsynet.no/smilefjes/tilsyn.csv";
 const KARTVERKET_SOK_URL = "https://ws.geonorge.no/adresser/v1/sok";
-const KOMMUNER_URL = "https://ws.geonorge.no/kommuneinfo/v1/kommuner";
-const POSTNR_URL = "https://www.bring.no/postnummerregister-ansi.txt";
 
 const ROOT = process.cwd();
 const CACHE_DIR = path.join(ROOT, "data");
@@ -46,36 +43,6 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 // ---------------------------------------------------------------------------
 // Oppslag
 // ---------------------------------------------------------------------------
-
-async function lastKommuneregister(): Promise<(postnr: string) => Kommune | null> {
-  const navn = new Map<string, string>();
-  try {
-    const res = await fetch(KOMMUNER_URL);
-    if (res.ok) {
-      for (const k of (await res.json()) as Array<{ kommunenummer: string; kommunenavnNorsk: string }>) {
-        navn.set(k.kommunenummer, k.kommunenavnNorsk);
-      }
-    }
-  } catch (e) {
-    console.warn("Kunne ikke hente kommunenavn fra Kartverket:", e);
-  }
-
-  const register = new Map<string, Kommune>();
-  try {
-    const res = await fetch(POSTNR_URL);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = new TextDecoder("latin1").decode(await res.arrayBuffer());
-    for (const line of text.split(/\r?\n/)) {
-      const [postnr, , kommunenr, kommunenavn] = line.split("\t");
-      if (!/^\d{4}$/.test(postnr ?? "") || !/^\d{4}$/.test(kommunenr ?? "")) continue;
-      register.set(postnr, { nr: kommunenr, navn: navn.get(kommunenr) ?? titleCase(kommunenavn) });
-    }
-  } catch (e) {
-    console.warn("Kunne ikke hente postnummerregister – kommune/fylke mangler i denne kjøringen:", e);
-  }
-  console.log(`Postnummerregister: ${register.size} postnumre, ${navn.size} kommunenavn`);
-  return (postnr) => register.get(postnr) ?? null;
-}
 
 type CacheEntry = { lat: number; lon: number };
 
@@ -290,7 +257,15 @@ async function main() {
   console.log(`${rows.length} tilsyn i CSV-en`);
   if (rows.length < 1000) throw new Error("Mistenkelig få rader i CSV-en – avbryter for ikke å overskrive gode data.");
 
-  const [kommuneForPostnr, koordinatFor] = await Promise.all([lastKommuneregister(), geokodAlle(rows)]);
+  const aktuellePostnumre = new Set(rows.map((r) => (r.postnr ?? "").trim().padStart(4, "0")));
+  const kjentePostnumre = fs.existsSync(STEDER_PATH)
+    ? (JSON.parse(fs.readFileSync(STEDER_PATH, "utf8")) as Datasett).steder
+        .filter((s) => s.kommunenr !== null && aktuellePostnumre.has(s.postnr))
+        .map((s) => s.postnr)
+    : [];
+  // Valider registeret før geokoding og skriving, slik at en kildefeil aldri sletter kommune/fylke.
+  const kommuneForPostnr = await lastKommuneregister(kjentePostnumre);
+  const koordinatFor = await geokodAlle(rows);
   const steder = buildSteder(rows, { kommuneForPostnr, koordinatFor });
 
   const now = new Date().toISOString();

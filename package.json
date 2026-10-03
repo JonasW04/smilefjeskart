@@ -9,12 +9,14 @@
     "lint": "eslint",
     "build:data": "tsx scripts/build-data.ts",
     "build:prediksjon": "tsx scripts/build-prediksjon.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "send:varsler": "tsx scripts/send-varsler.ts",
+    "varsling:admin": "tsx scripts/varsling-admin.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
-    "maplibre-gl": "^5.15.0",
-    "next": "16.1.1",
+    "maplibre-gl": "6.4.1",
+    "next": "16.3.8",
     "papaparse": "^5.5.3",
     "react": "19.2.3",
     "react-dom": "19.2.3"
@@ -27,7 +29,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.1.1",
+    "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",

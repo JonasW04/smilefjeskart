@@ -9,6 +9,11 @@ on:
 permissions:
   contents: write
 
+# Daglige og manuelt startede kjøringer deler data/utboks og må fullføres i rekkefølge.
+concurrency:
+  group: update-tilsyndata
+  cancel-in-progress: false
+
 jobs:
   update-data:
     runs-on: ubuntu-latest
@@ -55,3 +60,16 @@ jobs:
             git commit -m "chore: update tilsyndata $(date -u +%Y-%m-%d)"
             git push
           fi
+
+      # Smilefjesvarsler på e-post (se docs/varsling.md). Hopper over uten secrets.
+      # Dataene er allerede publisert. Utsendingsfeil må likevel synes som en feilet kjøring.
+      - name: Send smilefjesvarsler
+        timeout-minutes: 30
+        env:
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          VARSLING_SECRET: ${{ secrets.VARSLING_SECRET }}
+          VARSLING_FRA: ${{ secrets.VARSLING_FRA }}
+          NEXT_PUBLIC_SITE_URL: https://smilefjeskartet.no
+        run: npm run send:varsler

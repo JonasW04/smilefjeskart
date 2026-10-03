@@ -1,7 +1,7 @@
 /**
  * MapLibre-oppsett for kartsiden: grunnkart (OpenFreeMap), smilefjesbilder, kilder, lag og klyngemarkører.
  */
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
 import type { Modus, StedProps } from "@/lib/kart";
 import { smileySvg, type SmileyKind } from "@/lib/smiley";
 
@@ -15,7 +15,7 @@ export const GRUPPE_FARGE = ["#1DB56C", "#FFB21E", "#F04E5A", "#B3AAC6"];
 
 /** Varmere farger på grunnkartet, så det passer papir-uttrykket. */
 export function tilpassGrunnkart(map: maplibregl.Map, mork: boolean) {
-  const sett = (id: string, prop: string, verdi: string) => {
+  const sett = (id: string, prop: "background-color" | "fill-color", verdi: string) => {
     if (map.getLayer(id)) map.setPaintProperty(id, prop, verdi);
   };
   if (mork) {

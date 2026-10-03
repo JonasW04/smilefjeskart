@@ -42,3 +42,6 @@ next-env.d.ts
 
 node_modules/
 /data/
+
+# forhåndsvisning av varslings-e-poster (npm run varsling:admin -- forhandsvis)
+.varsling-forhandsvisning/
