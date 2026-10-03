@@ -7,6 +7,7 @@ import StedSpaakort from "@/components/prediksjon/StedSpaakort";
 import Tidslinje from "@/components/sted/Tidslinje";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
 import { getDatasett, getSted, kjedeFordeling, kjedeSteder, kommuneFordeling, landFordeling, naermeste } from "@/lib/server/data";
+import { fylkeSlugFraNr, getOmrade, kommuneSlug } from "@/lib/server/omrader";
 import { KARAKTER_FORKLARING, SMILE_LABEL, TEMAER, isGraded, smileFromKarakter } from "@/lib/smile";
 import { kindFromKarakter } from "@/lib/smiley";
 import { andel, dagerMellom, fordeling, formatDato, ordinaereKarakterer, prosent, sisteTilsyn, stedStats, tidSiden } from "@/lib/stats";
@@ -85,6 +86,9 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
       : egen.total >= 4 && egen.smil === egen.total
         ? `Feilfri rekke: alle ${egen.total} ordinære tilsyn har gitt smil. 🏆`
         : null;
+  const kSlug = kommuneSlug(s.kommunenr);
+  const fSlug = fylkeSlugFraNr(s.fylkenr);
+  const kjedeSide = s.kjedeSlug ? getOmrade("kjede", s.kjedeSlug) : null;
   const kjedeRate = (k: Sted) => {
     const f = fordeling(ordinaereKarakterer(k));
     return f.total ? andel(f, "smil") : -1;
@@ -97,8 +101,8 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
       <nav aria-label="Brødsmuler" className="text-sm font-semibold text-ink-soft">
         <ol className="flex flex-wrap items-center gap-1.5">
           <li><Link className="hover:text-ink" href="/">Kart</Link></li>
-          {s.fylke && (<><li aria-hidden>›</li><li>{s.fylke}</li></>)}
-          {s.kommune && s.kommune !== s.fylke && (<><li aria-hidden>›</li><li>{s.kommune}</li></>)}
+          {s.fylke && (<><li aria-hidden>›</li><li>{fSlug ? <Link className="hover:text-ink" href={`/fylke/${fSlug}`}>{s.fylke}</Link> : s.fylke}</li></>)}
+          {s.kommune && s.kommune !== s.fylke && (<><li aria-hidden>›</li><li>{kSlug ? <Link className="hover:text-ink" href={`/kommune/${kSlug}`}>{s.kommune}</Link> : s.kommune}</li></>)}
           <li aria-hidden>›</li>
           <li aria-current="page" className="text-ink">{s.navn}</li>
         </ol>
@@ -117,8 +121,8 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
             </p>
             <div className="flex flex-wrap gap-2">
               <span className="chip">{KATEGORI_EMOJI[s.kategori]} {KATEGORI_NAVN[s.kategori]}</span>
-              {s.kjede && <span className="chip">🔗 {s.kjede}</span>}
-              {s.kommune && <span className="chip">📍 {s.kommune}</span>}
+              {s.kjede && (kjedeSide ? <Link className="chip" href={`/kjede/${kjedeSide.slug}`}>🔗 {s.kjede}</Link> : <span className="chip">🔗 {s.kjede}</span>)}
+              {s.kommune && (kSlug ? <Link className="chip" href={`/kommune/${kSlug}`}>📍 {s.kommune}</Link> : <span className="chip">📍 {s.kommune}</span>)}
               {s.orgnr && (
                 <a className="chip" href={`https://virksomhet.brreg.no/oppslag/enheter/${s.orgnr}`} target="_blank" rel="noopener noreferrer">
                   🏢 Org.nr {s.orgnr}
@@ -257,7 +261,9 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
 
           {kjede.length > 0 && (
             <section className="card p-5" aria-labelledby="kjede-tittel">
-              <h2 id="kjede-tittel" className="font-display text-xl font-extrabold">Resten av {s.kjede}</h2>
+              <h2 id="kjede-tittel" className="font-display text-xl font-extrabold">
+                Resten av {kjedeSide ? <Link className="hover:text-accent hover:underline" href={`/kjede/${kjedeSide.slug}`}>{s.kjede}</Link> : s.kjede}
+              </h2>
               <p className="mt-1 text-sm text-ink-soft">
                 {kjede.length} andre steder. Sortert etter andel ordinære tilsyn med smil.
               </p>
@@ -270,6 +276,11 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
                     <StedLenke key={k.id} sted={k} meta={rate >= 0 ? prosent(rate) : "–"} />
                   ))}
               </ul>
+              {kjedeSide && (
+                <Link className="link mt-3 inline-block text-sm" href={`/kjede/${kjedeSide.slug}`}>
+                  Se alle {kjedeSide.steder.length} steder og utviklingen →
+                </Link>
+              )}
             </section>
           )}
         </aside>
