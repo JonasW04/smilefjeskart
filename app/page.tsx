@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import maplibregl, { GeoJSONSource } from "maplibre-gl";
 import Link from "next/link";
 import Legend from "./legend";
+import { escapeHtml } from "@/lib/text";
 
 // Data fra GeoJSON. Vi støtter både:
 /// - "karakter" (tidligere beregnet)
@@ -417,9 +418,9 @@ export default function Home() {
         new maplibregl.Popup({ offset: 18 })
           .setLngLat(coords)
           .setHTML(
-            `<strong>${p.navn}</strong><br/>${p.adresse}<br/>Dato: ${formatDato(
+            `<strong>${escapeHtml(p.navn)}</strong><br/>${escapeHtml(p.adresse)}<br/>Dato: ${escapeHtml(formatDato(
               p.dato
-            )}<br/><br/><strong>Smilefjeskarakter:</strong> ${score}<br/>${karakterLabel(score)}`
+            ))}<br/><br/><strong>Smilefjeskarakter:</strong> ${score}<br/>${karakterLabel(score)}`
           )
           .addTo(map);
 
@@ -546,9 +547,9 @@ export default function Home() {
     new maplibregl.Popup({ offset: 18 })
       .setLngLat(hit.coords)
       .setHTML(
-        `<strong>${hit.navn}</strong><br/>${hit.adresse}<br/>Dato: ${formatDato(
+        `<strong>${escapeHtml(hit.navn)}</strong><br/>${escapeHtml(hit.adresse)}<br/>Dato: ${escapeHtml(formatDato(
           hit.dato
-        )}<br/><br/><strong>Smilefjeskarakter:</strong> ${hit.smileScore}<br/>${karakterLabel(hit.smileScore)}`
+        ))}<br/><br/><strong>Smilefjeskarakter:</strong> ${hit.smileScore}<br/>${karakterLabel(hit.smileScore)}`
       )
       .addTo(map);
   };
