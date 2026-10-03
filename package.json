@@ -9,7 +9,9 @@
     "lint": "eslint",
     "build:data": "tsx scripts/build-data.ts",
     "build:prediksjon": "tsx scripts/build-prediksjon.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "send:varsler": "tsx scripts/send-varsler.ts",
+    "varsling:admin": "tsx scripts/varsling-admin.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
