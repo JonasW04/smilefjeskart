@@ -233,6 +233,7 @@ export default function OmradeSide({ o }: { o: Omrade }) {
               etikett: String(r.aar),
               kort: `’${String(r.aar).slice(2)}`,
               dempet: r.delvis || r.ordinaer.total < LITE_AAR,
+              delvis: r.delvis,
               deler: [
                 { verdi: andel(r.ordinaer, "strek"), fyll: "fill-strek" },
                 { verdi: andel(r.ordinaer, "sur"), fyll: "fill-sur" },

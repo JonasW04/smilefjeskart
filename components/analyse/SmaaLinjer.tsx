@@ -11,7 +11,7 @@ type Props = {
   /** Indeks for punkter som er usikre (f.eks. et år som ikke er ferdig). Tegnes som hul ring. */
   dempet?: number[];
   /** Ekstra tooltip-linje per x, f.eks. antall tilsyn. */
-  tipsEkstra?: (i: number) => string;
+  tipsEkstra?: (i: number, serie: number) => string;
 };
 
 const BREDDER = { smal: 300, bred: 360 } as const;
@@ -141,7 +141,7 @@ function Panel({
           width={band}
           height={plotH}
           fill="transparent"
-          data-tip={`${format(serie.verdier[i])}|${serie.navn}, ${e}${dempet.includes(i) ? " (hittil)" : ""}${tipsEkstra ? `|${tipsEkstra(i)}` : ""}`}
+          data-tip={`${format(serie.verdier[i])}|${serie.navn}, ${e}${dempet.includes(i) ? " (hittil)" : ""}${tipsEkstra ? `|${tipsEkstra(i, si)}` : ""}`}
         />
       ))}
     </svg>
