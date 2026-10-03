@@ -117,6 +117,9 @@ describe("buildSteder", () => {
     expect(a[KART.DATO]).toBe(20260114);
     expect(a[KART.ANTALL]).toBe(3);
     expect(a[KART.VERSTE]).toBe(2);
+    expect(a[KART.VERSTE_3AAR]).toBe(2); // strekmunn i 2025 er innenfor 3 år
+    const d = kart.steder.find((r) => r[KART.SLUG] === "pizza-palace-bergen")!;
+    expect(d[KART.VERSTE_3AAR]).toBe(0); // ingen tilsyn siste 3 år → siste karakter
     expect(kart.kommuner[a[KART.KOMMUNE]]).toEqual(["0301", "Oslo", "Oslo"]);
     const c = kart.steder.find((r) => r[KART.SLUG] === "pizza-palace-bergen")!;
     expect(kart.kategorier[c[KART.KATEGORI]]).toBe("pizza");
