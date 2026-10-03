@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
 import VercelAnalytics from "./analytics";
@@ -14,10 +14,17 @@ const bricolage = Bricolage_Grotesque({
   weight: ["600", "700", "800"],
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fff8ec" },
+    { media: "(prefers-color-scheme: dark)", color: "#16111f" },
+  ],
+};
+
 export const metadata: Metadata = {
-  title: "Smilefjeskartet – Se Mattilsynets Smilefjeskontroller på Kart",
+  title: "Smilefjeskartet – Mattilsynets smilefjestilsyn på kart",
   description:
-    "Søk og utforsk Mattilsynets smilefjeskontroller på et interaktivt kart. Se hvilke restauranter, kafeer og spisesteder i Norge som har fått smil, strek eller sur munn – oppdatert med offentlige data fra Mattilsynet.",
+    "Alle Mattilsynets smilefjestilsyn siden 2016 på ett kart. Se hvordan restauranter, kafeer og spisesteder i Norge har gjort det over tid – smil, strekmunn eller sur munn. Oppdateres hver morgen.",
   keywords: [
     "smilefjes",
     "mattilsynet",
@@ -42,7 +49,7 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://smilefjeskartet.no"),
   openGraph: {
-    title: "Smilefjeskartet – Se Mattilsynets Smilefjeskontroller på Kart",
+    title: "Smilefjeskartet – Mattilsynets smilefjestilsyn på kart",
     description:
       "Søk og utforsk Mattilsynets smilefjeskontroller på et interaktivt kart. Se hvilke restauranter, kafeer og spisesteder i Norge som har fått smil, strek eller sur munn.",
     url: "https://smilefjeskartet.no",
@@ -52,7 +59,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Smilefjeskartet – Se Mattilsynets Smilefjeskontroller på Kart",
+    title: "Smilefjeskartet – Mattilsynets smilefjestilsyn på kart",
     description:
       "Søk og utforsk Mattilsynets smilefjeskontroller på et interaktivt kart. Se hvilke restauranter, kafeer og spisesteder i Norge som har fått smil, strek eller sur munn.",
   },
@@ -88,7 +95,7 @@ export default function RootLayout({
               name: "Smilefjeskartet",
               url: "https://smilefjeskartet.no",
               description:
-                "Søk og utforsk Mattilsynets smilefjeskontroller på et interaktivt kart. Se hvilke restauranter, kafeer og spisesteder i Norge som har fått smil, strek eller sur munn – oppdatert med offentlige data fra Mattilsynet.",
+                "Alle Mattilsynets smilefjestilsyn siden 2016 på ett kart. Se hvordan restauranter, kafeer og spisesteder i Norge har gjort det over tid – smil, strekmunn eller sur munn. Oppdateres hver morgen.",
               applicationCategory: "UtilitiesApplication",
               operatingSystem: "All",
               inLanguage: "nb",
@@ -133,35 +140,6 @@ export default function RootLayout({
             }),
           }}
         />
-        <noscript>
-          <div style={{ padding: "2rem", fontFamily: "system-ui, sans-serif", maxWidth: "800px", margin: "0 auto" }}>
-            <h1>Smilefjeskartet – Mattilsynets Smilefjeskontroller på Kart</h1>
-            <p>
-              Smilefjeskartet viser resultatene fra Mattilsynets restaurantkontroller i Norge på et
-              interaktivt kart. Søk blant tusenvis av restauranter, kafeer og spisesteder for å se om
-              de har fått smil, strekmunn eller sur munn etter hygienekontroll.
-            </p>
-            <h2>Hva er smilefjesordningen?</h2>
-            <p>
-              Smilefjesordningen er Mattilsynets system for å vise resultater fra tilsyn hos
-              serveringssteder. Etter hvert tilsyn gis det en karakter som vises som et smilefjes:
-            </p>
-            <ul>
-              <li><strong>Smil (grønt)</strong> – Ingen eller mindre brudd på regelverket.</li>
-              <li><strong>Strekmunn (gult)</strong> – Brudd som krever oppfølging.</li>
-              <li><strong>Sur munn (rødt)</strong> – Alvorlige brudd på regelverket.</li>
-            </ul>
-            <h2>Om dataene</h2>
-            <p>
-              Dataene på dette kartet hentes fra Mattilsynets offisielle smilefjesdatasett, som er
-              offentlig tilgjengelig under NLOD 2.0-lisensen. Denne nettsiden er ikke tilknyttet
-              Mattilsynet.
-            </p>
-            <p>
-              Aktiver JavaScript for å bruke det interaktive kartet med søk og filtrering.
-            </p>
-          </div>
-        </noscript>
         {children}
         <VercelAnalytics />
       </body>
