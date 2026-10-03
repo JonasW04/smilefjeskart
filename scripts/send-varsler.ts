@@ -16,6 +16,9 @@ import { kjorUtsending, MAKS_NYE_STANDARD } from "../lib/varsling/utsending";
 import { maskerEpost } from "../lib/varsling/validering";
 import type { Datasett } from "../lib/types";
 
+// Samme lokale oppsett som next dev og varsling:admin; miljøet i Actions vinner.
+if (fs.existsSync(".env.local") && typeof process.loadEnvFile === "function") process.loadEnvFile(".env.local");
+
 const iActions = process.env.GITHUB_ACTIONS === "true";
 
 function logg(m: string) {
