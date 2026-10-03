@@ -33,6 +33,9 @@ jobs:
           key: geocode-cache-${{ github.run_id }}
           restore-keys: geocode-cache-
 
+      - name: Test pipeline
+        run: npx vitest run __tests__/pipeline.test.ts __tests__/lib.test.ts
+
       - name: Build tilsyndata
         run: npm run build:data
 
@@ -40,7 +43,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/tilsyn.geojson public/tilsyn-diff.json public/tilsyn-meta.json
+          git add generated/steder.json public/data/kart.json public/tilsyn.geojson public/tilsyn-diff.json public/tilsyn-meta.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
