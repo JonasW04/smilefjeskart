@@ -17,6 +17,8 @@ export type Kolonne = {
   tips: string;
   /** Tegnes blekere (f.eks. et år som ikke er ferdig). */
   dempet?: boolean;
+  /** Året er ikke ferdig; får «hittil» under årstallet. Små utvalg dempes uten denne merknaden. */
+  delvis?: boolean;
   /** Liten merknad over kolonnen, f.eks. «korona». */
   merke?: string;
 };
@@ -75,7 +77,7 @@ function Tegning({ kolonner, format, label, referanse, minMaks = 0, bredde }: Pr
   const venstre = smal ? 34 : 44;
   const hoyre = 6;
   const topp = 18;
-  const bunn = kolonner.some((k) => k.dempet) ? 34 : 22;
+  const bunn = kolonner.some((k) => k.delvis) ? 34 : 22;
   const plotB = bredde - venstre - hoyre;
   const plotH = H - topp - bunn;
 
@@ -162,7 +164,7 @@ function Tegning({ kolonner, format, label, referanse, minMaks = 0, bredde }: Pr
         (kolonner.length - 1 - i) % hver === 0 ? (
           <text key={k.etikett} x={cx(i)} y={topp + plotH + 15} textAnchor="middle" className="fill-ink-soft text-[11px] tabular-nums">
             {smal && k.kort ? k.kort : k.etikett}
-            {k.dempet && (
+            {k.delvis && (
               <tspan x={cx(i)} dy="1.15em" className="text-[10px] italic">
                 hittil
               </tspan>

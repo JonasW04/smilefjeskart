@@ -253,6 +253,7 @@ export default function AnalyseSide() {
                 etikett: String(r.aar),
                 kort: `’${String(r.aar).slice(2)}`,
                 dempet: r.delvis,
+                delvis: r.delvis,
                 deler: [
                   { verdi: andel(r.ordinaer, "strek"), fyll: "fill-strek" },
                   { verdi: andel(r.ordinaer, "sur"), fyll: "fill-sur" },
@@ -294,6 +295,7 @@ export default function AnalyseSide() {
                 etikett: String(r.aar),
                 kort: `’${String(r.aar).slice(2)}`,
                 dempet: r.delvis,
+                delvis: r.delvis,
                 merke: r.aar === 2020 && koronaFall !== null ? "korona" : undefined,
                 deler: [{ verdi: r.alle, fyll: "fill-accent" }],
                 tips: `${tall(r.alle)} tilsyn|${r.aar}${r.delvis ? " (hittil)" : ""}|${tall(r.oppfolging)} av dem oppfølging`,
@@ -381,7 +383,7 @@ export default function AnalyseSide() {
           serier={TEMAER.map((t, i) => ({ navn: t.navn, verdier: a.temaAar.map((r) => r.andel[i]) }))}
           format={aksePst}
           dempet={iAar.delvis ? [a.temaAar.length - 1] : []}
-          tipsEkstra={(i) => `${tall(a.temaAar[i].vurdert[0])} ordinære tilsyn`}
+          tipsEkstra={(i, tema) => `${tall(a.temaAar[i].vurdert[tema])} vurderinger i ordinære tilsyn`}
         />
         <TallTabell
           tittel="Andel karakter 2–3 per tema og år"
