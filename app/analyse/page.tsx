@@ -2076,6 +2076,7 @@ export default function AnalysePage() {
           </span>
           <div style={{ display: "flex", gap: 16 }}>
             <Link href="/" style={{ color: COLORS.primary, textDecoration: "none" }}>Kart</Link>
+            <Link href="/prediction" style={{ color: COLORS.primary, textDecoration: "none" }}>Prediksjon</Link>
           </div>
         </footer>
       </div>
