@@ -9,6 +9,11 @@ on:
 permissions:
   contents: write
 
+# Daglige og manuelt startede kjøringer deler data/utboks og må fullføres i rekkefølge.
+concurrency:
+  group: update-tilsyndata
+  cancel-in-progress: false
+
 jobs:
   update-data:
     runs-on: ubuntu-latest
@@ -57,9 +62,8 @@ jobs:
           fi
 
       # Smilefjesvarsler på e-post (se docs/varsling.md). Hopper over uten secrets.
-      # continue-on-error: en feil her skal ikke stoppe resten av jobben; den vises som en annotasjon.
+      # Dataene er allerede publisert. Utsendingsfeil må likevel synes som en feilet kjøring.
       - name: Send smilefjesvarsler
-        continue-on-error: true
         timeout-minutes: 30
         env:
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}

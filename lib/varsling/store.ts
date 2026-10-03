@@ -22,7 +22,64 @@ export const NOKLER = {
   sett: `${P}sett`,
   settKlar: `${P}sett:klar`,
   utboks: `${P}utboks`,
+  sendt: (id: string) => `${P}sendt:${id}`,
 } as const;
+
+// Lua holder lesing og skriving samlet. En pipeline kan ellers aktivere to abonnementer for
+// samme adresse, eller gjenopprette et abonnement som ble slettet under bekreftelsen.
+const BEKREFT = `-- varsling:bekreft/v1
+local json = redis.call('GET', KEYS[1])
+if not json then return 'ukjent' end
+local abo = cjson.decode(json)
+if abo.status == 'aktiv' then return 'ok' end
+if (redis.call('GET', KEYS[2]) or '') ~= ARGV[3] then return 'endret' end
+if ARGV[3] ~= '' and ARGV[3] ~= ARGV[1] then
+  redis.call('DEL', KEYS[5], KEYS[6])
+  redis.call('SREM', KEYS[3], ARGV[3])
+  redis.call('HDEL', KEYS[4], ARGV[3])
+end
+abo.status = 'aktiv'
+abo.bekreftet = ARGV[2]
+redis.call('SET', KEYS[1], cjson.encode(abo))
+redis.call('SADD', KEYS[3], ARGV[1])
+redis.call('SET', KEYS[2], ARGV[1])
+return 'ok'`;
+
+const SLETT = `-- varsling:slett/v1
+local fantes = redis.call('EXISTS', KEYS[1])
+redis.call('DEL', KEYS[1], KEYS[4])
+redis.call('SREM', KEYS[2], ARGV[1])
+redis.call('HDEL', KEYS[3], ARGV[1])
+if ARGV[2] == '1' and redis.call('GET', KEYS[5]) == ARGV[1] then
+  redis.call('DEL', KEYS[5])
+end
+return fantes`;
+
+const TELL = `-- varsling:grense/v1
+local antall = redis.call('INCR', KEYS[1])
+if antall == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end
+return antall`;
+
+const LAGRE_UTBOKS = `-- varsling:utboks/v1
+local json = redis.call('GET', KEYS[1])
+if not json or cjson.decode(json).status ~= 'aktiv' then return 0 end
+redis.call('HSET', KEYS[2], ARGV[1], ARGV[2])
+return 1`;
+
+const LAGRE_KVITTERING = `-- varsling:kvittering/v1
+local json = redis.call('GET', KEYS[1])
+if not json or cjson.decode(json).status ~= 'aktiv' then return 0 end
+redis.call('SET', KEYS[2], ARGV[1])
+return 1`;
+
+/** En avmelding som skjer etter at jobben leste abonnementet, må ikke gjenopprette utboksen. */
+export async function lagreUtboksHvisAktiv(kv: Kv, id: string, json: string): Promise<boolean> {
+  return (await kv.cmd<number>("EVAL", LAGRE_UTBOKS, 2, NOKLER.abo(id), NOKLER.utboks, id, json)) === 1;
+}
+
+export async function lagreKvitteringHvisAktiv(kv: Kv, id: string, json: string): Promise<boolean> {
+  return (await kv.cmd<number>("EVAL", LAGRE_KVITTERING, 2, NOKLER.abo(id), NOKLER.sendt(id), json)) === 1;
+}
 
 export function epostHash(secret: string, epost: string): string {
   return hmacHex(secret, "epost", epost);
@@ -57,43 +114,48 @@ export async function bekreftAbonnement(kv: Kv, secret: string, id: string, naa 
   if (abo.status === "aktiv") return "ok";
 
   const hash = epostHash(secret, abo.epost);
-  const gammelId = await kv.cmd<string | null>("GET", NOKLER.epost(hash));
-  const aktiv: Abonnement = { ...abo, status: "aktiv", bekreftet: naa.toISOString() };
-  const cmds: Array<Array<string | number>> = [];
-  if (gammelId && gammelId !== id) {
-    cmds.push(["DEL", NOKLER.abo(gammelId)], ["SREM", NOKLER.aktive, gammelId], ["HDEL", NOKLER.utboks, gammelId]);
+  for (let forsok = 0; forsok < 10; forsok++) {
+    const gammelId = await kv.cmd<string | null>("GET", NOKLER.epost(hash));
+    const resultat = await kv.cmd<"ok" | "ukjent" | "endret">(
+      "EVAL", BEKREFT, 6,
+      NOKLER.abo(id), NOKLER.epost(hash), NOKLER.aktive, NOKLER.utboks,
+      NOKLER.abo(gammelId || id), NOKLER.sendt(gammelId || id),
+      id, naa.toISOString(), gammelId || "",
+    );
+    if (resultat !== "endret") return resultat;
   }
-  // SET uten EX fjerner TTL-en fra ventetiden.
-  cmds.push(["SET", NOKLER.abo(id), JSON.stringify(aktiv)], ["SADD", NOKLER.aktive, id], ["SET", NOKLER.epost(hash), id]);
-  await kv.pipeline(cmds);
-  return "ok";
+  throw new Error("Abonnementet ble endret samtidig. Prøv bekreftelsen igjen.");
 }
 
 /** Sletter alt om et abonnement. Returnerer om det fantes. Idempotent. */
 export async function slettAbonnement(kv: Kv, secret: string, id: string): Promise<boolean> {
   const abo = await hentAbonnement(kv, id);
-  const cmds: Array<Array<string | number>> = [
-    ["DEL", NOKLER.abo(id)],
-    ["SREM", NOKLER.aktive, id],
-    ["HDEL", NOKLER.utboks, id],
-  ];
-  if (abo) {
-    const hash = epostHash(secret, abo.epost);
-    const peker = await kv.cmd<string | null>("GET", NOKLER.epost(hash));
-    if (peker === id) cmds.push(["DEL", NOKLER.epost(hash)]);
-  }
-  await kv.pipeline(cmds);
-  return abo !== null;
+  const peker = abo ? NOKLER.epost(epostHash(secret, abo.epost)) : NOKLER.abo(id);
+  const fantes = await kv.cmd<number>(
+    "EVAL", SLETT, 5, NOKLER.abo(id), NOKLER.aktive, NOKLER.utboks, NOKLER.sendt(id), peker,
+    id, abo ? "1" : "0",
+  );
+  return fantes === 1;
 }
 
-/** Sletter det aktive abonnementet for en e-postadresse (for eieren/admin-skriptet). */
+/** Sletter både aktive og ventende abonnementer for en e-postadresse (kun admin-skriptet). */
 export async function slettForEpost(kv: Kv, secret: string, epost: string): Promise<boolean> {
-  const hash = epostHash(secret, epost);
-  const id = await kv.cmd<string | null>("GET", NOKLER.epost(hash));
-  if (!id) return false;
-  await slettAbonnement(kv, secret, id);
-  await kv.cmd("DEL", NOKLER.epost(hash));
-  return true;
+  let cursor = "0";
+  const ids = new Set<string>();
+  do {
+    const [neste, nokler] = await kv.cmd<[string, string[]]>("SCAN", cursor, "MATCH", `${P}abo:*`, "COUNT", 100);
+    cursor = neste;
+    for (const bit of biter(nokler, 100)) {
+      const verdier = await kv.cmd<unknown[]>("MGET", ...bit);
+      for (const verdi of verdier) {
+        const abo = parse(verdi);
+        if (abo?.epost === epost) ids.add(abo.id);
+      }
+    }
+  } while (cursor !== "0");
+  let fantes = false;
+  for (const id of ids) fantes = (await slettAbonnement(kv, secret, id)) || fantes;
+  return fantes;
 }
 
 /** Henter alle aktive abonnementer. Rydder bort id-er som peker på slettede abonnementer. */
@@ -115,12 +177,9 @@ export async function hentAktive(kv: Kv): Promise<Abonnement[]> {
 
 /**
  * Fast-vindu-teller. Returnerer true hvis grensen er overskredet.
- * SET NX EX starter vinduet, INCR teller. Fungerer på alle Redis-versjoner.
+ * Lua setter utløp og teller atomisk, også om forrige vindu utløper under forespørselen.
  */
 export async function overGrense(kv: Kv, nokkel: string, grense: number, vinduSek: number): Promise<boolean> {
-  const [, antall] = await kv.pipeline([
-    ["SET", nokkel, 0, "EX", vinduSek, "NX"],
-    ["INCR", nokkel],
-  ]);
+  const antall = await kv.cmd<number>("EVAL", TELL, 1, nokkel, vinduSek);
   return Number(antall) > grense;
 }

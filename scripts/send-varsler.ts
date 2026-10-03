@@ -54,6 +54,7 @@ async function main() {
     const rader = Object.entries(rapport).map(([k, v]) => `| ${k} | ${v} |`);
     fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, ["### Smilefjesvarsler", "", "| | |", "|---|---|", ...rader, ""].join("\n"));
   }
+  if (rapport.stoppetAvFeil) throw new Error("Utsending stoppet av en avsender- eller protokollfeil. Utboksen er bevart; se advarselen over.");
 }
 
 main().catch((err) => {

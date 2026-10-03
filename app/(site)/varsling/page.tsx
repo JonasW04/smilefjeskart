@@ -9,7 +9,7 @@ import { sokelister } from "@/lib/varsling/omrade";
 export const metadata: Metadata = {
   title: "Varsling – få nye smilefjes rett i innboksen | Smilefjeskartet",
   description:
-    "Få en e-post når Mattilsynet deler ut smil, strekmunn eller sur munn i nabolaget ditt eller kommunen din. Gratis, maks én e-post om dagen, og avmelding med ett klikk.",
+    "Få en e-post når Mattilsynet deler ut smil, strekmunn eller sur munn i nabolaget ditt eller kommunen din. Gratis, maks én e-post om dagen, og enkel avmelding.",
   alternates: { canonical: "https://smilefjeskartet.no/varsling" },
 };
 
@@ -61,7 +61,7 @@ export default function VarslingSide() {
         </h1>
         <p className="max-w-2xl text-lg text-ink-soft">
           Fikk pizzastedet på hjørnet sur munn? Velg et område, så sier vi fra når Mattilsynet har vært på besøk. Gratis,
-          uten reklame, og du melder deg av med ett klikk.
+          uten reklame, og du kan enkelt melde deg av når du vil.
         </p>
       </header>
 
@@ -98,7 +98,7 @@ export default function VarslingSide() {
             <ul className="mt-2 space-y-1 text-sm">
               <li>✓ Vi lagrer bare e-post, område og valg.</li>
               <li>✓ Ingen sporing i e-postene, ingen reklame, ingen deling.</li>
-              <li>✓ Avmelding med ett klikk sletter alt.</li>
+              <li>✓ Enkel avmelding sletter abonnementet.</li>
             </ul>
             <a className="link mt-2 inline-block text-sm" href="#personvern">
               Hele forklaringen ↓
@@ -114,7 +114,7 @@ export default function VarslingSide() {
         <dl className="grid gap-4 sm:grid-cols-2">
           <Punkt tittel="Hva vi lagrer">
             E-postadressen din, området du har valgt (et punkt avrundet til ca. 100 meter og en radius, eller kommuner), hvilke
-            smilefjes du vil høre om, og når du meldte deg på og bekreftet. Ikke navn, ikke IP-adresse, ikke noe annet.
+            smilefjes du vil høre om, når du meldte deg på og bekreftet, og siste utsending. Ikke navn eller IP-adresse i klartekst.
           </Punkt>
           <Punkt tittel="Hvorfor">
             Bare for å sende deg varslene du har bedt om. Behandlingsgrunnlaget er samtykket ditt, som du gir ved å bekrefte
@@ -136,9 +136,10 @@ export default function VarslingSide() {
             </a>
             , som fører en logg over utsendte e-poster en kort periode. E-postene har ingen sporingspiksler eller sporede lenker.
           </Punkt>
-          <Punkt tittel="Slik sletter du alt">
-            Trykk «Meld meg av» nederst i en hvilken som helst e-post fra oss. Da slettes abonnementet og e-postadressen din med
-            én gang. Mange e-postprogrammer har også en egen «Avslutt abonnement»-knapp som gjør det samme.
+          <Punkt tittel="Slik sletter du abonnementet">
+            Trykk «Meld meg av» nederst i en varslings-e-post fra oss, og bekreft avmeldingen på siden som åpnes. Da slettes
+            abonnementet og e-postadressen din fra databasen vår med én gang. Mange e-postprogrammer har også en egen
+            «Avslutt abonnement»-knapp som gjør det samme direkte.
           </Punkt>
           <Punkt tittel="Dobbel bekreftelse">
             Ingen kan melde deg på uten tilgang til innboksen din: vi sender ingen varsler før lenken i bekreftelses-e-posten

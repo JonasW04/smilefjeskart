@@ -3,6 +3,8 @@
  * MinneKv, og Resend-kall fanges opp. Tester dermed også formatet på forespørslene våre.
  */
 import { NextRequest } from "next/server";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NOKLER } from "@/lib/varsling/store";
 import { MinneKv } from "./fakes";
@@ -84,13 +86,33 @@ describe("API-flyten", () => {
     const { lagToken } = await import("@/lib/varsling/token");
     const token = lagToken(ENV.VARSLING_SECRET, { f: "avmeld", id });
     const { POST: avmeldPost, GET: avmeldGet } = await import("@/app/api/varsling/avmeld/route");
+    const url = `https://smilefjeskartet.no/api/varsling/avmeld?token=${encodeURIComponent(token)}`;
+    const scan = await avmeldGet(new NextRequest(url));
+    const bekreftSide = new URL(scan.headers.get("location")!);
+    expect(bekreftSide.pathname).toBe("/varsling/avmeldt");
+    expect(bekreftSide.searchParams.get("status")).toBe("bekreft");
+    expect(bekreftSide.searchParams.get("token")).toBe(token);
+    expect(scan.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(await kv.cmd("SCARD", NOKLER.aktive)).toBe(1); // En automatisk GET-skanning melder ikke av.
     const r2 = await avmeldPost(new NextRequest(`https://smilefjeskartet.no/api/varsling/avmeld?token=${encodeURIComponent(token)}`, { method: "POST", body: "List-Unsubscribe=One-Click" }));
     expect(r2.status).toBe(200);
+    expect(r2.headers.has("location")).toBe(false); // RFC 8058 tillater ikke redirect.
     expect(await kv.cmd("SCARD", NOKLER.aktive)).toBe(0);
     expect(await kv.cmd("GET", NOKLER.abo(id))).toBeNull();
-    // Idempotent, også via GET.
-    const r3 = await avmeldGet(new NextRequest(`https://smilefjeskartet.no/api/varsling/avmeld?token=${encodeURIComponent(token)}`));
+    // Også nettleserskjemaet er idempotent og viser en lesbar bekreftelsesside.
+    const r3 = await avmeldPost(new NextRequest(`${url}&manuell=1`, { method: "POST" }));
     expect(r3.headers.get("location")).toBe("https://smilefjeskartet.no/varsling/avmeldt?status=ok");
+  });
+
+  it("viser avmeldingsskjema uten å slette data når lenken åpnes", async () => {
+    const { default: AvmeldtSide, metadata } = await import("@/app/(site)/varsling/avmeldt/page");
+    const jsx = await AvmeldtSide({ searchParams: Promise.resolve({ status: "bekreft", token: "signert.token" }) });
+    const html = renderToStaticMarkup(createElement("div", {}, jsx));
+    expect(html).toContain("Vil du melde deg av?");
+    expect(html).toContain('method="post"');
+    expect(html).toContain('/api/varsling/avmeld?token=signert.token&amp;manuell=1');
+    expect(metadata.referrer).toBe("no-referrer");
+    expect(kv.kall).toEqual([]);
   });
 
   it("omdirigerer ugyldige og forfalskede tokens til en fast side", async () => {

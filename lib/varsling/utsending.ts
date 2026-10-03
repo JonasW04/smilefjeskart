@@ -17,8 +17,8 @@ import type { Datasett } from "../types";
 import type { VarslingConfig } from "./config";
 import { avmeldHeaders, sammendragEpost } from "./epost";
 import { biter, type Kv } from "./kv";
-import type { Mailer } from "./mailer";
-import { hentAbonnement, hentAktive, NOKLER } from "./store";
+import type { Epost, Mailer } from "./mailer";
+import { hentAbonnement, hentAktive, lagreKvitteringHvisAktiv, lagreUtboksHvisAktiv, NOKLER } from "./store";
 import { ferskeTilsyn, nokkelDato, nyeTilsyn, sorterTreff, treffFor, vinduStart } from "./tilsyn";
 import { lagToken } from "./token";
 import type { VarselTilsyn } from "./typer";
@@ -30,7 +30,15 @@ export const MAKS_FORSOK = 3;
 /** Pause mellom e-poster. Resend tillater 2 forespørsler i sekundet som standard. */
 export const PAUSE_MS = 600;
 
-export type UtboksPost = { treff: VarselTilsyn[]; forsok: number; opprettet: string };
+export type UtboksPost = {
+  treff: VarselTilsyn[];
+  forsok: number;
+  opprettet: string;
+  /** Fryses før første sending; identisk HTTP-innhold ved omforsøk. Ingen mottakeradresse her. */
+  melding?: Omit<Epost, "til">;
+  /** Nye treff etter første forsøk venter i et eget sammendrag. */
+  ventende?: VarselTilsyn[];
+};
 
 export type UtsendingDeps = {
   kv: Kv;
@@ -56,6 +64,7 @@ export type UtsendingRapport = {
   utsatt: number;
   fjernet: number;
   stoppetAvKvote: boolean;
+  stoppetAvFeil: boolean;
 };
 
 const kort = (id: string) => id.slice(0, 6);
@@ -69,9 +78,27 @@ function parsePost(json: unknown): UtboksPost | null {
   if (typeof json !== "string") return null;
   try {
     const p = JSON.parse(json) as UtboksPost;
-    return Array.isArray(p.treff) ? { treff: p.treff, forsok: Number(p.forsok) || 0, opprettet: p.opprettet } : null;
+    return Array.isArray(p.treff) ? { ...p, forsok: Number(p.forsok) || 0 } : null;
   } catch {
     return null;
+  }
+}
+
+function parseKvittering(json: unknown): { dag: string; nokkel: string } | null {
+  if (typeof json !== "string") return null;
+  try {
+    const k = JSON.parse(json);
+    return typeof k?.dag === "string" && typeof k?.nokkel === "string" ? k : null;
+  } catch {
+    return null;
+  }
+}
+
+async function avsluttPost(kv: Kv, id: string, post: UtboksPost, naa: Date) {
+  if (post.ventende?.length) {
+    await lagreUtboksHvisAktiv(kv, id, JSON.stringify({ treff: post.ventende, forsok: 0, opprettet: naa.toISOString() }));
+  } else {
+    await kv.cmd("HDEL", NOKLER.utboks, id);
   }
 }
 
@@ -99,6 +126,7 @@ export async function kjorUtsending(deps: UtsendingDeps): Promise<UtsendingRappo
     utsatt: 0,
     fjernet: 0,
     stoppetAvKvote: false,
+    stoppetAvFeil: false,
   };
 
   const iDag = datasett.generert.slice(0, 10);
@@ -135,19 +163,22 @@ export async function kjorUtsending(deps: UtsendingDeps): Promise<UtsendingRappo
 
     for (const bit of biter(nyeTreff, 100)) {
       const eksisterende = (await kv.cmd<unknown[]>("HMGET", NOKLER.utboks, ...bit.map((x) => x.abo.id))) ?? [];
-      const felter: string[] = [];
-      bit.forEach(({ abo, treff }, i) => {
+      for (let i = 0; i < bit.length; i++) {
+        const { abo, treff } = bit[i];
         const gammel = parsePost(eksisterende[i]);
-        const samlet = new Map((gammel?.treff ?? []).map((t) => [t.key, t]));
-        for (const t of treff) samlet.set(t.key, t);
+        const laast = Boolean(gammel?.melding);
+        const samlet = new Map((laast ? gammel?.ventende ?? [] : gammel?.treff ?? []).map((t) => [t.key, t]));
+        const forsokte = new Set(laast ? gammel!.treff.map((t) => t.key) : []);
+        for (const t of treff) if (!forsokte.has(t.key)) samlet.set(t.key, t);
         const post: UtboksPost = {
-          treff: sorterTreff([...samlet.values()]),
+          ...(gammel ?? {}),
+          treff: laast ? gammel!.treff : sorterTreff([...samlet.values()]),
+          ...(laast ? { ventende: sorterTreff([...samlet.values()]) } : {}),
           forsok: gammel?.forsok ?? 0,
           opprettet: gammel?.opprettet ?? naa.toISOString(),
         };
-        felter.push(abo.id, JSON.stringify(post));
-      });
-      if (felter.length > 0) await kv.cmd("HSET", NOKLER.utboks, ...felter);
+        await lagreUtboksHvisAktiv(kv, abo.id, JSON.stringify(post));
+      }
     }
     rapport.lagtIUtboks = nyeTreff.length;
     // Først nå er det trygt å merke tilsynene som sett.
@@ -165,29 +196,51 @@ export async function kjorUtsending(deps: UtsendingDeps): Promise<UtsendingRappo
   for (let i = 0; i + 1 < flat.length; i += 2) poster.push([flat[i], parsePost(flat[i + 1])]);
 
   let forsteSending = true;
-  for (const [id, post] of poster) {
+  for (const [id, lagretPost] of poster) {
+    let post = lagretPost;
     const abo = await hentAbonnement(kv, id);
     if (!post || !abo || abo.status !== "aktiv" || post.treff.length === 0) {
       await kv.cmd("HDEL", NOKLER.utboks, id);
       rapport.fjernet++;
       continue;
     }
+    const sendDag = naa.toISOString().slice(0, 10);
+    const kvittering = parseKvittering(await kv.cmd("GET", NOKLER.sendt(id)));
+    if (kvittering?.nokkel === digestNokkel(id, post.treff)) {
+      // Resend tok imot, men forrige kjøring kan ha krasjet før køposten ble fjernet.
+      await avsluttPost(kv, id, post, naa);
+      rapport.fjernet++;
+      continue;
+    }
+    if (kvittering?.dag === sendDag) {
+      rapport.utsatt++;
+      continue;
+    }
     if (!forsteSending) await sleep(pauseMs);
     forsteSending = false;
 
-    const avmeldUrl = `${config.siteUrl}/api/varsling/avmeld?token=${encodeURIComponent(lagToken(config.secret, { f: "avmeld", id }))}`;
-    const innhold = sammendragEpost({ abo, treff: post.treff, siteUrl: config.siteUrl, avmeldUrl });
-    const res = await mailer.send({
-      til: abo.epost,
-      emne: innhold.emne,
-      html: innhold.html,
-      tekst: innhold.tekst,
-      headers: avmeldHeaders(avmeldUrl),
-      idempotensNokkel: digestNokkel(id, post.treff),
-    });
+    if (!post.melding) {
+      const avmeldUrl = `${config.siteUrl}/api/varsling/avmeld?token=${encodeURIComponent(lagToken(config.secret, { f: "avmeld", id }))}`;
+      const innhold = sammendragEpost({ abo, treff: post.treff, siteUrl: config.siteUrl, avmeldUrl });
+      post = { ...post, melding: {
+        fra: config.fra,
+        emne: innhold.emne,
+        html: innhold.html,
+        tekst: innhold.tekst,
+        headers: avmeldHeaders(avmeldUrl),
+        idempotensNokkel: digestNokkel(id, post.treff),
+      } };
+      // Lagre før API-kallet: krasj etter aksept må ikke endre forespørselen.
+      if (!await lagreUtboksHvisAktiv(kv, id, JSON.stringify(post))) {
+        rapport.fjernet++;
+        continue;
+      }
+    }
+    const res = await mailer.send({ til: abo.epost, ...post.melding! });
 
     if (res.ok) {
-      await kv.cmd("HDEL", NOKLER.utboks, id);
+      await lagreKvitteringHvisAktiv(kv, id, JSON.stringify({ dag: sendDag, nokkel: digestNokkel(id, post.treff) }));
+      await avsluttPost(kv, id, post, naa);
       rapport.sendt++;
       continue;
     }
@@ -196,13 +249,18 @@ export async function kjorUtsending(deps: UtsendingDeps): Promise<UtsendingRappo
       advar(`E-postkvoten hos Resend er brukt opp (${res.melding}). Resten venter i utboksen til neste kjøring.`);
       break;
     }
+    if (res.stopp) {
+      rapport.stoppetAvFeil = true;
+      advar(`Sending stoppet (status ${res.status}): ${res.melding}. Utboksen beholdes til feilen er rettet.`);
+      break;
+    }
     const forsok = post.forsok + 1;
     if (res.permanent || forsok >= MAKS_FORSOK) {
-      await kv.cmd("HDEL", NOKLER.utboks, id);
+      await avsluttPost(kv, id, post, naa);
       rapport.feilet++;
       advar(`Ga opp sammendrag til abonnent ${kort(id)}… (status ${res.status}): ${res.melding}`);
     } else {
-      await kv.cmd("HSET", NOKLER.utboks, id, JSON.stringify({ ...post, forsok }));
+      await lagreUtboksHvisAktiv(kv, id, JSON.stringify({ ...post, forsok }));
       rapport.utsatt++;
       advar(`Sammendrag til abonnent ${kort(id)}… feilet (status ${res.status}), prøver igjen neste kjøring.`);
     }

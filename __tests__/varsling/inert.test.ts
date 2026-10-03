@@ -1,6 +1,5 @@
 /** Uten miljøvariabler skal alt være av, men oppføre seg pent. */
 import { execFileSync } from "node:child_process";
-import path from "node:path";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { lesVarslingConfig, PAAKREVDE_ENV, varslingAktiv } from "@/lib/varsling/config";
@@ -70,7 +69,7 @@ describe("utsendingsjobben uten konfigurasjon", () => {
   it("hopper over og avslutter med kode 0", () => {
     const env: NodeJS.ProcessEnv = { NODE_ENV: "test", PATH: process.env.PATH, HOME: process.env.HOME };
     for (const k of PAAKREVDE_ENV) env[k] = "";
-    const ut = execFileSync(path.join("node_modules", ".bin", "tsx"), ["scripts/send-varsler.ts"], { env, encoding: "utf8" });
+    const ut = execFileSync(process.execPath, ["--import", "tsx", "scripts/send-varsler.ts"], { env, encoding: "utf8" });
     expect(ut).toContain("Hopper over");
     expect(ut).toContain("UPSTASH_REDIS_REST_URL");
   }, 30_000);

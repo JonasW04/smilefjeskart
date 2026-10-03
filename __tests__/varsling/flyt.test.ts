@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { behandleAbonnement, GRENSER, SJEKK_INNBOKSEN, type AbonnerDeps } from "@/lib/varsling/abonner";
-import { bekreftAbonnement, epostHash, hentAbonnement, hentAktive, NOKLER, slettAbonnement, slettForEpost } from "@/lib/varsling/store";
+import { bekreftAbonnement, epostHash, hentAbonnement, hentAktive, NOKLER, overGrense, slettAbonnement, slettForEpost } from "@/lib/varsling/store";
+import type { Arg, Kv } from "@/lib/varsling/kv";
 import { verifiserToken } from "@/lib/varsling/token";
 import { CONFIG, FalskMailer, MinneKv, sted, tilsyn } from "./fakes";
 
@@ -25,6 +26,27 @@ beforeEach(() => {
 function tokenFra(html: string): string {
   const m = html.match(/bekreft\?token=([A-Za-z0-9_.%-]+)/);
   return decodeURIComponent(m![1]);
+}
+
+/** Holder én operasjon før den når Redis, slik to ekte HTTP-forespørsler kan overlappe. */
+function stoppEval(kv: Kv, skript: "bekreft" | "slett") {
+  let signaliser!: () => void;
+  let fortsett!: () => void;
+  let stoppet = false;
+  const naadd = new Promise<void>((r) => { signaliser = r; });
+  const vent = new Promise<void>((r) => { fortsett = r; });
+  const klient: Kv = {
+    async cmd<T>(...args: Arg[]): Promise<T> {
+      if (!stoppet && args[0] === "EVAL" && String(args[1]).startsWith(`-- varsling:${skript}/v1`)) {
+        stoppet = true;
+        signaliser();
+        await vent;
+      }
+      return kv.cmd<T>(...args);
+    },
+    pipeline: (cmds) => kv.pipeline(cmds),
+  };
+  return { klient, naadd, fortsett };
 }
 
 describe("påmelding", () => {
@@ -103,11 +125,51 @@ describe("bekreftelse og avmelding", () => {
     expect(kv.ttl(NOKLER.abo(forste))).toBeUndefined(); // aktive utløper ikke
 
     const andre = await meldPaa("kari@example.no");
+    await kv.cmd("SET", NOKLER.sendt(forste), JSON.stringify({ dag: "2026-10-04", nokkel: "sendt" }));
+    await kv.cmd("HSET", NOKLER.utboks, forste, "ventende");
     // Før bekreftelse er det gamle fortsatt aktivt.
     expect((await hentAktive(kv)).map((a) => a.id)).toEqual([forste]);
     await bekreftAbonnement(kv, CONFIG.secret, andre);
     expect((await hentAktive(kv)).map((a) => a.id)).toEqual([andre]);
     expect(await hentAbonnement(kv, forste)).toBeNull();
+    expect(await kv.cmd("GET", NOKLER.sendt(forste))).toBeNull();
+    expect(await kv.cmd("HGET", NOKLER.utboks, forste)).toBeNull();
+  });
+
+  it("lar bare ett abonnement være aktivt når to bekreftelser overlapper", async () => {
+    const ids = [await meldPaa("dobbelt@example.no"), await meldPaa("dobbelt@example.no")];
+    expect(new Set(ids).size).toBe(2);
+    await Promise.all(ids.map((id) => bekreftAbonnement(kv, CONFIG.secret, id)));
+    const aktive = await hentAktive(kv);
+    expect(aktive).toHaveLength(1);
+    expect(await kv.cmd("GET", NOKLER.epost(epostHash(CONFIG.secret, "dobbelt@example.no")))).toBe(aktive[0].id);
+    expect(await hentAbonnement(kv, ids.find((id) => id !== aktive[0].id)!)).toBeNull();
+  });
+
+  it("gjenoppretter ikke en påmelding som slettes under bekreftelsen", async () => {
+    const id = await meldPaa("slettet@example.no");
+    const pause = stoppEval(kv, "bekreft");
+    const bekreft = bekreftAbonnement(pause.klient, CONFIG.secret, id);
+    await pause.naadd;
+    expect(await slettAbonnement(kv, CONFIG.secret, id)).toBe(true);
+    pause.fortsett();
+    expect(await bekreft).toBe("ukjent");
+    expect(await hentAktive(kv)).toEqual([]);
+    expect(await hentAbonnement(kv, id)).toBeNull();
+  });
+
+  it("sletter ikke e-postpekeren til et nytt abonnement under avmelding av det gamle", async () => {
+    const gammel = await meldPaa("byttet@example.no");
+    await bekreftAbonnement(kv, CONFIG.secret, gammel);
+    const ny = await meldPaa("byttet@example.no");
+    const pause = stoppEval(kv, "slett");
+    const slett = slettAbonnement(pause.klient, CONFIG.secret, gammel);
+    await pause.naadd;
+    await bekreftAbonnement(kv, CONFIG.secret, ny);
+    pause.fortsett();
+    await slett;
+    expect(await kv.cmd("GET", NOKLER.epost(epostHash(CONFIG.secret, "byttet@example.no")))).toBe(ny);
+    expect((await hentAktive(kv)).map((a) => a.id)).toEqual([ny]);
   });
 
   it("ubekreftede abonnementer forsvinner etter 48 timer", async () => {
@@ -119,6 +181,7 @@ describe("bekreftelse og avmelding", () => {
   it("avmelding sletter alt og er idempotent", async () => {
     const id = await meldPaa("lise@example.no");
     await bekreftAbonnement(kv, CONFIG.secret, id);
+    await kv.cmd("SET", NOKLER.sendt(id), JSON.stringify({ dag: "2026-10-04", nokkel: "sendt" }));
     expect(await slettAbonnement(kv, CONFIG.secret, id)).toBe(true);
     expect(await slettAbonnement(kv, CONFIG.secret, id)).toBe(false);
     const igjen = [...kv.data.entries()].filter(([k, v]) => !k.includes(":rl:") && (typeof v.v === "string" || (v.v as Set<string>).size > 0));
@@ -131,5 +194,40 @@ describe("bekreftelse og avmelding", () => {
     await bekreftAbonnement(kv, CONFIG.secret, id);
     expect(await slettForEpost(kv, CONFIG.secret, "ole@example.no")).toBe(true);
     expect(await hentAktive(kv)).toEqual([]);
+  });
+
+  it("eieren sletter også alle ubekreftede påmeldinger uten å påvirke andre adresser", async () => {
+    const ids = [await meldPaa("venter@example.no"), await meldPaa("venter@example.no")];
+    const annen = await meldPaa("annen@example.no");
+    expect(await slettForEpost(kv, CONFIG.secret, "venter@example.no")).toBe(true);
+    for (const id of ids) expect(await hentAbonnement(kv, id)).toBeNull();
+    expect(await hentAbonnement(kv, annen)).not.toBeNull();
+    expect(await slettForEpost(kv, CONFIG.secret, "venter@example.no")).toBe(false);
+  });
+
+  it("lar en ny bekreftelse beholde e-postpekeren når admins sletting overlapper", async () => {
+    const gammel = await meldPaa("admin@example.no");
+    await bekreftAbonnement(kv, CONFIG.secret, gammel);
+    const pause = stoppEval(kv, "slett");
+    const slett = slettForEpost(pause.klient, CONFIG.secret, "admin@example.no");
+    await pause.naadd;
+    const ny = await meldPaa("admin@example.no");
+    await bekreftAbonnement(kv, CONFIG.secret, ny);
+    pause.fortsett();
+    await slett;
+    expect(await kv.cmd("GET", NOKLER.epost(epostHash(CONFIG.secret, "admin@example.no")))).toBe(ny);
+    expect((await hentAktive(kv)).map((a) => a.id)).toEqual([ny]);
+  });
+});
+
+describe("atomisk rate limiting", () => {
+  it("teller samtidige forespørsler, setter utløp og starter et nytt vindu etter utløpet", async () => {
+    const key = NOKLER.rl("test", "samtidig");
+    const svar = await Promise.all(Array.from({ length: 12 }, () => overGrense(kv, key, 10, 60)));
+    expect(svar.filter(Boolean)).toHaveLength(2);
+    expect(kv.ttl(key)).toBe(60_000);
+    kv.naa = 60_001;
+    expect(await overGrense(kv, key, 10, 60)).toBe(false);
+    expect(kv.ttl(key)).toBe(120_001);
   });
 });
