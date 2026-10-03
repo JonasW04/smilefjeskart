@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import FordelingBar from "@/components/FordelingBar";
 import Smiley from "@/components/Smiley";
+import StedSpaakort from "@/components/prediksjon/StedSpaakort";
 import Tidslinje from "@/components/sted/Tidslinje";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
 import { getDatasett, getSted, kjedeFordeling, kjedeSteder, kommuneFordeling, landFordeling, naermeste } from "@/lib/server/data";
@@ -240,6 +241,8 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
             {s.kommunenr && <FordelingBar fordeling={kommuneFordeling(s.kommunenr)} label={s.kommune ?? "Kommunen"} compact />}
             <FordelingBar fordeling={land} label="Hele Norge" compact />
           </section>
+
+          <StedSpaakort slug={s.slug} />
 
           {nabo.length > 0 && (
             <section className="card p-5" aria-labelledby="naer-tittel">
