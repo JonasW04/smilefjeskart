@@ -1,5 +1,89 @@
 [
   {
+    "generatedAt": "2026-10-03T10:53:05.596Z",
+    "previousDownload": "2026-10-02T11:39:07.498Z",
+    "summary": {
+      "previousTotal": 8481,
+      "currentTotal": 8478,
+      "newCount": 0,
+      "changedCount": 5,
+      "removedCount": 3
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006120000063901126LRLFR_Tilsynsobjekt",
+        "orgnummer": "986999221",
+        "navn": "Kvilehytta kafe",
+        "adresse": "Vanylvsvegen 3294, 6146, Åheim",
+        "dato": "02102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2411121658321141022VUOZT_Tilsynsobjekt",
+        "orgnummer": "920485723",
+        "navn": "Jimmy’s",
+        "adresse": "Leirfallsgata 6, 0550, Oslo",
+        "dato": "02102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2502181543412790127JIDJP_Tilsynsobjekt",
+        "orgnummer": "834833352",
+        "navn": "Måløy MIX",
+        "adresse": "Sjøgata 26, 6700, Måløy",
+        "dato": "01102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2512021539072520128WSVEI_Tilsynsobjekt",
+        "orgnummer": "936308031",
+        "navn": "Dow’s Take Away",
+        "adresse": "Rådhusveien 4, 9845, Tana",
+        "dato": "02102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2604280342210680128YFBNT_Tilsynsobjekt",
+        "orgnummer": "936354378",
+        "navn": "67 Grill",
+        "adresse": "Thorvald Meyers gate 73, 0552, Oslo",
+        "dato": "02102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z2206131648045680128YEYIF_Tilsynsobjekt",
+      "Z2407311245377790239YLNIL_Tilsynsobjekt",
+      "Z1703061007325543252IERBU_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-02T11:39:07.498Z",
     "previousDownload": "2026-10-01T12:08:36.843Z",
     "summary": {
