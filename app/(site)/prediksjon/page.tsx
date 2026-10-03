@@ -426,7 +426,7 @@ function Tall({ verdi, tekst }: { verdi: string; tekst: string }) {
       <dt className="sr-only">{tekst}</dt>
       <dd>
         <span className="block font-display text-3xl font-extrabold">{verdi}</span>
-        <span className="text-sm font-semibold text-ink-soft">{tekst}</span>
+        <span className="text-sm font-semibold text-ink-soft" aria-hidden>{tekst}</span>
       </dd>
     </div>
   );

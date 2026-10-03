@@ -284,7 +284,7 @@ function Fakta({ tall, tekst }: { tall: string; tekst: string }) {
       <dt className="sr-only">{tekst}</dt>
       <dd>
         <span className="block font-display text-2xl font-extrabold tabular-nums">{tall}</span>
-        <span className="text-xs font-semibold text-ink-soft">{tekst}</span>
+        <span className="text-xs font-semibold text-ink-soft" aria-hidden>{tekst}</span>
       </dd>
     </div>
   );
