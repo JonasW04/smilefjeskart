@@ -27,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE, lastModified: oppdatert, changeFrequency: "daily", priority: 1.0 },
     { url: `${SITE}/analyse`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.8 },
+    { url: `${SITE}/prediksjon`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE}/om`, changeFrequency: "monthly", priority: 0.5 },
     ...omrader("fylke", fylker(), 0.7),
     ...omrader("kommune", kommuner(), 0.7),

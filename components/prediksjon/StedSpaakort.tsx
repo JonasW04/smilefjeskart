@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getPrediksjon, getStedPrediksjon } from "@/lib/server/prediksjon";
-import { prosent } from "@/lib/stats";
+import { formatDato, prosent } from "@/lib/stats";
 
 /** Liten kortboks på stedssiden med spåkulas anslag for stedet. Viser ingenting uten data. */
 export default function StedSpaakort({ slug }: { slug: string }) {
@@ -15,9 +15,10 @@ export default function StedSpaakort({ slug }: { slug: string }) {
   return (
     <section className="card space-y-3 p-5" aria-labelledby="spaa-tittel">
       <h2 id="spaa-tittel" className="font-display text-xl font-extrabold">Spåkula 🔮</h2>
+      <p className="text-xs text-ink-soft">Beregnet {formatDato(d.generert.slice(0, 10))}, med historikk til {formatDato(d.dataDato)}.</p>
       <dl className="space-y-3 text-sm">
         <div>
-          <dt className="font-semibold">Ordinært tilsyn de neste {d.horisont} dagene</dt>
+          <dt className="font-semibold">Ordinært tilsyn innen {d.horisont} dager fra {formatDato(d.dataDato)}</dt>
           <dd className="mt-1 flex items-center gap-2">
             <span className="block h-2 flex-1 overflow-hidden rounded-full bg-accent-soft" aria-hidden>
               <span className="block h-full rounded-full bg-accent" style={{ width: `${Math.min(100, p.besok * 100)}%` }} />
