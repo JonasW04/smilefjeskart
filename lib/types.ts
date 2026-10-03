@@ -44,9 +44,10 @@ export type Datasett = {
 
 /**
  * Kompakt kartdata for nettleseren (public/data/kart.json).
- * Hver rad: [slug, navn, adresse, lng, lat, karakter, dato(yyyymmdd), kommuneIdx, kategoriIdx, antallTilsyn, verste karakter noensinne]
+ * Hver rad: [slug, navn, adresse, lng, lat, karakter, dato(yyyymmdd), kommuneIdx, kategoriIdx, antallTilsyn,
+ *            verste karakter noensinne, verste karakter siste 3 år (eller siste karakter hvis ingen tilsyn i perioden)]
  */
-export type KartRad = [string, string, string, number, number, number, number, number, number, number, number];
+export type KartRad = [string, string, string, number, number, number, number, number, number, number, number, number];
 
 export type KartData = {
   v: 1;
@@ -68,4 +69,5 @@ export const KART = {
   KATEGORI: 8,
   ANTALL: 9,
   VERSTE: 10,
+  VERSTE_3AAR: 11,
 } as const;

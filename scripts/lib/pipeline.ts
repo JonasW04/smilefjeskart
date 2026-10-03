@@ -197,6 +197,10 @@ export function toKartData(steder: Sted[], kategorier: Kategori[], generert: str
   const kommuner: KartData["kommuner"] = [];
   const katIdx = new Map(kategorier.map((k, i) => [k, i]));
 
+  const grense = new Date(generert);
+  grense.setFullYear(grense.getFullYear() - 3);
+  const grenseIso = grense.toISOString().slice(0, 10);
+
   const rader: KartRad[] = [];
   for (const s of steder) {
     if (s.lng === null || s.lat === null) continue;
@@ -211,6 +215,8 @@ export function toKartData(steder: Sted[], kategorier: Kategori[], generert: str
     }
     const siste = sisteTilsyn(s);
     const verste = Math.max(-1, ...s.tilsyn.map((t) => t.karakter));
+    const nylige = s.tilsyn.filter((t) => t.dato >= grenseIso).map((t) => t.karakter);
+    const verste3 = nylige.length > 0 ? Math.max(-1, ...nylige) : siste.karakter;
     const adresse = [s.adresse, s.poststed].filter(Boolean).join(", ");
     rader.push([
       s.slug,
@@ -224,6 +230,7 @@ export function toKartData(steder: Sted[], kategorier: Kategori[], generert: str
       katIdx.get(s.kategori) ?? -1,
       s.tilsyn.length,
       verste,
+      verste3,
     ]);
   }
   return { v: 1, generert, kommuner, kategorier, steder: rader };
