@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import FordelingBar from "@/components/FordelingBar";
 import Smiley from "@/components/Smiley";
+import StedSpaakort from "@/components/prediksjon/StedSpaakort";
 import Tidslinje from "@/components/sted/Tidslinje";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
 import { getDatasett, getSted, kjedeFordeling, kjedeSteder, kommuneFordeling, landFordeling, naermeste } from "@/lib/server/data";
@@ -241,6 +242,8 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
             <FordelingBar fordeling={land} label="Hele Norge" compact />
           </section>
 
+          <StedSpaakort slug={s.slug} />
+
           {nabo.length > 0 && (
             <section className="card p-5" aria-labelledby="naer-tittel">
               <h2 id="naer-tittel" className="font-display text-xl font-extrabold">Naboene</h2>
@@ -281,7 +284,7 @@ function Fakta({ tall, tekst }: { tall: string; tekst: string }) {
       <dt className="sr-only">{tekst}</dt>
       <dd>
         <span className="block font-display text-2xl font-extrabold tabular-nums">{tall}</span>
-        <span className="text-xs font-semibold text-ink-soft">{tekst}</span>
+        <span className="text-xs font-semibold text-ink-soft" aria-hidden>{tekst}</span>
       </dd>
     </div>
   );

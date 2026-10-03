@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "build:data": "tsx scripts/build-data.ts",
+    "build:prediksjon": "tsx scripts/build-prediksjon.ts",
     "test": "vitest run"
   },
   "dependencies": {

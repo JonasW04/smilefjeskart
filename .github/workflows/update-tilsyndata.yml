@@ -39,11 +39,16 @@ jobs:
       - name: Build tilsyndata
         run: npm run build:data
 
+      - name: Build prediksjon
+        # Feiler modellen, skal tilsyndataene likevel oppdateres (siden viser datoen for prediksjonene).
+        continue-on-error: true
+        run: npm run build:prediksjon
+
       - name: Commit and push updated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add generated/steder.json public/data/kart.json public/tilsyn.geojson public/tilsyn-diff.json public/tilsyn-meta.json
+          git add generated/steder.json generated/prediksjon.json public/data/kart.json public/tilsyn.geojson public/tilsyn-diff.json public/tilsyn-meta.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
