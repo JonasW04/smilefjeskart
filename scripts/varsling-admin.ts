@@ -94,7 +94,7 @@ async function main() {
     const c = krevConfig();
     if (kommando === "slett") {
       const fantes = await slettForEpost(upstashKv(c.redisUrl, c.redisToken), c.secret, epost);
-      console.log(fantes ? `Slettet abonnementet til ${maskerEpost(epost)}.` : `Fant ikke noe aktivt abonnement for ${maskerEpost(epost)}.`);
+      console.log(fantes ? `Slettet aktive og ventende abonnementer til ${maskerEpost(epost)}.` : `Fant ikke noe abonnement for ${maskerEpost(epost)}.`);
       return;
     }
     const { sammendrag, avmeldUrl } = eksempel(c.siteUrl, c.secret);

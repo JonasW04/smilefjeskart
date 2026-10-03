@@ -17,9 +17,11 @@ Alt er kodet ferdig, men står **av** til du har lagt inn nøklene under. Uten d
    Den aktiverer abonnementet og sender brukeren til `/varsling/bekreftet`.
 4. Hver morgen, etter at tilsynsdataene er oppdatert, kjører GitHub Actions `npm run send:varsler`.
    Den finner tilsyn som er nye siden sist, og sender **ett sammendrag per abonnent** (maks én e-post
-   om dagen).
-5. Alle e-poster har «Meld meg av»-lenke og `List-Unsubscribe`-headere (ett klikk, RFC 8058).
-   Avmelding sletter alt om abonnementet med én gang.
+   per UTC-døgn, også ved manuelle omkjøringer).
+5. Varslings-e-poster har «Meld meg av»-lenke og `List-Unsubscribe`-headere. Lenken åpner en side
+   der brukeren bekrefter avmeldingen. E-postklientens «Avslutt abonnement» melder av direkte
+   med ett klikk (RFC 8058 POST). Avmelding sletter abonnementet fra databasen med én gang.
+   Automatisk GET-skanning av lenker endrer ingenting.
 
 Én e-postadresse har ett varsel. Bekrefter man et nytt, erstatter det det gamle.
 
@@ -122,12 +124,18 @@ hopper steget over.
    npm run varsling:admin -- forhandsvis                 # skriver HTML-filer til .varsling-forhandsvisning/ (trenger ingen nøkler)
    ```
 
-5. **Avmelding**: trykk «Meld meg av» nederst i e-posten, eller «Avslutt abonnement» i Gmail.
+5. **Avmelding**: trykk «Meld meg av» nederst i e-posten og bekreft på siden som åpnes, eller bruk
+   «Avslutt abonnement» i Gmail direkte.
    `status` skal da vise én abonnent mindre.
 
 Lokalt kan du kjøre hele flyten med `npm run dev` og en `.env.local` med variablene over pluss
 `NEXT_PUBLIC_SITE_URL=http://localhost:3000`, så lenkene i e-posten peker til din maskin.
 (Bruk gjerne en egen Upstash-database til testing.)
+
+De vanlige testene kjører med falsk Redis. Har du `redis-server` og `redis-cli` installert,
+kan du også validere Lua-skriptene og samtidige operasjoner mot en isolert, midlertidig Redis:
+`VARSLING_TEST_REDIS=1 npm test -- __tests__/varsling/store-redis.test.ts`.
+Testen bruker bare en lokal Unix-socket, uten nettverksport eller varig lagring.
 
 ## Slette en abonnent
 
@@ -137,8 +145,9 @@ Brukeren kan alltid slette seg selv med lenken i e-posten. Ber noen deg om slett
 npm run varsling:admin -- slett navn@eksempel.no
 ```
 
-E-postadresser lagres bare i selve abonnementet og som HMAC i oppslagsnøkkelen, så det er dette
-skriptet (som kjenner `VARSLING_SECRET`) som finner riktig post. Vil du slette **alt** (f.eks. etter
+Skriptet finner og sletter både aktive abonnementer og alle ventende påmeldinger for adressen,
+inkludert utboks og leveringskvitteringer. `VARSLING_SECRET` brukes til å rydde opp i HMAC-oppslaget.
+Vil du slette **alt** (f.eks. etter
 å ha byttet hemmelighet), kan du slette alle nøkler som starter med `varsling:` i Upstash-konsollen
 (Data Browser), eller kjøre `FLUSHDB` hvis databasen bare brukes til dette.
 
@@ -155,7 +164,7 @@ tilbake til «kommer snart», og jobben hopper over. Dataene i Redis blir liggen
 | Bekreftelses-e-poster per adresse | 3 per døgn (resten ignoreres i stillhet, så ingen kan se om adressen er i bruk) |
 | Bekreftelses-e-poster totalt | 300 per døgn (vern om e-postkvoten) |
 | Ubekreftede påmeldinger | slettes etter 48 timer |
-| E-poster per abonnent | maks én per kjøring (én gang i døgnet), maks 25 steder i hver |
+| E-poster per abonnent | maks én per UTC-døgn, maks 25 steder i hver |
 | Tempo mot Resend | ca. 1,7 per sekund, med omforsøk ved 429/5xx |
 
 - **Nye tilsyn** oppdages med en liste over «sette» tilsyn (`stedId|dato|karakter`) for de siste
@@ -164,8 +173,17 @@ tilbake til «kommer snart», og jobben hopper over. Dataene i Redis blir liggen
   ID-er) behandles som en dataendring: de merkes som sett uten at noen varsles. Grensen kan
   overstyres med miljøvariabelen `VARSLING_MAKS_NYE` i workflowen.
 - **Feil ved sending**: et sammendrag som feiler, blir liggende i utboksen og prøves igjen ved neste
-  kjøring (maks 3 forsøk). Ugyldige adresser fjernes fra utboksen med en gang.
-- **Kjører jobben to ganger** samme dag, sendes ingenting dobbelt (utboks + idempotensnøkkel hos Resend).
+  kjøring (maks 3 forsøk). Innhold, avsender og idempotensnøkkel låses før første forsøk. Nye treff
+  venter i neste sammendrag, slik at en uavklart tidligere sending ikke endres. Ugyldige adresser
+  fjernes fra utboksen med en gang; feil med avsenderkontoen stopper jobben og bevarer hele køen.
+- **Kjører jobben to ganger** samme dag, holder en lagret kvittering grensen på én e-post per
+  abonnent. GitHub-kjøringer venter på hverandre (`concurrency`), og en kvittert køpost ryddes uten
+  ny sending hvis jobben krasjet før køslettingen. Ikke kjør lokale utsendinger samtidig med Actions.
+- **Uavklart levering**: [Resend husker idempotensnøkler i 24 timer](https://resend.com/docs/dashboard/emails/idempotency-keys).
+  Hvis Resend tok imot e-posten, men svaret og lokal kvittering gikk tapt, kan et omforsøk etter
+  dette vinduet gi en duplikat. Dette kan ikke avgjøres sikkert fra en nettverksfeil alene.
+- **Synlige driftsfeil**: avsender-/protokollfeil gir en feilet Actions-kjøring etter at tilsynsdataene
+  er publisert. Kvotestopp er normalt og lar køen vente til neste kjøring.
 - **Logger** inneholder aldri e-postadresser, bare antall og de første tegnene i abonnements-ID-er.
   Oppsummeringen vises også i «Summary» for hver kjøring i GitHub Actions.
 
@@ -177,6 +195,7 @@ tilbake til «kommer snart», og jobben hopper over. Dataene i Redis blir liggen
 | `varsling:epost:<hmac>` | id-en til det aktive abonnementet for en e-postadresse |
 | `varsling:aktive` | sett med id-er til alle aktive abonnementer |
 | `varsling:utboks` | sammendrag som venter på å bli sendt |
+| `varsling:sendt:<id>` | siste leveringskvittering (UTC-dag og idempotensnøkkel), slettes med abonnementet |
 | `varsling:sett`, `varsling:sett:klar` | tilsyn som allerede er sett av jobben |
 | `varsling:rl:*` | tellere for grensene over (utløper av seg selv) |
 

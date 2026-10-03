@@ -473,7 +473,7 @@ export default function VarslingSkjema({ kommuner, poststeder }: Props) {
           {status === "sender" ? "Sender …" : "📬 Send meg varsler"}
         </button>
         <p className="text-xs text-ink-soft">
-          Vi lagrer bare e-postadressen og området du har valgt, og sletter alt når du melder deg av.{" "}
+          Vi lagrer e-postadressen og varslingsvalgene dine, og sletter abonnementet når du melder deg av.{" "}
           <a className="link" href="#personvern">
             Les mer om personvern
           </a>

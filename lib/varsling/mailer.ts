@@ -5,6 +5,8 @@
 import { maskerEpost } from "./validering";
 
 export type Epost = {
+  /** Låst avsender for et sammendrag som allerede er forsøkt sendt. */
+  fra?: string;
   til: string;
   emne: string;
   html: string;
@@ -22,6 +24,8 @@ export type SendResultat =
       permanent: boolean;
       /** true = dagskvoten hos Resend er brukt opp – stopp kjøringen. */
       kvote?: boolean;
+      /** Avsenderkonto/protokollfeil: behold utboksen og stopp til oppsettet er rettet. */
+      stopp?: boolean;
       status: number;
       melding: string;
     };
@@ -46,7 +50,7 @@ export function resendMailer(apiKey: string, fra: string, opts: Opts = {}): Mail
   return {
     async send(e: Epost): Promise<SendResultat> {
       const body = JSON.stringify({
-        from: fra,
+        from: e.fra ?? fra,
         to: [e.til],
         subject: e.emne,
         html: e.html,
@@ -87,13 +91,16 @@ export function resendMailer(apiKey: string, fra: string, opts: Opts = {}): Mail
           await sleep(Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(retryAfter, 60) * 1000 : 1000 * 2 ** (forsok - 1));
           continue;
         }
-        if (res.status >= 500) {
+        if (res.status >= 500 || res.ok || (res.status === 409 && json.name === "concurrent_idempotent_requests")) {
           siste = { ok: false, permanent: false, status: res.status, melding };
           await sleep(1000 * 2 ** (forsok - 1));
           continue;
         }
-        // 409 = samme idempotensnøkkel er i bruk/allerede sendt med annet innhold → behandle som sendt.
-        if (res.status === 409 && e.idempotensNokkel) return { ok: true, id: "duplikat" };
+        // En vellykket idempotent sending returnerer 2xx med den opprinnelige ID-en.
+        // 409 er aldri en kvittering. Avsender-/payloadfeil gjelder hele køen.
+        if (res.status === 401 || res.status === 403 || res.status === 409 || res.status === 400) {
+          return { ok: false, permanent: false, stopp: true, status: res.status, melding };
+        }
         // Øvrige 4xx: feil i forespørselen eller ugyldig mottaker. Ikke prøv igjen.
         return { ok: false, permanent: true, status: res.status, melding };
       }

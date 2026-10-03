@@ -29,7 +29,7 @@ async function aktiv(id: string, p: Partial<Abonnement> = {}) {
 }
 
 function kjor(d: Datasett, extra: Partial<UtsendingDeps> = {}) {
-  return kjorUtsending({ kv, mailer, config: CONFIG, datasett: d, sleep: async () => {}, ...extra });
+  return kjorUtsending({ kv, mailer, config: CONFIG, datasett: d, naa: new Date(d.generert), sleep: async () => {}, ...extra });
 }
 
 const gammel = sted({ id: "A", tilsyn: [tilsyn("2026-09-20", 2)] });
@@ -92,7 +92,7 @@ describe("utsending", () => {
     expect(mailer.sendt).toHaveLength(1);
   });
 
-  it("slår sammen med ventende sammendrag hvis forrige sending feilet", async () => {
+  it("bevarer forsøkt innhold og legger nye treff i neste sammendrag", async () => {
     await kjor(datasett([gammel]));
     await aktiv("abonnent0000000001");
     mailer.svar.push({ ok: false, permanent: false, status: 500, melding: "nede" });
@@ -102,7 +102,62 @@ describe("utsending", () => {
     const senere = sted({ id: "D", navn: "Dønerdama", tilsyn: [tilsyn("2026-10-01", 2)] });
     const r2 = await kjor(datasett([gammel, nyttSur, senere]));
     expect(r2).toMatchObject({ nye: 1, sendt: 1 });
-    expect(mailer.sendt[0].emne).toBe("2 nye smilefjes i Oslo: 1 sur munn, 1 strekmunn");
+    expect(mailer.sendt[0].emne).toBe("😠 Sur munn for Burgerbua");
+    const r3 = await kjor(datasett([gammel, nyttSur, senere], "2026-10-04T22:00:00Z"));
+    expect(r3.sendt).toBe(1);
+    expect(mailer.sendt[1].emne).toBe("😐 Strekmunn for Dønerdama");
+  });
+
+  it("sender høyst ett sammendrag per UTC-døgn ved manuelle omkjøringer", async () => {
+    await kjor(datasett([gammel]));
+    await aktiv("abonnent0000000001");
+    await kjor(datasett([gammel, nyttSur]));
+    const senere = sted({ id: "D", tilsyn: [tilsyn("2026-10-02", 2)] });
+    const r = await kjor(datasett([gammel, nyttSur, senere]));
+    expect(r.sendt).toBe(0);
+    expect(mailer.sendt).toHaveLength(1);
+    expect((await kjor(datasett([gammel, nyttSur, senere], "2026-10-04T22:00:00Z"))).sendt).toBe(1);
+  });
+
+  it("bevarer nøyaktig forespørsel når lagring feiler etter aksept hos Resend", async () => {
+    await kjor(datasett([gammel]));
+    await aktiv("abonnent0000000001");
+    const forsokt: unknown[] = [];
+    const krasjMailer = { send: async (e: unknown) => {
+      forsokt.push(e);
+      kv.feilPaa = "SET";
+      return { ok: true as const, id: "akseptert" };
+    } };
+    await expect(kjor(datasett([gammel, nyttSur]), { mailer: krasjMailer })).rejects.toThrow();
+    kv.feilPaa = null;
+    const senere = sted({ id: "D", tilsyn: [tilsyn("2026-10-02", 2)] });
+    await kjor(datasett([gammel, nyttSur, senere]), { config: { ...CONFIG, siteUrl: "https://endret.example.no" } });
+    expect(mailer.sendt[0]).toEqual(forsokt[0]);
+  });
+
+  it("bevarer hele utboksen ved feil med avsenderkontoen", async () => {
+    await kjor(datasett([gammel]));
+    await aktiv("abonnent0000000001");
+    await aktiv("abonnent0000000002");
+    mailer.svar.push({ ok: false, permanent: false, stopp: true, status: 403, melding: "avsender ikke verifisert" });
+    const r = await kjor(datasett([gammel, nyttSur]));
+    expect(r.sendt).toBe(0);
+    expect(r.feilet).toBe(0);
+    expect(await kv.cmd("HLEN", NOKLER.utboks)).toBe(2);
+    expect((await kjor(datasett([gammel, nyttSur]))).sendt).toBe(2);
+  });
+
+  it("sender ikke på nytt etter lagret kvittering selv om køsletting krasjet", async () => {
+    await kjor(datasett([gammel]));
+    await aktiv("abonnent0000000001");
+    kv.feilPaa = "HDEL";
+    await expect(kjor(datasett([gammel, nyttSur]))).rejects.toThrow();
+    expect(mailer.sendt).toHaveLength(1);
+    kv.feilPaa = null;
+    const r = await kjor(datasett([gammel, nyttSur], "2026-10-06T22:00:00Z"));
+    expect(r.sendt).toBe(0);
+    expect(mailer.sendt).toHaveLength(1);
+    expect(await kv.cmd("HLEN", NOKLER.utboks)).toBe(0);
   });
 
   it(`gir opp etter ${MAKS_FORSOK} forsøk og ved permanente feil`, async () => {
@@ -137,6 +192,20 @@ describe("utsending", () => {
     const r = await kjor(datasett([gammel, nyttSur]));
     expect(r.sendt).toBe(0);
     expect(mailer.sendt).toHaveLength(0);
+  });
+
+  it("gjenoppretter ikke kødata hvis noen melder seg av under sending", async () => {
+    await kjor(datasett([gammel]));
+    const id = "abonnent0000000001";
+    await aktiv(id);
+    const avmeldMailer = { send: async () => {
+      await slettAbonnement(kv, CONFIG.secret, id);
+      return { ok: false as const, permanent: false, status: 500, melding: "nettverk" };
+    } };
+    await kjor(datasett([gammel, nyttSur]), { mailer: avmeldMailer });
+    expect(await kv.cmd("GET", NOKLER.abo(id))).toBeNull();
+    expect(await kv.cmd("HGET", NOKLER.utboks, id)).toBeNull();
+    expect(await kv.cmd("GET", NOKLER.sendt(id))).toBeNull();
   });
 
   it("varsler ikke ved mistenkelig mange nye tilsyn (f.eks. nye ID-er)", async () => {

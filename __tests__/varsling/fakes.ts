@@ -53,6 +53,61 @@ export class MinneKv implements Kv {
     const cmd = c.toUpperCase();
     if (this.feilPaa === cmd) throw new Error(`falsk feil på ${cmd}`);
     switch (cmd) {
+      case "EVAL": {
+        const [script, antall, ...resten] = r;
+        const keys = resten.slice(0, Number(antall));
+        const argv = resten.slice(Number(antall));
+        // Hver dispatch kjører synkront som én Redis-operasjon. De ekte Lua-skriptene
+        // valideres også mot Redis i store-redis.test.ts når Redis er tilgjengelig.
+        if (script.startsWith("-- varsling:bekreft/v1")) {
+          const json = this.kjor(["GET", keys[0]]);
+          if (!json) return "ukjent";
+          const abo = JSON.parse(String(json));
+          if (abo.status === "aktiv") return "ok";
+          if ((this.kjor(["GET", keys[1]]) || "") !== argv[2]) return "endret";
+          if (argv[2] && argv[2] !== argv[0]) {
+            this.kjor(["DEL", keys[4], keys[5]]);
+            this.kjor(["SREM", keys[2], argv[2]]);
+            this.kjor(["HDEL", keys[3], argv[2]]);
+          }
+          this.kjor(["SET", keys[0], JSON.stringify({ ...abo, status: "aktiv", bekreftet: argv[1] })]);
+          this.kjor(["SADD", keys[2], argv[0]]);
+          this.kjor(["SET", keys[1], argv[0]]);
+          return "ok";
+        }
+        if (script.startsWith("-- varsling:slett/v1")) {
+          const fantes = this.hent(keys[0]) ? 1 : 0;
+          this.kjor(["DEL", keys[0], keys[3]]);
+          this.kjor(["SREM", keys[1], argv[0]]);
+          this.kjor(["HDEL", keys[2], argv[0]]);
+          if (argv[1] === "1" && this.kjor(["GET", keys[4]]) === argv[0]) this.kjor(["DEL", keys[4]]);
+          return fantes;
+        }
+        if (script.startsWith("-- varsling:grense/v1")) {
+          const antall = this.kjor(["INCR", keys[0]]) as number;
+          if (antall === 1) this.kjor(["EXPIRE", keys[0], argv[0]]);
+          return antall;
+        }
+        if (script.startsWith("-- varsling:utboks/v1") || script.startsWith("-- varsling:kvittering/v1")) {
+          const json = this.kjor(["GET", keys[0]]);
+          if (!json || JSON.parse(String(json)).status !== "aktiv") return 0;
+          if (script.startsWith("-- varsling:utboks/v1")) this.kjor(["HSET", keys[1], argv[0], argv[1]]);
+          else this.kjor(["SET", keys[1], argv[0]]);
+          return 1;
+        }
+        throw new Error("MinneKv støtter ikke dette Lua-skriptet");
+      }
+      case "SCAN": {
+        const keys = [...this.data.keys()].filter((k) => this.hent(k));
+        const match = r.indexOf("MATCH");
+        const prefix = match >= 0 ? r[match + 1].replace(/\*$/, "") : "";
+        const count = r.indexOf("COUNT");
+        const storrelse = count >= 0 ? Number(r[count + 1]) : 10;
+        const filtrert = keys.filter((k) => k.startsWith(prefix));
+        const start = Number(r[0]);
+        const slutt = Math.min(start + storrelse, filtrert.length);
+        return [slutt < filtrert.length ? String(slutt) : "0", filtrert.slice(start, slutt)];
+      }
       case "GET": {
         const v = this.hent(r[0]);
         return typeof v?.v === "string" ? v.v : null;
@@ -67,6 +122,12 @@ export class MinneKv implements Kv {
       }
       case "DEL":
         return r.filter((k) => this.data.delete(k)).length;
+      case "EXPIRE": {
+        const v = this.hent(r[0]);
+        if (!v) return 0;
+        v.utloper = this.naa + Number(r[1]) * 1000;
+        return 1;
+      }
       case "INCR": {
         const v = this.hent(r[0]);
         const n = Number(typeof v?.v === "string" ? v.v : 0) + 1;

@@ -209,7 +209,7 @@ ${resten > 0 ? `<p style="margin:4px 0 0;font-weight:700;">…og ${resten} til. 
 ${knapp(`${o.siteUrl}/`, "🗺️ Åpne kartet")}`;
 
   const bunn = `<p style="margin:0;">Du får denne e-posten fordi du har bedt om varsler om ${e(filterTekst(o.abo.filtre))} ${e(hvor)}. Vi sender maks én e-post om dagen.</p>
-<p style="margin:8px 0 0;"><a href="${e(o.avmeldUrl)}" style="color:${F.accent};font-weight:700;">Meld meg av</a> – ett klikk, og vi sletter e-postadressen din.</p>`;
+<p style="margin:8px 0 0;"><a href="${e(o.avmeldUrl)}" style="color:${F.accent};font-weight:700;">Meld meg av</a> – bekreft på neste side, så sletter vi abonnementet og e-postadressen din.</p>`;
 
   const tekst = [
     tittel,
@@ -228,7 +228,7 @@ ${knapp(`${o.siteUrl}/`, "🗺️ Åpne kartet")}`;
     ...(resten > 0 ? [`…og ${resten} til: ${o.siteUrl}/`, ""] : []),
     "—",
     `Du får denne e-posten fordi du har bedt om varsler om ${filterTekst(o.abo.filtre)} ${hvor}.`,
-    `Meld deg av (ett klikk): ${o.avmeldUrl}`,
+    `Meld deg av (bekreft på neste side): ${o.avmeldUrl}`,
     "Smilefjeskartet er ikke tilknyttet Mattilsynet. Data: Mattilsynet (NLOD 2.0).",
   ].join("\n");
 
