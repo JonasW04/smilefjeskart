@@ -55,3 +55,17 @@ jobs:
             git commit -m "chore: update tilsyndata $(date -u +%Y-%m-%d)"
             git push
           fi
+
+      # Smilefjesvarsler på e-post (se docs/varsling.md). Hopper over uten secrets.
+      # continue-on-error: en feil her skal ikke stoppe resten av jobben; den vises som en annotasjon.
+      - name: Send smilefjesvarsler
+        continue-on-error: true
+        timeout-minutes: 30
+        env:
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          VARSLING_SECRET: ${{ secrets.VARSLING_SECRET }}
+          VARSLING_FRA: ${{ secrets.VARSLING_FRA }}
+          NEXT_PUBLIC_SITE_URL: https://smilefjeskartet.no
+        run: npm run send:varsler
