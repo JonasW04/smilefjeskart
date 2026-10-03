@@ -153,8 +153,8 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="min-w-0 space-y-6 lg:col-span-2">
           {/* Tema for tema */}
           <section className="card p-5 sm:p-6" aria-labelledby="tema-tittel">
             <h2 id="tema-tittel" className="font-display text-2xl font-extrabold">Tema for tema</h2>
@@ -224,7 +224,7 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
           </section>
         </div>
 
-        <aside className="space-y-6">
+        <aside className="min-w-0 space-y-6">
           <section className="card p-5" aria-labelledby="fakta-tittel">
             <h2 id="fakta-tittel" className="font-display text-xl font-extrabold">Kort fortalt</h2>
             <dl className="mt-3 grid grid-cols-2 gap-3">

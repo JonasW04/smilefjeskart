@@ -16,12 +16,13 @@ npm run dev
 ```sh
 npm test
 npm run lint
+npm audit --omit=dev
 npx tsc --noEmit
 npm run build
 npm start
 ```
 
-CI kjører tester, lint, typesjekk og produksjonsbygg for pull requests og endringer på main. Lokale arbeidskopier i `.claude/` holdes utenfor lint og typesjekk.
+CI kjører tester, lint, typesjekk, produksjonsaudit og produksjonsbygg for pull requests og endringer på main. Redis installeres i CI slik at lagringstestene kjører de ekte Lua-skriptene. Lokalt kan de kjøres med `VARSLING_TEST_REDIS=1 npm test` når `redis-server` og `redis-cli` er installert. Lokale arbeidskopier i `.claude/` holdes utenfor lint og typesjekk.
 
 ## Oppdatere data
 

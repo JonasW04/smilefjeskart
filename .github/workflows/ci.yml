@@ -29,7 +29,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Audit production dependencies
+        run: npm audit --omit=dev
+
+      - name: Install Redis for storage regression tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends redis-server redis-tools
+
       - name: Test
+        env:
+          VARSLING_TEST_REDIS: "1"
         run: npm test
 
       - name: Lint

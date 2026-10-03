@@ -1,6 +1,7 @@
 "use client";
 
-import maplibregl, { type GeoJSONSource } from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
+import type { GeoJSONSource } from "maplibre-gl";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Smiley from "@/components/Smiley";
 import { KATEGORI_EMOJI, KATEGORI_NAVN, type Kategori } from "@/lib/classify";
