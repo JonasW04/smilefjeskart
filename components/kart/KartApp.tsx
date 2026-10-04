@@ -1,8 +1,12 @@
 "use client";
 
 import * as maplibregl from "maplibre-gl";
-import type { GeoJSONSource } from "maplibre-gl";
+import { setWorkerUrl, type GeoJSONSource } from "maplibre-gl";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+
+if (typeof window !== "undefined") {
+  setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
+}
 import Smiley from "@/components/Smiley";
 import { KATEGORI_EMOJI, KATEGORI_NAVN, type Kategori } from "@/lib/classify";
 import {
@@ -161,15 +165,16 @@ export default function KartApp() {
     let avsluttet = false;
     let map: maplibregl.Map;
     try {
+      setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
       map = new maplibregl.Map({
-      container: containerRef.current,
-      style: morkRef.current ? STIL_URL.mork : STIL_URL.lys,
-      bounds: NORGE,
-      fitBoundsOptions: {
-        padding: window.innerWidth >= 640 ? { top: 30, bottom: 30, left: 400, right: 30 } : { top: 120, bottom: 60, left: 10, right: 10 },
-      },
-      attributionControl: { compact: true },
-      maxZoom: 18.5,
+        container: containerRef.current,
+        style: morkRef.current ? STIL_URL.mork : STIL_URL.lys,
+        bounds: NORGE,
+        fitBoundsOptions: {
+          padding: window.innerWidth >= 640 ? { top: 30, bottom: 30, left: 400, right: 30 } : { top: 120, bottom: 60, left: 10, right: 10 },
+        },
+        attributionControl: { compact: true },
+        maxZoom: 18.5,
       });
     } catch {
       // WebGL kan være utilgjengelig selv om data og søk fungerer.
