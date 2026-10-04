@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "tsx scripts/copy-maplibre-worker.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "build:data": "tsx scripts/build-data.ts",
     "build:prediksjon": "tsx scripts/build-prediksjon.ts",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "send:varsler": "tsx scripts/send-varsler.ts",
     "varsling:admin": "tsx scripts/varsling-admin.ts"
   },
@@ -22,6 +24,7 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/geojson": "^7946.0.16",
     "@types/node": "^20.19.37",

@@ -22,7 +22,15 @@ npm run build
 npm start
 ```
 
-CI kjører tester, lint, typesjekk, produksjonsaudit og produksjonsbygg for pull requests og endringer på main. Redis installeres i CI slik at lagringstestene kjører de ekte Lua-skriptene. Lokalt kan de kjøres med `VARSLING_TEST_REDIS=1 npm test` når `redis-server` og `redis-cli` er installert. Lokale arbeidskopier i `.claude/` holdes utenfor lint og typesjekk.
+Kartets nettlesertester kjøres mot et produksjonsbygg og bruker den ekte MapLibre-workeren. De sjekker at klynger tegnes og følger kartposisjonen under dragging:
+
+```sh
+npx playwright install chromium
+npm run build
+npm run test:e2e
+```
+
+CI kjører tester, lint, typesjekk, produksjonsaudit, produksjonsbygg og kartets nettlesertester for pull requests og endringer på main. Redis installeres i CI slik at lagringstestene kjører de ekte Lua-skriptene. Lokalt kan de kjøres med `VARSLING_TEST_REDIS=1 npm test` når `redis-server` og `redis-cli` er installert. Lokale arbeidskopier i `.claude/` holdes utenfor lint og typesjekk.
 
 ## Oppdatere data
 
