@@ -491,6 +491,10 @@ export default function KartApp() {
             </select>
           </label>
 
+          <p className="text-xs leading-relaxed text-ink-soft">
+            Fjesene i klyngene viser humøret i området: bredt glis når nesten alle har smil, sur munn når mange ikke har det.
+          </p>
+
           <p className="text-xs text-ink-soft" aria-live="polite">
             Viser <strong className="text-ink">{antallVist.toLocaleString("nb-NO")}</strong> av{" "}
             {(data?.steder.length ?? 0).toLocaleString("nb-NO")} steder

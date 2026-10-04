@@ -2,7 +2,7 @@
  * MapLibre-oppsett for kartsiden: grunnkart (OpenFreeMap), smilefjesbilder, kilder, lag og klyngemarkører.
  */
 import * as maplibregl from "maplibre-gl";
-import type { Modus, StedProps } from "@/lib/kart";
+import { klyngeHumor, type Modus, type StedProps } from "@/lib/kart";
 import { smileySvg, type SmileyKind } from "@/lib/smiley";
 
 export const STIL_URL = {
@@ -141,21 +141,59 @@ function forkort(n: number): string {
   return String(n);
 }
 
-/** Smultring-klynge: andel smil/strek/sur rundt antallet. */
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
+/**
+ * Lite fjes inni smultringen. Munnen bøyer seg etter humøret (-1 sur … 1 glis); ytterpunktene
+ * får ekstra detaljer – røde kinn og åpent glis, eller sinte øyebryn. Ukjent humør gir «o»-munn.
+ */
+function humorFjes(c: number, f: number, humor: number | null): string {
+  const ink = "var(--ink)";
+  const ey = r2(c - 0.22 * f);
+  const ex = 0.36 * f;
+  const er = r2(Math.max(1.6, 0.13 * f));
+  const sw = r2(Math.max(2, 0.15 * f));
+  const strek = `fill="none" stroke="${ink}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"`;
+  const oyne = `<g class="kart-klynge-oyne"><circle cx="${r2(c - ex)}" cy="${ey}" r="${er}" fill="${ink}"/><circle cx="${r2(c + ex)}" cy="${ey}" r="${er}" fill="${ink}"/></g>`;
+  if (humor === null) return `${oyne}<circle cx="${c}" cy="${r2(c + 0.38 * f)}" r="${r2(0.16 * f)}" ${strek}/>`;
+
+  const hw = 0.42 * f;
+  const y0 = r2(c + 0.34 * f - 0.1 * f * humor);
+  const ctrl = r2(y0 + 0.62 * f * humor);
+  const bue = `M${r2(c - hw)} ${y0} Q${c} ${ctrl} ${r2(c + hw)} ${y0}`;
+  let ekstra = "";
+  let munn = `<path d="${bue}" ${strek}/>`;
+  if (humor > 0.75) {
+    munn = `<path d="${bue} Z" fill="${ink}" stroke="${ink}" stroke-width="${r2(sw * 0.7)}" stroke-linejoin="round"/>`;
+    for (const side of [-1, 1]) {
+      ekstra += `<ellipse cx="${r2(c + side * 0.66 * f)}" cy="${r2(c + 0.16 * f)}" rx="${r2(0.17 * f)}" ry="${r2(0.1 * f)}" fill="#FF8BC2" opacity="0.8"/>`;
+    }
+  } else if (humor < -0.6) {
+    for (const side of [-1, 1]) {
+      const ytre = r2(c + side * (ex + 0.22 * f));
+      const indre = r2(c + side * (ex - 0.2 * f));
+      ekstra += `<path d="M${ytre} ${r2(ey - 0.5 * f)} L${indre} ${r2(ey - 0.3 * f)}" ${strek}/>`;
+    }
+  }
+  return oyne + ekstra + munn;
+}
+
+/** Smultring-klynge: andel smil/strek/sur rundt et fjes som viser humøret, med antallet under. */
 export function klyngeElement(p: Record<string, number>, modus: Modus): HTMLButtonElement {
   const pre = modus === "siste" ? "k" : "v";
   const total = p.point_count;
   const deler = [p[`${pre}0`] ?? 0, p[`${pre}1`] ?? 0, p[`${pre}2`] ?? 0];
   deler.push(Math.max(0, total - deler[0] - deler[1] - deler[2]));
-  const size = total >= 500 ? 66 : total >= 100 ? 56 : total >= 20 ? 48 : 40;
-  const r = size / 2 - 5;
+  const size = total >= 500 ? 70 : total >= 100 ? 60 : total >= 20 ? 52 : 46;
+  const c = size / 2;
+  const r = c - 5;
   const omkrets = 2 * Math.PI * r;
   let offset = 0;
   const buer = deler
     .map((n, g) => {
       if (n === 0) return "";
       const len = (n / total) * omkrets;
-      const bue = `<circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${GRUPPE_FARGE[g]}" stroke-width="8" stroke-dasharray="${len} ${omkrets - len}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${size / 2} ${size / 2})"/>`;
+      const bue = `<circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${GRUPPE_FARGE[g]}" stroke-width="8" stroke-dasharray="${len} ${omkrets - len}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${c} ${c})"/>`;
       offset += len;
       return bue;
     })
@@ -168,10 +206,11 @@ export function klyngeElement(p: Record<string, number>, modus: Modus): HTMLButt
   if (deler[1]) tekst.push(`${deler[1]} med strekmunn`);
   if (deler[2]) tekst.push(`${deler[2]} med sur munn`);
   el.setAttribute("aria-label", `${tekst.join(", ")}. Zoom inn.`);
-  el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
-    <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 1}" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+  // Fjeset fyller hullet i smultringen (indre kant er r - 4), med litt luft.
+  el.innerHTML = `<span class="kart-klynge-innhold"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
+    <circle cx="${c}" cy="${c}" r="${c - 1}" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
     ${buer}
-    <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-weight="800" font-size="${size >= 56 ? 15 : 13}" fill="var(--ink)">${forkort(total)}</text>
-  </svg>`;
+    ${humorFjes(c, r - 5.5, klyngeHumor(deler[0], deler[1], deler[2]))}
+  </svg><span class="kart-klynge-tall">${forkort(total)}</span></span>`;
   return el;
 }
