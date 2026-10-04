@@ -604,7 +604,11 @@ export default function AnalyseSide() {
           <>
             {tall(siste7.length)} tilsyn fra {formatDato(fra7)} til {formatDato(a.sluttDato)}
             {siste7Daarlige.length > 0 ? `, hvorav ${siste7Daarlige.length} med strekmunn eller sur munn` : ""}. Mattilsynet publiserer
-            resultatene med noen dagers forsinkelse.
+            resultatene med noen dagers forsinkelse. Se også{" "}
+            <Link className="link" href="/siste">
+              Ferskt fra Mattilsynet
+            </Link>{" "}
+            med comebacks, nye steder og RSS-strøm.
           </>
         }
       >

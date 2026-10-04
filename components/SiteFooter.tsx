@@ -29,6 +29,7 @@ export default function SiteFooter() {
         </div>
         <ul className="flex flex-wrap gap-4 font-semibold sm:flex-col sm:gap-1 sm:text-right">
           <li><Link className="link" href="/">Kart</Link></li>
+          <li><Link className="link" href="/siste">Ferskt fra Mattilsynet</Link></li>
           <li><Link className="link" href="/analyse">Analyse</Link></li>
           <li><Link className="link" href="/prediksjon">Spåkula</Link></li>
           <li><Link className="link" href="/varsling">Varsling</Link></li>
