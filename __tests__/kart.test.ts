@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { byggSokIndeks, gruppe, kommuneBbox, lesUrl, skrivUrl, sok, spredKoordinater, tilGeoJson, type Filter } from "@/lib/kart";
+import { byggSokIndeks, gruppe, klyngeHumor, kommuneBbox, lesUrl, skrivUrl, sok, spredKoordinater, tilGeoJson, type Filter } from "@/lib/kart";
 import type { KartData, KartRad } from "@/lib/types";
 
 const rad = (slug: string, navn: string, adresse: string, lng: number, lat: number, k: number, v: number, kommune: number, kat: number): KartRad =>
@@ -106,5 +106,20 @@ describe("kart url", () => {
     expect(t.modus).toBe("tre-aar");
     expect(t.kategori).toBe("alle");
     expect(t.smil.size).toBe(3);
+  });
+});
+
+describe("klyngeHumor", () => {
+  it("maps smile share onto -1..1 around the thresholds", () => {
+    expect(klyngeHumor(95, 5, 0)).toBeCloseTo(1);
+    expect(klyngeHumor(100, 0, 0)).toBe(1);
+    expect(klyngeHumor(80, 15, 5)).toBeCloseTo(0);
+    expect(klyngeHumor(65, 30, 5)).toBeCloseTo(-1);
+    expect(klyngeHumor(1, 9, 0)).toBe(-1);
+    expect(klyngeHumor(87, 13, 0)).toBeGreaterThan(0.4);
+  });
+
+  it("is null when nothing has a known result", () => {
+    expect(klyngeHumor(0, 0, 0)).toBeNull();
   });
 });

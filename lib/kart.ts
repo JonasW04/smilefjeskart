@@ -46,6 +46,22 @@ export function passerFilter(r: KartRad, data: KartData, modus: Modus, f: Filter
   return smil ? f.smil.has(smil) : f.smil.size === 3;
 }
 
+/** Andel smil som gir fullt glis, strekmunn og sur munn på klyngefjesene. */
+export const HUMOR_TERSKEL = { glis: 0.95, strek: 0.8, sur: 0.65 } as const;
+
+/**
+ * Humøret til en klynge fra -1 (sur) til 1 (glis), ut fra andelen smil blant steder med kjent resultat.
+ * Lineært mellom tersklene, så 80 % smil gir strekmunn. null når ingen har kjent resultat.
+ */
+export function klyngeHumor(smil: number, strek: number, sur: number): number | null {
+  const kjent = smil + strek + sur;
+  if (kjent === 0) return null;
+  const { glis, strek: midt, sur: bunn } = HUMOR_TERSKEL;
+  const a = smil / kjent;
+  const h = a >= midt ? (a - midt) / (glis - midt) : (a - midt) / (midt - bunn);
+  return Math.max(-1, Math.min(1, h));
+}
+
 const GYLDEN_VINKEL = Math.PI * (3 - Math.sqrt(5));
 
 /**

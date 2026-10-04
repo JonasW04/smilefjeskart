@@ -186,13 +186,45 @@ body {
   filter: drop-shadow(2px 2px 0 var(--shadow-ink));
 }
 /* MapLibre plasserer markøren med inline transform på selve elementet, så
-   animasjon og skalering må ligge på SVG-en – ellers henger klyngene etter kartet. */
-.kart-klynge svg {
+   animasjon og skalering må ligge på innholdet – ellers henger klyngene etter kartet. */
+.kart-klynge-innhold {
   display: block;
+  position: relative;
   transition: transform 140ms ease;
 }
-.kart-klynge:hover svg {
+.kart-klynge:hover .kart-klynge-innhold {
   transform: scale(1.08);
+}
+.kart-klynge svg {
+  display: block;
+}
+/* Antallet henger som en navnelapp under smultringen; markøren sentreres fortsatt på ringen. */
+.kart-klynge-tall {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, -55%);
+  padding: 0 6px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 16px;
+  white-space: nowrap;
+}
+.kart-klynge-oyne {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.kart-klynge:hover .kart-klynge-oyne {
+  animation: kart-blunk 420ms ease;
+}
+
+@keyframes kart-blunk {
+  0%, 100% { transform: scaleY(1); }
+  45% { transform: scaleY(0.1); }
 }
 
 .kart-meg {
@@ -234,5 +266,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .kart-meg { animation: none; }
-  .kart-klynge svg { transition: none; }
+  .kart-klynge-innhold { transition: none; }
+  .kart-klynge:hover .kart-klynge-oyne { animation: none; }
 }
