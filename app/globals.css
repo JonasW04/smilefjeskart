@@ -184,9 +184,14 @@ body {
   cursor: pointer;
   font-family: var(--font-figtree), system-ui, sans-serif;
   filter: drop-shadow(2px 2px 0 var(--shadow-ink));
+}
+/* MapLibre plasserer markøren med inline transform på selve elementet, så
+   animasjon og skalering må ligge på SVG-en – ellers henger klyngene etter kartet. */
+.kart-klynge svg {
+  display: block;
   transition: transform 140ms ease;
 }
-.kart-klynge:hover {
+.kart-klynge:hover svg {
   transform: scale(1.08);
 }
 
@@ -229,5 +234,5 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .kart-meg { animation: none; }
-  .kart-klynge { transition: none; }
+  .kart-klynge svg { transition: none; }
 }
