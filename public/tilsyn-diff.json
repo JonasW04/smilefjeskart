@@ -1,5 +1,195 @@
 [
   {
+    "generatedAt": "2026-10-07T12:24:02.164Z",
+    "previousDownload": "2026-10-06T12:30:43.982Z",
+    "summary": {
+      "previousTotal": 8496,
+      "currentTotal": 8499,
+      "newCount": 7,
+      "changedCount": 6,
+      "removedCount": 4
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2607301526593670128HKYPL_Tilsynsobjekt",
+        "orgnummer": "837578892",
+        "navn": "Amraj Authentic Indian Cusine Voss",
+        "adresse": "Stallgata 15, 5700, Voss",
+        "dato": "06102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2610061111235380240OYOQU_Tilsynsobjekt",
+        "orgnummer": "937330871",
+        "navn": "Herman Husmann Fredrikstad",
+        "adresse": "Brochs gate 8, 1607, Fredrikstad",
+        "dato": "06102026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2603201240409840128QNBOD_Tilsynsobjekt",
+        "orgnummer": "937290489",
+        "navn": "Jettz Burger Fredrikstad",
+        "adresse": "Stortorvet 5, 1607, Fredrikstad",
+        "dato": "06102026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2609221640497990127SSDLZ_Tilsynsobjekt",
+        "orgnummer": "937702604",
+        "navn": "Kebab House Evje",
+        "adresse": "Nils Heglands veg 76, 4735, Evje",
+        "dato": "06102026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2602091353263940128CEMLM_Tilsynsobjekt",
+        "orgnummer": "921225180",
+        "navn": "Lille Kjøkken Alta",
+        "adresse": "Altaveien 256, 9515, Alta",
+        "dato": "13022026",
+        "karakter": 0,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2608071315190210127KPELF_Tilsynsobjekt",
+        "orgnummer": "937817835",
+        "navn": "Milano pizza kebab Evje AS",
+        "adresse": "Tingbergvegen 26, 4735, Evje",
+        "dato": "06102026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1110071218182240209VSTRK_Tilsynsobjekt",
+        "orgnummer": "995340143",
+        "navn": "New Kebabish",
+        "adresse": "Smedgata 14, 1850, Mysen",
+        "dato": "06102026",
+        "karakter": 2,
+        "karakter1": -1,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1604071238281670239AOHQY_Tilsynsobjekt",
+        "orgnummer": "999273912",
+        "navn": "Cafe Sara",
+        "adresse": "Hausmanns gate 29, 0182, Oslo",
+        "dato": "06102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2312071319097041037ZKCTT_Tilsynsobjekt",
+        "orgnummer": "972181056",
+        "navn": "Eilef’s Landhandleri",
+        "adresse": "Kristian IVs gate 1, 0164, Oslo",
+        "dato": "06102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006080424095181127WFGFH_Tilsynsobjekt",
+        "orgnummer": "979526059",
+        "navn": "Elias Pizza",
+        "adresse": "Dikeveien 28, 1661, Rolvsøy",
+        "dato": "06102026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1506221109043463252BEBKZ_Tilsynsobjekt",
+        "orgnummer": "914545730",
+        "navn": "Freddy Fuego AS",
+        "adresse": "Hausmanns gate 31, 0182, Oslo",
+        "dato": "06102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006051340386271126HGRPX_Tilsynsobjekt",
+        "orgnummer": "975868699",
+        "navn": "Quality Hotel Residence",
+        "adresse": "Julie Eges gate 5, 4306, Sandnes",
+        "dato": "06102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2303241351483211044YGTZD_Tilsynsobjekt",
+        "orgnummer": "926021176",
+        "navn": "Snacbaren 1985",
+        "adresse": "Torggata 2, 1850, Mysen",
+        "dato": "06102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2603271644398201062IXPQS_Tilsynsobjekt",
+      "Z1907021057398162024IFCHX_Tilsynsobjekt",
+      "Z2401051442136270128NZKZN_Tilsynsobjekt",
+      "Z2103191406493692024VSHFT_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-06T12:30:43.982Z",
     "previousDownload": "2026-10-05T13:09:45.982Z",
     "summary": {
