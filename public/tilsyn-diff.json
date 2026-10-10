@@ -1,5 +1,140 @@
 [
   {
+    "generatedAt": "2026-10-10T11:40:06.125Z",
+    "previousDownload": "2026-10-09T12:21:49.881Z",
+    "summary": {
+      "previousTotal": 8502,
+      "currentTotal": 8504,
+      "newCount": 3,
+      "changedCount": 6,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z1501051133141052025ETBRS_Tilsynsobjekt",
+        "orgnummer": "913128206",
+        "navn": "Bakeriet Cafe & Catering",
+        "adresse": "Myrane 13, 6718, Deknepollen",
+        "dato": "08102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2608240838567082025WMHWZ_Tilsynsobjekt",
+        "orgnummer": "922860211",
+        "navn": "Burger King Notodden",
+        "adresse": "Nesøya 2, 3674, Notodden",
+        "dato": "09102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2606031240562961064KIYRO_Tilsynsobjekt",
+        "orgnummer": "979111533",
+        "navn": "Mr Chuong",
+        "adresse": "Nonnegata 24, 7014, Trondheim",
+        "dato": "08102026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 2,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006062000121371126TVDTT_Tilsynsobjekt",
+        "orgnummer": "972353302",
+        "navn": "Dolmsundet Hotell",
+        "adresse": "Dolmsundveien 1, 7250, Melandsjø",
+        "dato": "09102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1502131100218373251WFJMZ_Tilsynsobjekt",
+        "orgnummer": "913991109",
+        "navn": "Kafe Sjøsprøyt",
+        "adresse": "Hamneveien 22, 7246, Sandstad",
+        "dato": "09102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2109071041441020127QPEDT_Tilsynsobjekt",
+        "orgnummer": "926961365",
+        "navn": "Kanel Steinovnsbakeri, Rortunet",
+        "adresse": "Kirkealleen 1, 3470, Slemmestad",
+        "dato": "09102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006050429029171189HEFDX_Tilsynsobjekt",
+        "orgnummer": "973346601",
+        "navn": "Mazhar Mathus",
+        "adresse": "Kongsveien 81, 9350, Sjøvegan",
+        "dato": "09102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 2,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2211241227299060128YYOOO_Tilsynsobjekt",
+        "orgnummer": "930571415",
+        "navn": "Smør og fluga",
+        "adresse": "Jarlsøveien 50, 3124, Tønsberg",
+        "dato": "08102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2409271330341181021IPJLS_Tilsynsobjekt",
+        "orgnummer": "929671694",
+        "navn": "Spicy Vibes",
+        "adresse": "Asperudveien 67, 1255, Oslo",
+        "dato": "09102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2407081053484921027SKGYM_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-09T12:21:49.881Z",
     "previousDownload": "2026-10-08T12:33:36.749Z",
     "summary": {
