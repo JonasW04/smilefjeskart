@@ -1,5 +1,153 @@
 [
   {
+    "generatedAt": "2026-10-15T10:37:57.798Z",
+    "previousDownload": "2026-10-14T10:56:09.195Z",
+    "summary": {
+      "previousTotal": 8506,
+      "currentTotal": 8507,
+      "newCount": 2,
+      "changedCount": 8,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2604221446483380127DYXQP_Tilsynsobjekt",
+        "orgnummer": "922954704",
+        "navn": "El-toro AS aksdal",
+        "adresse": "Rådhusvegen 33, 5570, Aksdal",
+        "dato": "05102026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2602111329476280127WISHR_Tilsynsobjekt",
+        "orgnummer": "935647347",
+        "navn": "Kog26 AS",
+        "adresse": "Kong Oscars gate 26, 5017, Bergen",
+        "dato": "14102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z2204061923446690390JFZHO_Tilsynsobjekt",
+        "orgnummer": "927462680",
+        "navn": "175⁰C K-fried",
+        "adresse": "Vulkan 7, 0178, Oslo",
+        "dato": "14102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2102100908435970373CPZPF_Tilsynsobjekt",
+        "orgnummer": "925942812",
+        "navn": "Ban thai takeaway",
+        "adresse": "Carl Gulbransons gate 2, 7800, Namsos",
+        "dato": "14102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1202211713128293252CVNWK_Tilsynsobjekt",
+        "orgnummer": "998006945",
+        "navn": "Døgnvill Burger & Bar",
+        "adresse": "Vulkan 12, 0178, Oslo",
+        "dato": "14102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1102081101408791043WFIPV_Tilsynsobjekt",
+        "orgnummer": "996110125",
+        "navn": "Milano Pizzeria",
+        "adresse": "Storetveitvegen 26, 5067, Bergen",
+        "dato": "13102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1506161046348262025JLIWX_Tilsynsobjekt",
+        "orgnummer": "915207499",
+        "navn": "Nabo’n",
+        "adresse": "Vålgutua 219, 2436, Våler i Solør",
+        "dato": "14102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2105071422330130127IDLCD_Tilsynsobjekt",
+        "orgnummer": "911924110",
+        "navn": "Nord Cafe",
+        "adresse": "Markens gate 4, 4610, Kristiansand S",
+        "dato": "14102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1903211510014172024ZSPUY_Tilsynsobjekt",
+        "orgnummer": "922328277",
+        "navn": "Slakter Sørensen",
+        "adresse": "Markens gate 8, 4611, Kristiansand S",
+        "dato": "14102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006120000486541189LFEQK_Tilsynsobjekt",
+        "orgnummer": "974107619",
+        "navn": "Union Hotel AS Geiranger",
+        "adresse": "Geirangervegen 100, 6216, Geiranger",
+        "dato": "14102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2311221205473530127JSDEJ_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-14T10:56:09.195Z",
     "previousDownload": "2026-10-12T14:01:07.638Z",
     "summary": {
