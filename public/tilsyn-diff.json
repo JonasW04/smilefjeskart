@@ -1,5 +1,220 @@
 [
   {
+    "generatedAt": "2026-10-16T10:24:47.360Z",
+    "previousDownload": "2026-10-15T10:37:57.798Z",
+    "summary": {
+      "previousTotal": 8507,
+      "currentTotal": 8510,
+      "newCount": 6,
+      "changedCount": 9,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2610011522514841069XOXQI_Tilsynsobjekt",
+        "orgnummer": "911937859",
+        "navn": "Burger King Ålesund Storsenter",
+        "adresse": "Kipervikgata 5, 6003, Ålesund",
+        "dato": "15102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607141050346352025LAFNL_Tilsynsobjekt",
+        "orgnummer": "993930261",
+        "navn": "Burger King Moa",
+        "adresse": "Langelandsvegen 1, 6010, Ålesund",
+        "dato": "15102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2601171348138190127RBVGQ_Tilsynsobjekt",
+        "orgnummer": "836925432",
+        "navn": "Knutehytta",
+        "adresse": "Knuteveien 800, 3614, Kongsberg",
+        "dato": "15102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2610071102171290127AZXRU_Tilsynsobjekt",
+        "orgnummer": "937927525",
+        "navn": "La Flamma Arendal",
+        "adresse": "Molandsveien 60, 4846, Arendal",
+        "dato": "15102026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2601140644431232024TDFLN_Tilsynsobjekt",
+        "orgnummer": "990765200",
+        "navn": "Matmagasinet AS - Gimi",
+        "adresse": "Nedre Torfæus' gate 14, 4009, Stavanger",
+        "dato": "15102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605221108284561072KTQBL_Tilsynsobjekt",
+        "orgnummer": "937417233",
+        "navn": "Strand Kulturkafe",
+        "adresse": "Nedre Barkvedvegen 54, 4100, Jørpeland",
+        "dato": "13102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z2010300859591962024VMJNH_Tilsynsobjekt",
+        "orgnummer": "925265101",
+        "navn": "Bærja kafé",
+        "adresse": "Vukuvegen 318, 7656, Verdal",
+        "dato": "15102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2105271026141990127IMJSU_Tilsynsobjekt",
+        "orgnummer": "921442254",
+        "navn": "Bistro Breim Sushi og Thaimat",
+        "adresse": "Øyavegen 1, 6826, Byrkjelo",
+        "dato": "15102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1505051121403782025BLLJN_Tilsynsobjekt",
+        "orgnummer": "994733540",
+        "navn": "Huldra håndverk mat og kultur Steia",
+        "adresse": "Steia 10, 2560, Alvdal",
+        "dato": "15102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2310040927256932024QDCIV_Tilsynsobjekt",
+        "orgnummer": "996953165",
+        "navn": "McDonald’s Flå Avd 75",
+        "adresse": "Svingelie 4, 3539, Flå",
+        "dato": "14102026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2010061313208440128TBWFX_Tilsynsobjekt",
+        "orgnummer": "925659010",
+        "navn": "Mr. Damascy",
+        "adresse": "Solheimsgaten 60, 5054, Bergen",
+        "dato": "15102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2105071422330130127IDLCD_Tilsynsobjekt",
+        "orgnummer": "911924110",
+        "navn": "Nord Cafe",
+        "adresse": "Markens gate 4, 4610, Kristiansand S",
+        "dato": "15102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2301111232014901019NWBZD_Tilsynsobjekt",
+        "orgnummer": "928070530",
+        "navn": "Peking House",
+        "adresse": "Rådhusgaten 24, 4100, Jørpeland",
+        "dato": "13102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 2,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2211241227299060128YYOOO_Tilsynsobjekt",
+        "orgnummer": "930571415",
+        "navn": "Smør og fluga",
+        "adresse": "Jarlsøveien 50, 3124, Tønsberg",
+        "dato": "15102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1406301349108170380YMBSB_Tilsynsobjekt",
+        "orgnummer": "995724553",
+        "navn": "The Social Bar & Bistro - Quality Hotel Waterfront",
+        "adresse": "Nedre Strandgate 25, 6004, Ålesund",
+        "dato": "15102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2505081526584062108OQYAE_Tilsynsobjekt",
+      "Z2601151157530840239GJYLW_Tilsynsobjekt",
+      "Z2410171210340640127QYVVY_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-15T10:37:57.798Z",
     "previousDownload": "2026-10-14T10:56:09.195Z",
     "summary": {
