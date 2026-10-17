@@ -1,5 +1,139 @@
 [
   {
+    "generatedAt": "2026-10-17T09:57:08.279Z",
+    "previousDownload": "2026-10-16T10:24:47.360Z",
+    "summary": {
+      "previousTotal": 8510,
+      "currentTotal": 8509,
+      "newCount": 0,
+      "changedCount": 9,
+      "removedCount": 1
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1409112334420453251XAHXN_Tilsynsobjekt",
+        "orgnummer": "913536835",
+        "navn": "Bun’s Burgerbar",
+        "adresse": "Sørengkaia 71, 0194, Oslo",
+        "dato": "23092026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006052054488451127EUPKP_Tilsynsobjekt",
+        "orgnummer": "975824853",
+        "navn": "Clarion Home Hotell Bastion",
+        "adresse": "Skippergata 7, 0152, Oslo",
+        "dato": "16102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1608020821383573143XXJPI_Tilsynsobjekt",
+        "orgnummer": "913978145",
+        "navn": "Godt Brød Fornebu",
+        "adresse": "Snarøyveien 55, 1364, Fornebu",
+        "dato": "16102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006050429029171189HEFDX_Tilsynsobjekt",
+        "orgnummer": "973346601",
+        "navn": "Mazhar Mathus",
+        "adresse": "Kongsveien 81, 9350, Sjøvegan",
+        "dato": "16102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006070522457851190NLBQX_Tilsynsobjekt",
+        "orgnummer": "990115575",
+        "navn": "Mona Lisa Restaurant",
+        "adresse": "Grandavegen 36, 6823, Sandane",
+        "dato": "15102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 2,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1110071218182240209VSTRK_Tilsynsobjekt",
+        "orgnummer": "995340143",
+        "navn": "New Kebabish",
+        "adresse": "Smedgata 14, 1850, Mysen",
+        "dato": "16102026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1604270811291313123YQANG_Tilsynsobjekt",
+        "orgnummer": "818150962",
+        "navn": "Verdal Spiseri",
+        "adresse": "Nordgata 22, 7650, Verdal",
+        "dato": "15102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2101041455592580128MGASU_Tilsynsobjekt",
+        "orgnummer": "925390127",
+        "navn": "Victoria Sjøsiden AS",
+        "adresse": "Sjøgata 17, 7600, Levanger",
+        "dato": "15102026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 2,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1911061009157763145RZGVE_Tilsynsobjekt",
+        "orgnummer": "923181121",
+        "navn": "Victoria Verdal",
+        "adresse": "E6 Vinne 51, 7657, Verdal",
+        "dato": "15102026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1904100934253342024EBNOI_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-16T10:24:47.360Z",
     "previousDownload": "2026-10-15T10:37:57.798Z",
     "summary": {
