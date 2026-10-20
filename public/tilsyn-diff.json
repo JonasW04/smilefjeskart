@@ -1,5 +1,90 @@
 [
   {
+    "generatedAt": "2026-10-20T10:44:05.979Z",
+    "previousDownload": "2026-10-19T11:41:52.651Z",
+    "summary": {
+      "previousTotal": 8509,
+      "currentTotal": 8505,
+      "newCount": 0,
+      "changedCount": 5,
+      "removedCount": 4
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1006060855586511189GMZTA_Tilsynsobjekt",
+        "orgnummer": "993765171",
+        "navn": "Bare Barista Kaffebar",
+        "adresse": "Øvre Langgate 44, 3110, Tønsberg",
+        "dato": "19102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604271534352331069FWYMV_Tilsynsobjekt",
+        "orgnummer": "937390440",
+        "navn": "Bien Litteraturhuset",
+        "adresse": "Østre Skostredet 5, 5017, Bergen",
+        "dato": "19102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2307041350172760127TEOAG_Tilsynsobjekt",
+        "orgnummer": "994125095",
+        "navn": "Fellesverket Tønsberg",
+        "adresse": "Nedre Langgate 39, 3126, Tønsberg",
+        "dato": "19102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006050444329341189LQFSY_Tilsynsobjekt",
+        "orgnummer": "992377720",
+        "navn": "OBS Harstad kafé 5260",
+        "adresse": "Verkstedveien 7, 9406, Harstad",
+        "dato": "19102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2406241336309220127IIAGV_Tilsynsobjekt",
+        "orgnummer": "932386011",
+        "navn": "Skyland Tønsberg",
+        "adresse": "Andebuveien 78, 3170, Sem",
+        "dato": "19102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z2506131313126180128KYXOG_Tilsynsobjekt",
+      "Z1806120901107722025TEPEZ_Tilsynsobjekt",
+      "Z1603121503151303252CSQRU_Tilsynsobjekt",
+      "Z2308021111555901044UFYFG_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-19T11:41:52.651Z",
     "previousDownload": "2026-10-18T10:10:19.647Z",
     "summary": {
