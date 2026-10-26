@@ -37,6 +37,8 @@ export function lagFasit(
   tilsyn: ReadonlyMap<string, readonly TilsynDag[]>,
   dataDag: number,
 ): Fasit | null {
+  // Tommelfingerreglene leser historikken slik den er i dag, også tilsyn som ble publisert etter spådommen.
+  // Det hjelper reglene og ikke modellen, så sammenligningen heller i modellens disfavør.
   const unike = new Map<string, ArkivertSpaadom>();
   for (const s of arkiv) {
     if (dagnr(s.dataDato) >= dataDag) continue;

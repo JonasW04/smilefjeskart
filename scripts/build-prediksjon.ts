@@ -99,9 +99,13 @@ const live = steder.map((s) => {
 let fasit: Fasit | null = null;
 try {
   const { arkiv, grunn } = lesSpaadomsarkiv(ROOT, isoFraDagnr(dataDag - FASIT_DAGER));
-  if (grunn) logg("Advarsel: grunn git-klon, fasiten ser bare spådommene som finnes lokalt");
-  fasit = lagFasit(arkiv, new Map(steder.map((s) => [s.sted.slug, s.tilsyn])), dataDag);
-  logg(`Fasit: ${fasit?.antallSpaadommer ?? 0} publiserte spådommer, ${fasit?.besok.length ?? 0} besøksvinduer, ${fasit?.utfall?.n ?? 0} utfall`);
+  if (grunn) {
+    // En grunn klon ser bare de siste spådommene. Bedre ingen fasit enn en som overskriver den fulle med en avkortet.
+    logg("Fasit hoppet over: grunn git-klon (sjekk ut med fetch-depth: 0)");
+  } else {
+    fasit = lagFasit(arkiv, new Map(steder.map((s) => [s.sted.slug, s.tilsyn])), dataDag);
+    logg(`Fasit: ${fasit?.antallSpaadommer ?? 0} publiserte spådommer, ${fasit?.besok.length ?? 0} besøksvinduer, ${fasit?.utfall?.n ?? 0} utfall`);
+  }
 } catch (e) {
   // Uten git (f.eks. utenfor et repo) skal modellen likevel publiseres.
   logg(`Fasit hoppet over: ${e instanceof Error ? e.message : String(e)}`);

@@ -530,8 +530,10 @@ function rangeringsdom(m: FasitMaal, regel: string): string {
   const [lav, hoy] = m.aucIntervall;
   const h = tall(m.heuristikk.auc, 2);
   const innledning = `Rangering (AUC): ${a} for modellen (95 % intervall ${tall(lav, 2)}–${tall(hoy, 2)}) mot ${h} for «${regel.toLowerCase()}».`;
-  if (lav > m.heuristikk.auc) return innledning + " Modellen slår tommelfingerregelen.";
-  if (m.modell.auc > m.heuristikk.auc) return innledning + " Modellen ligger foran, men det er for få tilsyn ennå til å si det sikkert.";
+  // Sammenlign tallene slik de vises, så teksten aldri sier «over» om to like tall.
+  const rund = (x: number) => Math.round(x * 100) / 100;
+  if (rund(lav) > rund(m.heuristikk.auc)) return innledning + " Hele intervallet ligger over tommelfingerregelen, så modellen rangerer bedre.";
+  if (m.modell.auc > m.heuristikk.auc) return innledning + " Modellen ligger foran, men intervallet overlapper ennå tommelfingerregelen.";
   return innledning + " Foreløpig slår ikke modellen tommelfingerregelen.";
 }
 
@@ -540,7 +542,12 @@ function BesokFasitKort({ v, horisont }: { v: FasitBesokVindu; horisont: number 
     <div className="card space-y-4 p-5 sm:p-6">
       <h3 className="font-display text-xl font-extrabold">🚪 Besøk innen {horisont} dager</h3>
       <p className="text-sm text-ink-soft">
-        Spådommen fra {formatDato(v.fra)}{v.lukket ? `, sjekket mot alle ${horisont} dagene.` : `. Dag ${v.dager} av ${horisont}, vinduet stenger ${formatDato(v.til)}.`}
+        Spådommen fra {formatDato(v.fra)}
+        {v.lukket
+          ? `, sjekket mot alle ${horisont} dagene.`
+          : v.dager < horisont
+            ? `. Dag ${v.dager} av ${horisont}, vinduet stenger ${formatDato(v.til)}.`
+            : `. Alle ${horisont} dagene er over, men vi venter en uke på tilsyn som registreres sent.`}
       </p>
       <dl className="grid grid-cols-2 gap-3">
         <Tall verdi={`≈ ${tall(v.forventet)}`} tekst={`steder med besøk ventet innen dag ${horisont}`} />
@@ -552,13 +559,13 @@ function BesokFasitKort({ v, horisont }: { v: FasitBesokVindu; horisont: number 
         </div>
       )}
       <p className="text-sm">
-        Blant de 10 % stedene modellen rangerte høyest, har {prosent(v.modell.toppDesil)} fått besøk, mot {prosent(v.modell.snittFaktisk)} av alle.
+        Blant de 10 % stedene modellen rangerte høyest, har {prosent(v.modell.toppDesil, 1)} fått besøk, mot {prosent(v.modell.snittFaktisk, 1)} av alle.
       </p>
       <p className="text-sm">{rangeringsdom(v, "Bare tid siden sist")}</p>
       {v.lukket ? (
         <MetrikkTabell caption="Besøk: modellen mot enkle tommelfingerregler på publiserte spådommer" rader={[["Modellen", v.modell, true], ["Bare tid siden sist", v.heuristikk, false], ["Gjett snittet", v.grunnrate, false]]} />
       ) : (
-        <p className="text-xs text-ink-soft">Om nivået traff, kan vi først si når vinduet er over. Besøkene kommer ikke jevnt fordelt over de {horisont} dagene.</p>
+        <p className="text-xs text-ink-soft">Om nivået traff, kan vi først si når fasiten er endelig. Besøkene kommer ikke jevnt fordelt over de {horisont} dagene.</p>
       )}
     </div>
   );
@@ -569,7 +576,7 @@ function UtfallFasitKort({ u, fra }: { u: FasitUtfall; fra: string }) {
     <div className="card space-y-4 p-5 sm:p-6">
       <h3 className="font-display text-xl font-extrabold">🎲 Strek/sur ved neste tilsyn</h3>
       <p className="text-sm text-ink-soft">
-        {tall(u.n)} ordinære tilsyn siden {formatDato(fra)}, hvert sjekket mot spådommen som lå ute dagen før. {tall(u.treff)} endte med strekmunn eller sur munn.
+        {tall(u.n)} ordinære tilsyn siden {formatDato(fra)}, hvert sjekket mot den siste spådommen vi publiserte før tilsynet. {tall(u.treff)} endte med strekmunn eller sur munn.
       </p>
       <dl className="grid grid-cols-2 gap-3">
         <Tall verdi={prosent(u.modell.snittPredikert)} tekst="spådd sjanse for strek/sur i snitt" />
@@ -579,7 +586,7 @@ function UtfallFasitKort({ u, fra }: { u: FasitUtfall; fra: string }) {
       <MetrikkTabell caption="Strek/sur: modellen mot enkle tommelfingerregler på publiserte spådommer" rader={[["Modellen", u.modell, true], ["Bare forrige resultat", u.heuristikk, false], ["Gjett snittet", u.grunnrate, false]]} />
       {(u.utenSpaadom > 0 || u.treff < 100) && (
         <p className="text-xs text-ink-soft">
-          {u.utenSpaadom > 0 && `${tall(u.utenSpaadom)} tilsyn til var hos nye steder som ikke hadde fått noen spådom ennå. De er holdt utenfor. `}
+          {u.utenSpaadom > 0 && `${tall(u.utenSpaadom)} tilsyn til var hos steder som manglet i spådommen, som regel nye steder. De er holdt utenfor. `}
           {u.treff < 100 && `Med bare ${tall(u.treff)} strekmunner og sure munner er usikkerheten stor, og tallene blir sikrere for hver uke.`}
         </p>
       )}

@@ -9,14 +9,13 @@ export function lesSpaadomsarkiv(root: string, sidenIso: string): { arkiv: Arkiv
   const commits = git(["log", `--since=${sidenIso}`, "--format=%H", "--", "generated/prediksjon.json"]).split("\n").filter(Boolean);
   const arkiv: ArkivertSpaadom[] = [];
   for (const sha of commits) {
-    let innhold: string;
     try {
-      innhold = git(["show", `${sha}:generated/prediksjon.json`]);
+      const d = JSON.parse(git(["show", `${sha}:generated/prediksjon.json`])) as PrediksjonData;
+      arkiv.push({ dataDato: d.dataDato, generert: d.generert, horisont: d.horisont, rytme: d.besok.rytme, etterSiste: d.utfall.etterSiste, steder: d.steder });
     } catch {
+      // Commiten slettet fila, eller fila er ødelagt eller i et annet format. Én slik skal ikke velte hele fasiten.
       continue;
     }
-    const d = JSON.parse(innhold) as PrediksjonData;
-    arkiv.push({ dataDato: d.dataDato, generert: d.generert, horisont: d.horisont, rytme: d.besok.rytme, etterSiste: d.utfall.etterSiste, steder: d.steder });
   }
   return { arkiv, grunn };
 }

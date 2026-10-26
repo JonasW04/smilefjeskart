@@ -31,14 +31,18 @@ describe("lagFasit", () => {
   it("beholder sist genererte spådom for hver datadato", () => {
     const siste = spaadom("2026-01-10", rader.map(([slug]) => [slug, 900, 100]), "2026-01-10T18:00:00.000Z");
     const tidlig = spaadom("2026-01-10", rader.map(([slug]) => [slug, 100, 100]));
-    const f = lagFasit([siste, tidlig], grenser, juni)!;
-    expect(f.antallSpaadommer).toBe(1);
-    expect(f.besok[0].forventet).toBeCloseTo(4.5);
+    for (const arkiv of [[siste, tidlig], [tidlig, siste]]) {
+      const f = lagFasit(arkiv, grenser, juni)!;
+      expect(f.antallSpaadommer).toBe(1);
+      expect(f.besok[0].forventet).toBeCloseTo(4.5);
+    }
   });
 
   it("teller ordinære besøk fra dagen etter til og med siste dag", () => {
     const v = lagFasit([spaadom("2026-01-10", rader)], grenser, juni)!.besok[0];
     expect(v).toMatchObject({ treff: 2, n: 5, lukket: true, dager: 60, til: "2026-03-11" });
+    // Rytmeheuristikken: D hadde tilsyn dagen før (bøtte 0–30), de andre for 224 dager siden (siste bøtte).
+    expect(v.heuristikk.snittPredikert).toBeCloseTo((4 * 0.5 + 0.01) / 5);
   });
 
   it("teller bare observerte dager og venter på etterslepet før lukking", () => {
