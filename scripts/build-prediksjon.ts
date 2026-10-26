@@ -23,7 +23,9 @@ import {
   utfallEksempler,
   type Eksempler,
 } from "../lib/prediksjon/trening";
-import type { PrediksjonData } from "../lib/prediksjon/typer";
+import { lagFasit } from "../lib/prediksjon/fasit";
+import { lesSpaadomsarkiv } from "./lib/spaadomsarkiv";
+import type { Fasit, FasitMaal, PrediksjonData } from "../lib/prediksjon/typer";
 import type { Datasett } from "../lib/types";
 
 const ROOT = process.cwd();
@@ -34,6 +36,7 @@ const HORISONT = 60;
 const START = dagnr("2017-01-01"); // 2016 er første år i datasettet, så historikken er for tynn før dette.
 const TESTPERIODER = 3;
 const L2 = 5;
+const FASIT_DAGER = 365; // Publiserte spådommer så langt tilbake leses fra git for fasiten.
 
 const t0 = Date.now();
 const logg = (msg: string) => console.log(`[${((Date.now() - t0) / 1000).toFixed(1).padStart(5)}s] ${msg}`);
@@ -91,6 +94,18 @@ const live = steder.map((s) => {
     utfall: prediker(utfallModell, utfallRad(h, s.sted.kategori, kjede, uk)),
   };
 });
+
+// Fasit: publiserte spådommer mot det som skjedde
+let fasit: Fasit | null = null;
+try {
+  const { arkiv, grunn } = lesSpaadomsarkiv(ROOT, isoFraDagnr(dataDag - FASIT_DAGER));
+  if (grunn) logg("Advarsel: grunn git-klon, fasiten ser bare spådommene som finnes lokalt");
+  fasit = lagFasit(arkiv, new Map(steder.map((s) => [s.sted.slug, s.tilsyn])), dataDag);
+  logg(`Fasit: ${fasit?.antallSpaadommer ?? 0} publiserte spådommer, ${fasit?.besok.length ?? 0} besøksvinduer, ${fasit?.utfall?.n ?? 0} utfall`);
+} catch (e) {
+  // Uten git (f.eks. utenfor et repo) skal modellen likevel publiseres.
+  logg(`Fasit hoppet over: ${e instanceof Error ? e.message : String(e)}`);
+}
 
 // ---------------------------------------------------------------------------
 // Beskrivende tall (fra faktiske data, ikke modellen)
@@ -166,6 +181,19 @@ const rundRapport = <T extends Omit<PrediksjonData["besok"], "antallSnapshots" |
   folder: r.folder.map((f) => ({ ...f, aucModell: r4(f.aucModell), aucHeuristikk: r4(f.aucHeuristikk), snittPredikert: r4(f.snittPredikert), snittFaktisk: r4(f.snittFaktisk) })),
 });
 
+const rundFasitMaal = <T extends FasitMaal>(m: T): T => ({
+  ...m,
+  modell: rundMetrikk(m.modell),
+  heuristikk: rundMetrikk(m.heuristikk),
+  grunnrate: rundMetrikk(m.grunnrate),
+  aucIntervall: [r4(m.aucIntervall[0]), r4(m.aucIntervall[1])],
+});
+const rundFasit = (f: Fasit): Fasit => ({
+  ...f,
+  besok: f.besok.map((v) => ({ ...rundFasitMaal(v), forventet: Math.round(v.forventet) })),
+  utfall: f.utfall && rundFasitMaal(f.utfall),
+});
+
 const fylkeNavn = new Map(steder.map((s) => [s.fylke, s.sted.fylke ?? "Ukjent fylke"]));
 const obsKategori = observert((s) => s.sted.kategori);
 const obsFylke = observert((s) => s.fylke);
@@ -206,6 +234,7 @@ const data: PrediksjonData = {
   steder: live
     .map((l): [string, number, number] => [l.s.sted.slug, Math.round(l.besok * 1000), Math.round(l.utfall * 1000)])
     .sort((a, b) => a[0].localeCompare(b[0])),
+  fasit: fasit && rundFasit(fasit),
 };
 
 fs.writeFileSync(UT, JSON.stringify(data));
@@ -215,6 +244,7 @@ console.log(
     {
       besok: { modell: data.besok.modell, heuristikk: data.besok.heuristikk, grunnrate: data.besok.grunnrate, folder: data.besok.folder, forventet: data.besok.forventet },
       utfall: { modell: data.utfall.modell, heuristikk: data.utfall.heuristikk, grunnrate: data.utfall.grunnrate, folder: data.utfall.folder, landSnitt: data.utfall.landSnitt },
+      fasit: data.fasit,
     },
     null,
     1,

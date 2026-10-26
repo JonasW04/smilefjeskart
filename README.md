@@ -45,7 +45,7 @@ npm run build:prediksjon
 
 - `generated/steder.json`: steder og full tilsynshistorikk, leses på serveren.
 - `public/data/kart.json`: kompakt kartdata til nettleseren.
-- `generated/prediksjon.json`: modellrapporter og anslag fra `build:prediksjon`.
+- `generated/prediksjon.json`: modellrapporter og anslag fra `build:prediksjon`, samt `fasit`, publiserte spådommer lest tilbake fra git-historikken og sjekket mot det som skjedde siden. Dette trenger full git-historikk, som arbeidsflyten henter med `fetch-depth: 0`.
 - `public/tilsyn.geojson`, `public/tilsyn-diff.json`, `public/tilsyn-meta.json`: beholdte dataformater for bakoverkompatibilitet.
 
 Workflowen [Update tilsyndata](.github/workflows/update-tilsyndata.yml) kjører hver dag kl. 06:00 UTC og kan startes manuelt. Den publiserer oppdaterte tilsynsdata selv om modelltreningen feiler; Spåkula viser datoen for datagrunnlaget slik at eldre anslag kan gjenkjennes.

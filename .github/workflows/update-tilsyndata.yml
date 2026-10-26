@@ -21,6 +21,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Full historikk: build:prediksjon leser tidligere publiserte spådommer fra git for fasiten.
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
