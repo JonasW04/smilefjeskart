@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import KartLaster from "@/components/kart/KartLaster";
+
+export const metadata: Metadata = {
+  title: "Smilefjes på kart – oversikt over Mattilsynets tilsyn | Smilefjeskartet",
+  description: "Se smilefjeset til alle restauranter, kafeer og spisesteder i Norge på ett kart. Alle Mattilsynets smilefjestilsyn siden 2016, med historikk for hvert sted. Oppdateres hver morgen.",
+  alternates: { canonical: "https://smilefjeskartet.no" },
+};
 
 export default function Forside() {
   return (

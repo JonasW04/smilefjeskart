@@ -8,6 +8,7 @@ import Tidslinje from "@/components/sted/Tidslinje";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
 import { getDatasett, getSted, kjedeFordeling, kjedeSteder, kommuneFordeling, landFordeling, naermeste } from "@/lib/server/data";
 import { fylkeSlugFraNr, getOmrade, kommuneSlug } from "@/lib/server/omrader";
+import { merkeSnippet, stedTittel } from "@/lib/seo";
 import { KARAKTER_FORKLARING, SMILE_LABEL, TEMAER, isGraded, smileFromKarakter } from "@/lib/smile";
 import { kindFromKarakter } from "@/lib/smiley";
 import { andel, dagerMellom, fordeling, formatDato, ordinaereKarakterer, prosent, sisteTilsyn, stedStats, tidSiden } from "@/lib/stats";
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!s) return { title: "Fant ikke stedet – Smilefjeskartet" };
   const t = sisteTilsyn(s);
   const smil = smileFromKarakter(t.karakter);
-  const title = `${s.navn}, ${s.poststed || s.kommune || ""} – ${smil ? SMILE_LABEL[smil] : "Smilefjes"} | Smilefjeskartet`;
+  const title = stedTittel(s);
   const description = `${s.navn} fikk ${smil ? SMILE_LABEL[smil].toLowerCase() : "ukjent karakter"} ved siste tilsyn ${formatDato(t.dato)}. Se alle ${s.tilsyn.length} tilsyn fra Mattilsynet siden ${s.tilsyn[0].dato.slice(0, 4)}, tema for tema.`;
   return {
     title,
@@ -283,6 +284,14 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
               )}
             </section>
           )}
+
+          <section className="card space-y-3 p-5" aria-labelledby="merke-tittel">
+            <h2 id="merke-tittel" className="font-display text-xl font-extrabold">Vis smilefjeset på nettsiden din</h2>
+            <p className="text-sm text-ink-soft">Driver du {s.navn}? Lim inn koden under på nettsiden deres. Merket oppdaterer seg selv etter hvert nye tilsyn.</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`/sted/${s.slug}/merke.png`} alt={`Smilefjes fra Mattilsynet for ${s.navn}`} width={220} height={56} />
+            <pre className="select-all overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-paper p-3 text-xs"><code>{merkeSnippet(s)}</code></pre>
+          </section>
         </aside>
       </div>
     </article>

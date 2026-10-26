@@ -16,7 +16,7 @@ export function ogOptions() {
 
 const PAPER = "#fff8ec";
 const INK = "#1e1631";
-const BG: Record<SmileyKind, string> = { smil: "#d4f6e3", strek: "#fff0c4", sur: "#ffdde0", ukjent: "#ece8f3" };
+export const BG: Record<SmileyKind, string> = { smil: "#d4f6e3", strek: "#fff0c4", sur: "#ffdde0", ukjent: "#ece8f3" };
 
 export function smileyImg(kind: SmileyKind, size: number) {
   const src = `data:image/svg+xml;base64,${Buffer.from(smileySvg(kind, size)).toString("base64")}`;
