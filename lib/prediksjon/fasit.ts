@@ -45,7 +45,7 @@ export function lagFasit(
   }
   const spaadommer = [...unike.values()].sort((a, b) => a.dataDato.localeCompare(b.dataDato));
   if (spaadommer.length === 0) return null;
-  const dager = spaadommer.map((s) => dagnr(s.dataDato));
+  const spaadomsdager = spaadommer.map((s) => dagnr(s.dataDato));
   const oppslag = spaadommer.map((s) => new Map(s.steder.map(([slug, b, u]) => [slug, { besok: b / 1000, utfall: u / 1000 }])));
   const besok: FasitBesokVindu[] = [];
   const maaneder = new Set<string>();
@@ -81,8 +81,8 @@ export function lagFasit(
   const grunnrater = spaadommer.map((s) => grunnrate(s.etterSiste));
   for (const [slug, t] of tilsyn) {
     for (const x of t) {
-      if (x.oppfolging || x.karakter < 0 || x.dag <= dager[0] || x.dag > dataDag) continue;
-      const i = forsteIkkeMindre(dager, x.dag) - 1;
+      if (x.oppfolging || x.karakter < 0 || x.dag <= spaadomsdager[0] || x.dag > dataDag) continue;
+      const i = forsteIkkeMindre(spaadomsdager, x.dag) - 1;
       const rad = oppslag[i].get(slug);
       if (!rad) {
         utenSpaadom++;
