@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { lagFasit, type ArkivertSpaadom } from "@/lib/prediksjon/fasit";
 import { forberedTilsyn } from "@/lib/prediksjon/historikk";
-import { aucIntervall } from "@/lib/prediksjon/metrikker";
+import { rangeringsdom } from "@/lib/prediksjon/fasittekst";
+import { aucIntervall, type Metrikk } from "@/lib/prediksjon/metrikker";
 import { dagnr } from "@/lib/prediksjon/tid";
+import type { FasitMaal } from "@/lib/prediksjon/typer";
 import type { Tilsyn } from "@/lib/types";
 
 function spaadom(dataDato: string, steder: ArkivertSpaadom["steder"], generert = dataDato + "T12:00:00.000Z"): ArkivertSpaadom {
@@ -96,5 +98,24 @@ describe("aucIntervall", () => {
     const [nedre, ovre] = aucIntervall(0.99, 3, 3);
     expect(nedre).toBeGreaterThanOrEqual(0);
     expect(ovre).toBeLessThanOrEqual(1);
+  });
+});
+
+describe("rangeringsdom", () => {
+  const metrikk = (auc: number): Metrikk => ({ auc, brier: 0, brierSkill: 0, loggTap: 0, snittPredikert: 0, snittFaktisk: 0, toppDesil: 0 });
+  const maal = (auc: number, lav: number, hoy: number, regel: number): FasitMaal => ({
+    n: 100, treff: 20, modell: metrikk(auc), heuristikk: metrikk(regel), grunnrate: metrikk(0.5), aucIntervall: [lav, hoy],
+  });
+
+  it("sier ikke «over» når nedre grense og regelen vises likt", () => {
+    // Fasiten 26. okt. 2026: 0,5832 og 0,575 vises begge som 0,58, men Math.round(0.575 * 100) gir 57.
+    const tekst = rangeringsdom(maal(0.7105, 0.5832, 0.8378, 0.575), "Bare forrige resultat");
+    expect(tekst).toContain("intervall 0,58–0,84) mot 0,58 for «bare forrige resultat»");
+    expect(tekst).toContain("intervallet overlapper ennå");
+  });
+
+  it("sier «over» bare når hele intervallet vises over regelen", () => {
+    expect(rangeringsdom(maal(0.8, 0.7, 0.9, 0.6), "Regel")).toContain("Hele intervallet ligger over");
+    expect(rangeringsdom(maal(0.6, 0.5, 0.7, 0.65), "Regel")).toContain("Foreløpig slår ikke");
   });
 });
