@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/**": ["./generated/steder.json", "./assets/fonts/*.ttf", "./generated/prediksjon.json"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.smilefjeskartet.no" }],
+        destination: "https://smilefjeskartet.no/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
