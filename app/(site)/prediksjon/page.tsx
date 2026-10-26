@@ -6,7 +6,7 @@ import Rytme from "@/components/prediksjon/Rytme";
 import Smiley from "@/components/Smiley";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
 import type { Metrikk } from "@/lib/prediksjon/metrikker";
-import type { ModellRapport } from "@/lib/prediksjon/typer";
+import type { FasitBesokVindu, FasitMaal, FasitUtfall, ModellRapport } from "@/lib/prediksjon/typer";
 import { getSteder } from "@/lib/server/data";
 import { getPrediksjon, getStedPrediksjon } from "@/lib/server/prediksjon";
 import { kindFromKarakter } from "@/lib/smiley";
@@ -90,6 +90,9 @@ export default async function PrediksjonSide({ searchParams }: { searchParams: P
   const topp = [...utvalg].sort((a, b) => b.p.besok - a.p.besok || a.s.navn.localeCompare(b.s.navn, "nb")).slice(0, ANTALL_I_LISTE);
 
   // --- Nøkkeltall -------------------------------------------------------------
+  const f = d.fasit ?? null;
+  const visFasit = f !== null && (f.besok.length > 0 || f.utfall !== null);
+  const hovedvindu = f ? [...f.besok].reverse().find((v) => v.lukket) ?? f.besok[0] : undefined;
   const b = d.besok;
   const u = d.utfall;
   const loeft = b.modell.toppDesil / b.modell.snittFaktisk;
@@ -138,6 +141,7 @@ export default async function PrediksjonSide({ searchParams }: { searchParams: P
         <a className="chip" href="#besok">🚪 Besøk snart</a>
         <a className="chip" href="#utfall">🎲 Neste tilsyn</a>
         <a className="chip" href="#kvalitet">🎯 Hvor god er spåkula?</a>
+        {visFasit && <a className="chip" href="#fasit">🧾 Fasit så langt</a>}
         <a className="chip" href="#metode">🔧 Slik fungerer modellen</a>
       </nav>
 
@@ -327,6 +331,27 @@ export default async function PrediksjonSide({ searchParams }: { searchParams: P
         </div>
       </section>
 
+      {visFasit && (
+        <section id="fasit" className="scroll-mt-6 space-y-4" aria-labelledby="fasit-tittel">
+          <div className="space-y-2">
+            <h2 id="fasit-tittel" className="font-display text-3xl font-extrabold tracking-tight">🧾 Fasit: slik gikk det</h2>
+            <p className="max-w-3xl text-ink-soft">
+              Tilbaketesten over spår år som allerede var over. Her sjekker vi spådommene vi faktisk har publisert siden {formatDato(f.forste)},
+              mot tilsynene som kom etterpå. Hver natts spådommer ligger lagret i prosjektets git-historikk, så ingen kan pynte på dem i ettertid.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {hovedvindu && <BesokFasitKort v={hovedvindu} horisont={d.horisont} />}
+            {f.utfall && <UtfallFasitKort u={f.utfall} fra={f.forste} />}
+          </div>
+          {f.besok.length > 1 && <VinduTabell vinduer={f.besok} horisont={d.horisont} />}
+          <p className="text-sm text-ink-soft">
+            Fasit med tilsyn til og med {formatDato(f.dataDato)}, fra {tall(f.antallSpaadommer)} publiserte spådommer. Mattilsynet publiserer noen
+            tilsyn noen dager på etterskudd, så de siste dagene kan fylles på.
+          </p>
+        </section>
+      )}
+
       {/* Metode --------------------------------------------------------------------- */}
       <section id="metode" className="card scroll-mt-6 space-y-5 p-5 sm:p-8" aria-labelledby="metode-tittel">
         <h2 id="metode-tittel" className="font-display text-3xl font-extrabold tracking-tight">🔧 Slik fungerer modellen</h2>
@@ -461,35 +486,144 @@ function KvalitetsKort({ tittel, rapport, heuristikk, dom }: { tittel: string; r
   return (
     <div className="card space-y-3 p-5 sm:p-6">
       <h3 className="font-display text-xl font-extrabold">{tittel}</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <caption className="sr-only">{`${tittel}: modellen mot enkle tommelfingerregler i tilbaketesten`}</caption>
-          <thead>
-            <tr className="border-b-2 border-line">
-              <th scope="col" className="py-2 pr-2">Metode</th>
-              <th scope="col" className="py-2 pr-2 text-right" title="Rangering: 0,5 = myntkast, 1 = perfekt">AUC</th>
-              <th scope="col" className="py-2 pr-2 text-right" title="Snittlig kvadratavvik mellom sannsynlighet og fasit – lavere er bedre">Brier</th>
-              <th scope="col" className="py-2 text-right" title="Hvor mye lavere Brier-skåren er enn ved å gjette snittet">Mot snittet</th>
-            </tr>
-          </thead>
-          <tbody className="tabular-nums">
-            {rader.map(([navn, m, hoved]) => (
-              <tr key={navn} className={`border-b border-line/15 ${hoved ? "font-bold" : "text-ink-soft"}`}>
-                <th scope="row" className="py-2 pr-2 text-left font-[inherit]">{navn}</th>
-                <td className="py-2 pr-2 text-right">{tall(m.auc, 2)}</td>
-                <td className="py-2 pr-2 text-right">{tall(m.brier, 3)}</td>
-                <td className="py-2 text-right">{m.brierSkill === 0 ? "–" : `${m.brierSkill > 0 ? "+" : "−"}${prosent(Math.abs(m.brierSkill))}`}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <MetrikkTabell caption={`${tittel}: modellen mot enkle tommelfingerregler i tilbaketesten`} rader={rader} />
       <p className="text-sm">{dom}</p>
       <p className="text-xs text-ink-soft">
         AUC per testår: {rapport.folder.map((f) => `${tall(f.aucModell, 2)} (${f.fra.slice(0, 4)}/${f.til.slice(2, 4)})`).join(" · ")}. {tall(n)} spådommer
         totalt. AUC er sjansen for at modellen gir høyere tall til et tilfeldig «ja» enn til et tilfeldig «nei» (0,5 = myntkast). Brier
         måler hvor nær sannsynlighetene er fasiten (lavere er bedre), og «mot snittet» er hvor mye bedre det er enn å gi alle samme tall.
       </p>
+    </div>
+  );
+}
+
+function MetrikkTabell({ caption, rader }: { caption: string; rader: Array<[string, Metrikk, boolean]> }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-left text-sm">
+        <caption className="sr-only">{caption}</caption>
+        <thead>
+          <tr className="border-b-2 border-line">
+            <th scope="col" className="py-2 pr-2">Metode</th>
+            <th scope="col" className="py-2 pr-2 text-right" title="Rangering: 0,5 = myntkast, 1 = perfekt">AUC</th>
+            <th scope="col" className="py-2 pr-2 text-right" title="Snittlig kvadratavvik mellom sannsynlighet og fasit – lavere er bedre">Brier</th>
+            <th scope="col" className="py-2 text-right" title="Hvor mye lavere Brier-skåren er enn ved å gjette snittet">Mot snittet</th>
+          </tr>
+        </thead>
+        <tbody className="tabular-nums">
+          {rader.map(([navn, m, hoved]) => (
+            <tr key={navn} className={`border-b border-line/15 ${hoved ? "font-bold" : "text-ink-soft"}`}>
+              <th scope="row" className="py-2 pr-2 text-left font-[inherit]">{navn}</th>
+              <td className="py-2 pr-2 text-right">{tall(m.auc, 2)}</td>
+              <td className="py-2 pr-2 text-right">{tall(m.brier, 3)}</td>
+              <td className="py-2 text-right">{m.brierSkill === 0 ? "–" : `${m.brierSkill > 0 ? "+" : "−"}${prosent(Math.abs(m.brierSkill))}`}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function rangeringsdom(m: FasitMaal, regel: string): string {
+  const a = tall(m.modell.auc, 2);
+  const [lav, hoy] = m.aucIntervall;
+  const h = tall(m.heuristikk.auc, 2);
+  const innledning = `Rangering (AUC): ${a} for modellen (95 % intervall ${tall(lav, 2)}–${tall(hoy, 2)}) mot ${h} for «${regel.toLowerCase()}».`;
+  // Sammenlign tallene slik de vises, så teksten aldri sier «over» om to like tall.
+  const rund = (x: number) => Math.round(x * 100) / 100;
+  if (rund(lav) > rund(m.heuristikk.auc)) return innledning + " Hele intervallet ligger over tommelfingerregelen, så modellen rangerer bedre.";
+  if (m.modell.auc > m.heuristikk.auc) return innledning + " Modellen ligger foran, men intervallet overlapper ennå tommelfingerregelen.";
+  return innledning + " Foreløpig slår ikke modellen tommelfingerregelen.";
+}
+
+function BesokFasitKort({ v, horisont }: { v: FasitBesokVindu; horisont: number }) {
+  return (
+    <div className="card space-y-4 p-5 sm:p-6">
+      <h3 className="font-display text-xl font-extrabold">🚪 Besøk innen {horisont} dager</h3>
+      <p className="text-sm text-ink-soft">
+        Spådommen fra {formatDato(v.fra)}
+        {v.lukket
+          ? `, sjekket mot alle ${horisont} dagene.`
+          : v.dager < horisont
+            ? `. Dag ${v.dager} av ${horisont}, vinduet stenger ${formatDato(v.til)}.`
+            : `. Alle ${horisont} dagene er over, men vi venter en uke på tilsyn som registreres sent.`}
+      </p>
+      <dl className="grid grid-cols-2 gap-3">
+        <Tall verdi={`≈ ${tall(v.forventet)}`} tekst={`steder med besøk ventet innen dag ${horisont}`} />
+        <Tall verdi={tall(v.treff)} tekst={v.lukket ? "steder fikk faktisk besøk" : "steder har fått besøk så langt"} />
+      </dl>
+      {!v.lukket && (
+        <div className="h-2 overflow-hidden rounded-full bg-accent-soft" role="progressbar" aria-label="Dager av vinduet som er gått" aria-valuemin={0} aria-valuemax={horisont} aria-valuenow={v.dager}>
+          <div className="h-full rounded-full bg-accent" style={{ width: `${(v.dager / horisont) * 100}%` }} />
+        </div>
+      )}
+      <p className="text-sm">
+        Blant de 10 % stedene modellen rangerte høyest, har {prosent(v.modell.toppDesil, 1)} fått besøk, mot {prosent(v.modell.snittFaktisk, 1)} av alle.
+      </p>
+      <p className="text-sm">{rangeringsdom(v, "Bare tid siden sist")}</p>
+      {v.lukket ? (
+        <MetrikkTabell caption="Besøk: modellen mot enkle tommelfingerregler på publiserte spådommer" rader={[["Modellen", v.modell, true], ["Bare tid siden sist", v.heuristikk, false], ["Gjett snittet", v.grunnrate, false]]} />
+      ) : (
+        <p className="text-xs text-ink-soft">Om nivået traff, kan vi først si når fasiten er endelig. Besøkene kommer ikke jevnt fordelt over de {horisont} dagene.</p>
+      )}
+    </div>
+  );
+}
+
+function UtfallFasitKort({ u, fra }: { u: FasitUtfall; fra: string }) {
+  return (
+    <div className="card space-y-4 p-5 sm:p-6">
+      <h3 className="font-display text-xl font-extrabold">🎲 Strek/sur ved neste tilsyn</h3>
+      <p className="text-sm text-ink-soft">
+        {tall(u.n)} ordinære tilsyn siden {formatDato(fra)}, hvert sjekket mot den siste spådommen vi publiserte før tilsynet. {tall(u.treff)} endte med strekmunn eller sur munn.
+      </p>
+      <dl className="grid grid-cols-2 gap-3">
+        <Tall verdi={prosent(u.modell.snittPredikert)} tekst="spådd sjanse for strek/sur i snitt" />
+        <Tall verdi={prosent(u.modell.snittFaktisk)} tekst="faktisk andel strek/sur" />
+      </dl>
+      <p className="text-sm">{rangeringsdom(u, "Bare forrige resultat")}</p>
+      <MetrikkTabell caption="Strek/sur: modellen mot enkle tommelfingerregler på publiserte spådommer" rader={[["Modellen", u.modell, true], ["Bare forrige resultat", u.heuristikk, false], ["Gjett snittet", u.grunnrate, false]]} />
+      {(u.utenSpaadom > 0 || u.treff < 100) && (
+        <p className="text-xs text-ink-soft">
+          {u.utenSpaadom > 0 && `${tall(u.utenSpaadom)} tilsyn til var hos steder som manglet i spådommen, som regel nye steder. De er holdt utenfor. `}
+          {u.treff < 100 && `Med bare ${tall(u.treff)} strekmunner og sure munner er usikkerheten stor, og tallene blir sikrere for hver uke.`}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function VinduTabell({ vinduer, horisont }: { vinduer: FasitBesokVindu[]; horisont: number }) {
+  return (
+    <div className="card p-5 sm:p-6">
+      <h3 className="font-display text-xl font-extrabold">Alle besøksspådommer</h3>
+      <p className="text-sm text-ink-soft">Den første spådommen i hver måned, sjekket mot de neste {horisont} dagene.</p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-sm">
+          <caption className="sr-only">Månedlige besøksspådommer og hvordan de gikk</caption>
+          <thead>
+            <tr className="border-b-2 border-line">
+              <th scope="col" className="py-2 pr-2">Spådd fra</th>
+              <th scope="col" className="py-2 pr-2 text-right">Ventet</th>
+              <th scope="col" className="py-2 pr-2 text-right">Fikk besøk</th>
+              <th scope="col" className="py-2 pr-2 text-right">AUC</th>
+              <th scope="col" className="py-2 text-right">Status</th>
+            </tr>
+          </thead>
+          <tbody className="tabular-nums">
+            {vinduer.map((v) => (
+              <tr key={v.fra} className="border-b border-line/15 text-ink-soft">
+                <th scope="row" className="py-2 pr-2 text-left font-[inherit]">{formatDato(v.fra)}</th>
+                <td className="py-2 pr-2 text-right">≈ {tall(v.forventet)}</td>
+                <td className="py-2 pr-2 text-right">{tall(v.treff)}</td>
+                <td className="py-2 pr-2 text-right">{tall(v.modell.auc, 2)}</td>
+                <td className="py-2 text-right">{v.lukket ? "Ferdig" : `Dag ${v.dager} av ${horisont}`}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

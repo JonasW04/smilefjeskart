@@ -25,6 +25,49 @@ export type ModellRapport = {
   nTrening: number;
 };
 
+export type FasitMaal = {
+  /** Antall spådommer som er sjekket, og hvor mange av dem som slo til (y = 1). */
+  n: number;
+  treff: number;
+  modell: Metrikk;
+  heuristikk: Metrikk;
+  /** «Gjett snittet»: historisk snitt fra spådommens egne tabeller. AUC 0,5 og brierSkill 0 per definisjon. */
+  grunnrate: Metrikk;
+  /** 95 % intervall for modellens AUC (Hanley–McNeil). */
+  aucIntervall: [number, number];
+};
+
+/** Én publisert besøksspådom (den første i hver kalendermåned) og hvordan den har gått. */
+export type FasitBesokVindu = FasitMaal & {
+  /** dataDato for spådommen; vinduet er dagene etter. */
+  fra: string;
+  /** Siste dag i vinduet (fra + horisont). */
+  til: string;
+  /** Dager av vinduet vi har data for (= horisont når vinduet er over). */
+  dager: number;
+  /** Vinduet er over, med ETTERSLEP dager ekstra for sene publiseringer. */
+  lukket: boolean;
+  /** Sum av sannsynlighetene: ventet antall steder med ordinært tilsyn innen horisonten. */
+  forventet: number;
+};
+
+export type FasitUtfall = FasitMaal & {
+  /** Ordinære tilsyn hos steder som ikke var med i spådommen dagen før (typisk nye steder). */
+  utenSpaadom: number;
+};
+
+export type Fasit = {
+  /** Fasiten bygger på tilsyn til og med denne datoen. */
+  dataDato: string;
+  /** dataDato for den eldste publiserte spådommen som er med. */
+  forste: string;
+  /** Antall publiserte spådommer (unike dataDato) som er lest. */
+  antallSpaadommer: number;
+  /** Eldste først. */
+  besok: FasitBesokVindu[];
+  utfall: FasitUtfall | null;
+};
+
 export type PrediksjonData = {
   v: 1;
   /** Når modellen ble trent (ISO-tidsstempel). */
@@ -52,4 +95,6 @@ export type PrediksjonData = {
   };
   /** [slug, P(ordinært tilsyn innen horisont) i promille, P(strek/sur ved neste ordinære) i promille] */
   steder: Array<[string, number, number]>;
+  /** Publiserte spådommer fra git-historikken sjekket mot det som skjedde etterpå. Mangler i eldre filer. */
+  fasit?: Fasit | null;
 };

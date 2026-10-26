@@ -77,6 +77,14 @@ export function treffITopp(y: ArrayLike<number>, p: ArrayLike<number>, andel: nu
   return s / k;
 }
 
+/** 95 % intervall for AUC (Hanley & McNeil 1982), kappet til [0, 1]. */
+export function aucIntervall(a: number, nPos: number, nNeg: number): [number, number] {
+  const q1 = a / (2 - a);
+  const q2 = (2 * a * a) / (1 + a);
+  const se = Math.sqrt((a * (1 - a) + (nPos - 1) * (q1 - a * a) + (nNeg - 1) * (q2 - a * a)) / (nPos * nNeg));
+  return [Math.max(0, a - 1.96 * se), Math.min(1, a + 1.96 * se)];
+}
+
 export type Metrikk = {
   auc: number;
   brier: number;
