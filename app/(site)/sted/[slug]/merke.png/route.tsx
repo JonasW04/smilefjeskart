@@ -31,9 +31,14 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
       >
         {smileyImg(kind, 72)}
         <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
-          <div style={{ display: "flex", fontSize: 17, opacity: 0.75 }}>Smilefjes fra Mattilsynet</div>
+          <div style={{ display: "flex", fontSize: 17, opacity: 0.75 }}>Siste smilefjestilsyn</div>
           <div style={{ display: "flex", fontFamily: DISPLAY, fontSize: 34 }}>{kind === "ukjent" ? "Ukjent" : SMILE_LABEL[kind]}</div>
-          <div style={{ display: "flex", fontSize: 17 }}>{`${formatDato(siste.dato)} · smilefjeskartet.no`}</div>
+          <div style={{ display: "flex", fontSize: 17, gap: 6 }}>
+            <span>{`${formatDato(siste.dato)} ·`}</span>
+            <span style={{ display: "flex", fontFamily: DISPLAY }}>
+              Smilefjes<span style={{ color: "#6b4eff" }}>kartet</span>
+            </span>
+          </div>
         </div>
       </div>
     ),

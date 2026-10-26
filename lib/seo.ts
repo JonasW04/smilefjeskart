@@ -20,5 +20,5 @@ export function merkeSnippet(s: Sted): string {
     .replace(/"/g, "&quot;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
-  return `<a href="https://smilefjeskartet.no/sted/${s.slug}"><img src="https://smilefjeskartet.no/sted/${s.slug}/merke.png" alt="Smilefjes fra Mattilsynet for ${navn}" width="220" height="56"></a>`;
+  return `<a href="https://smilefjeskartet.no/sted/${s.slug}"><img src="https://smilefjeskartet.no/sted/${s.slug}/merke.png" alt="Se smilefjeset til ${navn} på smilefjeskartet.no" width="220" height="56"></a>`;
 }

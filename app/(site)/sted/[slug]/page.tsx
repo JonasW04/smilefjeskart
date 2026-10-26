@@ -287,9 +287,9 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
 
           <section className="card space-y-3 p-5" aria-labelledby="merke-tittel">
             <h2 id="merke-tittel" className="font-display text-xl font-extrabold">Vis smilefjeset på nettsiden din</h2>
-            <p className="text-sm text-ink-soft">Driver du {s.navn}? Lim inn koden under på nettsiden deres. Merket oppdaterer seg selv etter hvert nye tilsyn.</p>
+            <p className="text-sm text-ink-soft">Driver du {s.navn}? Lim inn koden under på nettsiden deres. Merket oppdaterer seg selv når det kommer nye tilsyn.</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/sted/${s.slug}/merke.png`} alt={`Smilefjes fra Mattilsynet for ${s.navn}`} width={220} height={56} />
+            <img src={`/sted/${s.slug}/merke.png`} alt={`Smilefjes-merke for ${s.navn}: ${kind === "ukjent" ? "ukjent" : SMILE_LABEL[kind].toLowerCase()}`} width={220} height={56} loading="lazy" />
             <pre className="select-all overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-paper p-3 text-xs"><code>{merkeSnippet(s)}</code></pre>
           </section>
         </aside>

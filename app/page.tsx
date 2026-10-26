@@ -2,10 +2,17 @@ import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import KartLaster from "@/components/kart/KartLaster";
 
+const title = "Smilefjes på kart – oversikt over Mattilsynets tilsyn | Smilefjeskartet";
+const description =
+  "Se smilefjeset til alle restauranter, kafeer og spisesteder i Norge på ett kart. Alle Mattilsynets smilefjestilsyn siden 2016, med historikk for hvert sted. Oppdateres hver morgen.";
+const url = "https://smilefjeskartet.no";
+
 export const metadata: Metadata = {
-  title: "Smilefjes på kart – oversikt over Mattilsynets tilsyn | Smilefjeskartet",
-  description: "Se smilefjeset til alle restauranter, kafeer og spisesteder i Norge på ett kart. Alle Mattilsynets smilefjestilsyn siden 2016, med historikk for hvert sted. Oppdateres hver morgen.",
-  alternates: { canonical: "https://smilefjeskartet.no" },
+  title,
+  description,
+  alternates: { canonical: url },
+  openGraph: { title, description, url, type: "website", locale: "nb_NO", siteName: "Smilefjeskartet" },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 export default function Forside() {

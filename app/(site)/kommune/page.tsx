@@ -4,10 +4,16 @@ import { fylker, kommuner } from "@/lib/server/omrader";
 import { tall } from "@/lib/chart";
 import { andel, prosent } from "@/lib/stats";
 
+const title = "Smilefjes i alle kommuner – kommuneoversikt | Smilefjeskartet";
+const description = "Finn smilefjesene i din kommune. Alle norske kommuner og fylker med serveringssteder, antall tilsyn og andel smil fra Mattilsynet.";
+const url = "https://smilefjeskartet.no/kommune";
+
 export const metadata: Metadata = {
-  title: "Smilefjes i alle kommuner – kommuneoversikt | Smilefjeskartet",
-  description: "Finn smilefjesene i din kommune. Alle norske kommuner og fylker med serveringssteder, antall tilsyn og andel smil fra Mattilsynet.",
-  alternates: { canonical: "https://smilefjeskartet.no/kommune" },
+  title,
+  description,
+  alternates: { canonical: url },
+  openGraph: { title, description, url, type: "website", locale: "nb_NO", siteName: "Smilefjeskartet" },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 export default function KommuneOversikt() {

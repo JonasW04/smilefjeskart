@@ -58,8 +58,13 @@ describe("merkeSnippet", () => {
   it("escaper navnet og lenker til merket", () => {
     const s = lagSted({ navn: `Bar & "Grill"`, slug: "bar-grill", tilsyn: [{ dato: "2025-02-19", karakter: 1 }] });
     const snippet = merkeSnippet(s);
-    expect(snippet).toContain(`alt="Smilefjes fra Mattilsynet for Bar &amp; &quot;Grill&quot;"`);
+    expect(snippet).toContain(`alt="Se smilefjeset til Bar &amp; &quot;Grill&quot; på smilefjeskartet.no"`);
     expect(snippet).toContain(`href="https://smilefjeskartet.no/sted/bar-grill"`);
     expect(snippet).toContain(`src="https://smilefjeskartet.no/sted/bar-grill/merke.png"`);
+  });
+
+  it("escaper < og > i navnet", () => {
+    const s = lagSted({ navn: "<b>Kafé</b>", slug: "kafe", tilsyn: [{ dato: "2025-02-19", karakter: 1 }] });
+    expect(merkeSnippet(s)).toContain(`alt="Se smilefjeset til &lt;b&gt;Kafé&lt;/b&gt; på smilefjeskartet.no"`);
   });
 });
