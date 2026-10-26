@@ -5,8 +5,9 @@ import RisikoStolper, { type RisikoRad } from "@/components/prediksjon/RisikoSto
 import Rytme from "@/components/prediksjon/Rytme";
 import Smiley from "@/components/Smiley";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
+import { rangeringsdom } from "@/lib/prediksjon/fasittekst";
 import type { Metrikk } from "@/lib/prediksjon/metrikker";
-import type { FasitBesokVindu, FasitMaal, FasitUtfall, ModellRapport } from "@/lib/prediksjon/typer";
+import type { FasitBesokVindu, FasitUtfall, ModellRapport } from "@/lib/prediksjon/typer";
 import { getSteder } from "@/lib/server/data";
 import { getPrediksjon, getStedPrediksjon } from "@/lib/server/prediksjon";
 import { kindFromKarakter } from "@/lib/smiley";
@@ -523,18 +524,6 @@ function MetrikkTabell({ caption, rader }: { caption: string; rader: Array<[stri
       </table>
     </div>
   );
-}
-
-function rangeringsdom(m: FasitMaal, regel: string): string {
-  const a = tall(m.modell.auc, 2);
-  const [lav, hoy] = m.aucIntervall;
-  const h = tall(m.heuristikk.auc, 2);
-  const innledning = `Rangering (AUC): ${a} for modellen (95 % intervall ${tall(lav, 2)}–${tall(hoy, 2)}) mot ${h} for «${regel.toLowerCase()}».`;
-  // Sammenlign tallene slik de vises, så teksten aldri sier «over» om to like tall.
-  const rund = (x: number) => Math.round(x * 100) / 100;
-  if (rund(lav) > rund(m.heuristikk.auc)) return innledning + " Hele intervallet ligger over tommelfingerregelen, så modellen rangerer bedre.";
-  if (m.modell.auc > m.heuristikk.auc) return innledning + " Modellen ligger foran, men intervallet overlapper ennå tommelfingerregelen.";
-  return innledning + " Foreløpig slår ikke modellen tommelfingerregelen.";
 }
 
 function BesokFasitKort({ v, horisont }: { v: FasitBesokVindu; horisont: number }) {
