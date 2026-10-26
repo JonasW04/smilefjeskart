@@ -1,5 +1,19 @@
 [
   {
+    "generatedAt": "2026-10-26T11:58:34.987Z",
+    "previousDownload": "2026-10-25T10:28:48.199Z",
+    "summary": {
+      "previousTotal": 8493,
+      "currentTotal": 8493,
+      "newCount": 0,
+      "changedCount": 0,
+      "removedCount": 0
+    },
+    "newInspections": [],
+    "changedInspections": [],
+    "removedIds": []
+  },
+  {
     "generatedAt": "2026-10-25T10:28:48.199Z",
     "previousDownload": "2026-10-24T10:03:57.213Z",
     "summary": {
