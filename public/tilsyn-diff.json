@@ -1,5 +1,49 @@
 [
   {
+    "generatedAt": "2026-10-27T11:20:10.468Z",
+    "previousDownload": "2026-10-26T11:58:34.987Z",
+    "summary": {
+      "previousTotal": 8493,
+      "currentTotal": 8493,
+      "newCount": 1,
+      "changedCount": 1,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2610231209477961058CHUSM_Tilsynsobjekt",
+        "orgnummer": "836530152",
+        "navn": "The Royal Corner",
+        "adresse": "Dronningens gate 46, 4608, Kristiansand S",
+        "dato": "20102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1109120744441800105IHTGC_Tilsynsobjekt",
+        "orgnummer": "997080254",
+        "navn": "Dragon House Hinna",
+        "adresse": "Hinnasvingene 48, 4020, Stavanger",
+        "dato": "26102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2509040802116020127HUGXN_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-26T11:58:34.987Z",
     "previousDownload": "2026-10-25T10:28:48.199Z",
     "summary": {
