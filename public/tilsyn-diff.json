@@ -1,5 +1,205 @@
 [
   {
+    "generatedAt": "2026-10-29T12:02:06.200Z",
+    "previousDownload": "2026-10-28T11:54:25.593Z",
+    "summary": {
+      "previousTotal": 8494,
+      "currentTotal": 8500,
+      "newCount": 7,
+      "changedCount": 7,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2610281310588380128EVIAU_Tilsynsobjekt",
+        "orgnummer": "929129849",
+        "navn": "8th Avenue AS",
+        "adresse": "Brooklyn Square 2, 4560, Vanse",
+        "dato": "28102026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607171830040980128GXNFD_Tilsynsobjekt",
+        "orgnummer": "937882114",
+        "navn": "Huset Spiseri",
+        "adresse": "Haugetunvegen 2, 5337, Rong",
+        "dato": "28102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2609272247544390127FCWTQ_Tilsynsobjekt",
+        "orgnummer": "838358802",
+        "navn": "Itachino Food AS",
+        "adresse": "Vangsgata 12, 5700, Voss",
+        "dato": "28102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2609281043046600128IHJNZ_Tilsynsobjekt",
+        "orgnummer": "935786770",
+        "navn": "Joe & The Juice Oslo City",
+        "adresse": "Stenersgata 1, 0050, Oslo",
+        "dato": "28102026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2504041257027752108GFMBI_Tilsynsobjekt",
+        "orgnummer": "835253392",
+        "navn": "Kitchen Afrique",
+        "adresse": "Deichmans gate 9, 0178, Oslo",
+        "dato": "26102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1309121109045383144UHYUB_Tilsynsobjekt",
+        "orgnummer": "985902941",
+        "navn": "La Bella Pizza og Grill",
+        "adresse": "St. Marie gate 77, 1706, Sarpsborg",
+        "dato": "28102026",
+        "karakter": 2,
+        "karakter1": -1,
+        "karakter2": 2,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2605012227247630127VYHPC_Tilsynsobjekt",
+        "orgnummer": "822801722",
+        "navn": "Yrjars Sushi Take Away",
+        "adresse": "Yrjars gate 2, 7130, Brekstad",
+        "dato": "28102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1905241347293830127GBUSW_Tilsynsobjekt",
+        "orgnummer": "922640920",
+        "navn": "Cafe Røed",
+        "adresse": "Røedalleen 26, 1519, Moss",
+        "dato": "28102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006051340229781127MDLGP_Tilsynsobjekt",
+        "orgnummer": "990765200",
+        "navn": "Matmagasinet AS kafe",
+        "adresse": "Niels Juels gate 50, 4008, Stavanger",
+        "dato": "15102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1904031507075720392XSRVU_Tilsynsobjekt",
+        "orgnummer": "917777330",
+        "navn": "Max Grill Stovner Senter",
+        "adresse": "Stovner Senter 3, 0985, Oslo",
+        "dato": "28102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1704071030000243251NLCEW_Tilsynsobjekt",
+        "orgnummer": "911877392",
+        "navn": "Olivia Trondheim",
+        "adresse": "Beddingen 16, 7042, Trondheim",
+        "dato": "28102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1302061043428423142GOLZU_Tilsynsobjekt",
+        "orgnummer": "996573508",
+        "navn": "Restaurant Fjøset",
+        "adresse": "Hovdeveien 10, 7130, Brekstad",
+        "dato": "28102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1804061100438112024OPSJV_Tilsynsobjekt",
+        "orgnummer": "989979310",
+        "navn": "Restaurant Melissa",
+        "adresse": "Skolegata 5, 7130, Brekstad",
+        "dato": "28102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2410291313567662102PISFX_Tilsynsobjekt",
+        "orgnummer": "999579272",
+        "navn": "Smashed Arendal",
+        "adresse": "Kirkegaten 1, 4836, Arendal",
+        "dato": "28102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1705091149556663214HABGR_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-28T11:54:25.593Z",
     "previousDownload": "2026-10-27T11:20:10.468Z",
     "summary": {
