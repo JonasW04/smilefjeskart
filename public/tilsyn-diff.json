@@ -1,5 +1,119 @@
 [
   {
+    "generatedAt": "2026-11-01T12:37:14.338Z",
+    "previousDownload": "2026-10-31T11:30:19.486Z",
+    "summary": {
+      "previousTotal": 8503,
+      "currentTotal": 8496,
+      "newCount": 0,
+      "changedCount": 7,
+      "removedCount": 7
+    },
+    "newInspections": [],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z2402241352579850128GIUVH_Tilsynsobjekt",
+        "orgnummer": "932948311",
+        "navn": "Bocca Bekkestua",
+        "adresse": "Gamle Ringeriksvei 34, 1357, Bekkestua",
+        "dato": "30102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2511111332528510127AYLKR_Tilsynsobjekt",
+        "orgnummer": "914389380",
+        "navn": "Campino Søgne AS",
+        "adresse": "Torvgada 10, 4640, Søgne",
+        "dato": "30102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006062037132611190MAIAB_Tilsynsobjekt",
+        "orgnummer": "979197233",
+        "navn": "Godt Brød Vestre Torggaten",
+        "adresse": "Vestre Torggaten 2, 5015, Bergen",
+        "dato": "30102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2207051405082302024AINQK_Tilsynsobjekt",
+        "orgnummer": "977292875",
+        "navn": "Hunan Restaurant",
+        "adresse": "Gamle Ringeriksvei 39, 1357, Bekkestua",
+        "dato": "30102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2410291313567662102PISFX_Tilsynsobjekt",
+        "orgnummer": "999579272",
+        "navn": "Smashed Arendal",
+        "adresse": "Kirkegaten 1, 4836, Arendal",
+        "dato": "30102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2510271350082261023QWLJV_Tilsynsobjekt",
+        "orgnummer": "931971247",
+        "navn": "Stasjon Grill",
+        "adresse": "Malvikvegen 1328, 7550, Hommelvik",
+        "dato": "30102026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1904091118575650127LFJSI_Tilsynsobjekt",
+        "orgnummer": "918361057",
+        "navn": "Sushi & Nudler",
+        "adresse": "Gamle Ringeriksvei 39, 1357, Bekkestua",
+        "dato": "30102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2504021054095092025KHRIC_Tilsynsobjekt",
+      "Z2601291317462771029AHWCQ_Tilsynsobjekt",
+      "Z1006100301237901126ZSGML_Tilsynsobjekt",
+      "Z2007271040328210128LYJQW_Tilsynsobjekt",
+      "Z2204120914033200388DHMVX_Tilsynsobjekt",
+      "Z2301310828135200128YBOTK_Tilsynsobjekt",
+      "Z2109141052155130385URWYS_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-10-31T11:30:19.486Z",
     "previousDownload": "2026-10-30T11:56:01.999Z",
     "summary": {
