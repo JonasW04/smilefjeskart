@@ -13,6 +13,21 @@ export function stedTittel(s: Sted): string {
   return `${tittel} | Smilefjeskartet`;
 }
 
+const SITE = "https://smilefjeskartet.no";
+
+/** Brødsmuler for søkemotorer, likt de synlige på stedsiden: kartet, fylket, kommunen og stedet. */
+export function stedBrodsmulerLd(s: Sted, fylkeSlug: string | null, kommuneSlug: string | null) {
+  const smuler = [{ name: "Kart", item: `${SITE}/` }];
+  if (s.fylke && fylkeSlug) smuler.push({ name: s.fylke, item: `${SITE}/fylke/${fylkeSlug}` });
+  if (s.kommune && s.kommune !== s.fylke && kommuneSlug) smuler.push({ name: s.kommune, item: `${SITE}/kommune/${kommuneSlug}` });
+  smuler.push({ name: s.navn, item: `${SITE}/sted/${s.slug}` });
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: smuler.map((smule, i) => ({ "@type": "ListItem", position: i + 1, ...smule })),
+  };
+}
+
 /** HTML-snutt steder kan lime inn for å vise smilefjeset sitt. */
 export function merkeSnippet(s: Sted): string {
   const navn = s.navn

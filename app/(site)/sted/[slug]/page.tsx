@@ -8,7 +8,7 @@ import Tidslinje from "@/components/sted/Tidslinje";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
 import { getDatasett, getSted, kjedeFordeling, kjedeSteder, kommuneFordeling, landFordeling, naermeste } from "@/lib/server/data";
 import { fylkeSlugFraNr, getOmrade, kommuneSlug } from "@/lib/server/omrader";
-import { merkeSnippet, stedTittel } from "@/lib/seo";
+import { merkeSnippet, stedBrodsmulerLd, stedTittel } from "@/lib/seo";
 import { KARAKTER_FORKLARING, SMILE_LABEL, TEMAER, isGraded, smileFromKarakter } from "@/lib/smile";
 import { kindFromKarakter } from "@/lib/smiley";
 import { andel, dagerMellom, fordeling, formatDato, ordinaereKarakterer, prosent, sisteTilsyn, stedStats, tidSiden } from "@/lib/stats";
@@ -98,6 +98,7 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
   return (
     <article className="space-y-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(s)).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(stedBrodsmulerLd(s, fSlug, kSlug)).replace(/</g, "\\u003c") }} />
 
       <nav aria-label="Brødsmuler" className="text-sm font-semibold text-ink-soft">
         <ol className="flex flex-wrap items-center gap-1.5">

@@ -1,5 +1,7 @@
+import type { MetadataRoute } from "next";
 import { describe, expect, it } from "vitest";
-import { merkeSnippet, stedTittel } from "@/lib/seo";
+import robots from "@/app/robots";
+import { merkeSnippet, stedBrodsmulerLd, stedTittel } from "@/lib/seo";
 import type { Sted, Tilsyn } from "@/lib/types";
 
 function lagSted(
@@ -66,5 +68,91 @@ describe("merkeSnippet", () => {
   it("escaper < og > i navnet", () => {
     const s = lagSted({ navn: "<b>Kafé</b>", slug: "kafe", tilsyn: [{ dato: "2025-02-19", karakter: 1 }] });
     expect(merkeSnippet(s)).toContain(`alt="Se smilefjeset til &lt;b&gt;Kafé&lt;/b&gt; på smilefjeskartet.no"`);
+  });
+});
+
+describe("stedBrodsmulerLd", () => {
+  const smuler = (ld: ReturnType<typeof stedBrodsmulerLd>) => ld.itemListElement.map((e) => `${e.position} ${e.name} ${e.item}`);
+
+  it("går fra kartet via fylke og kommune til stedet", () => {
+    const s = lagSted({ navn: "67 Grill", slug: "67-grill-lillestrom", fylke: "Akershus", kommune: "Lillestrøm", tilsyn: [{ dato: "2025-02-19", karakter: 1 }] });
+    const ld = stedBrodsmulerLd(s, "akershus", "lillestrom");
+    expect(ld["@type"]).toBe("BreadcrumbList");
+    expect(smuler(ld)).toEqual([
+      "1 Kart https://smilefjeskartet.no/",
+      "2 Akershus https://smilefjeskartet.no/fylke/akershus",
+      "3 Lillestrøm https://smilefjeskartet.no/kommune/lillestrom",
+      "4 67 Grill https://smilefjeskartet.no/sted/67-grill-lillestrom",
+    ]);
+  });
+
+  it("viser Oslo én gang når kommune og fylke heter det samme", () => {
+    const s = lagSted({ navn: "Kafé X", slug: "kafe-x", fylke: "Oslo", kommune: "Oslo", tilsyn: [{ dato: "2025-02-19", karakter: 1 }] });
+    expect(smuler(stedBrodsmulerLd(s, "oslo", "oslo"))).toEqual([
+      "1 Kart https://smilefjeskartet.no/",
+      "2 Oslo https://smilefjeskartet.no/fylke/oslo",
+      "3 Kafé X https://smilefjeskartet.no/sted/kafe-x",
+    ]);
+  });
+
+  it("hopper over ledd uten egen side", () => {
+    const s = lagSted({ navn: "Kafé X", slug: "kafe-x", fylke: "Akershus", kommune: "Lillestrøm", tilsyn: [{ dato: "2025-02-19", karakter: 1 }] });
+    expect(smuler(stedBrodsmulerLd(s, null, null))).toEqual(["1 Kart https://smilefjeskartet.no/", "2 Kafé X https://smilefjeskartet.no/sted/kafe-x"]);
+  });
+});
+
+/** Mønster i robots.txt som regex: * er hva som helst, $ til slutt låser enden. */
+function robotsRegex(monster: string): RegExp {
+  const ende = monster.endsWith("$");
+  const kropp = (ende ? monster.slice(0, -1) : monster)
+    .split("*")
+    .map((del) => del.replace(/[.+?^${}()|[\]\\]/g, "\\$&"))
+    .join(".*");
+  return new RegExp(`^${kropp}${ende ? "$" : ""}`);
+}
+
+/** Googles regel: det lengste mønsteret som treffer vinner, og allow vinner ved likt. */
+function tillatt(r: MetadataRoute.Robots, sti: string): boolean {
+  const regel = Array.isArray(r.rules) ? r.rules[0] : r.rules;
+  const liste = (v?: string | string[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
+  const lengste = (monstre: string[]) => Math.max(-1, ...monstre.filter((m) => robotsRegex(m).test(sti)).map((m) => m.length));
+  return lengste(liste(regel.allow)) >= lengste(liste(regel.disallow));
+}
+
+describe("robots", () => {
+  const r = robots();
+
+  it.each([
+    "/",
+    "/sted/67-grill-oslo",
+    "/sted/67-grill-oslo/merke.png",
+    "/kommune",
+    "/kommune/oslo",
+    "/fylke/rogaland",
+    "/kjede/egon",
+    "/siste",
+    "/siste/rss.xml",
+    "/analyse/kommuner.csv",
+    "/data/kart.json",
+    "/sitemap.xml",
+  ])("lar Google hente %s", (sti) => {
+    expect(tillatt(r, sti)).toBe(true);
+  });
+
+  it.each([
+    "/?_rsc=xS921uIzRn4TqtXQ",
+    "/siste?_rsc=P1ePAXgRlx32dPjV",
+    "/kommune/oslo?_rsc=2cp5NKPS40nawLAX",
+    "/?sted=67-grill-oslo",
+    "/?sted=67-grill-oslo&_rsc=abc",
+    "/api/sted/67-grill-oslo",
+  ])("stenger %s", (sti) => {
+    expect(tillatt(r, sti)).toBe(false);
+  });
+
+  it("gjelder alle søkemotorer og peker på sitemapen", () => {
+    expect(Array.isArray(r.rules) ? r.rules.length : 1).toBe(1);
+    expect(Array.isArray(r.rules) ? r.rules[0].userAgent : r.rules.userAgent).toBe("*");
+    expect(r.sitemap).toBe("https://smilefjeskartet.no/sitemap.xml");
   });
 });
