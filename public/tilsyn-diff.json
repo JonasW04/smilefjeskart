@@ -1,5 +1,142 @@
 [
   {
+    "generatedAt": "2026-11-03T13:22:39.672Z",
+    "previousDownload": "2026-11-02T14:22:09.193Z",
+    "summary": {
+      "previousTotal": 8496,
+      "currentTotal": 8496,
+      "newCount": 3,
+      "changedCount": 6,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2603301515500620127NEWCQ_Tilsynsobjekt",
+        "orgnummer": "836170032",
+        "navn": "Crete Pizza",
+        "adresse": "Kringsjåveien 108, 5163, Laksevåg",
+        "dato": "02112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2610191050444341066JNUOI_Tilsynsobjekt",
+        "orgnummer": "937242549",
+        "navn": "Firefly restaurant AS",
+        "adresse": "Storgaten 33, 4876, Grimstad",
+        "dato": "02112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2610221239440671061FRWVJ_Tilsynsobjekt",
+        "orgnummer": "938535159",
+        "navn": "Sentrum spiseri",
+        "adresse": "Torvgata 4, 2500, Tynset",
+        "dato": "22102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z2401301334085220127ROFKQ_Tilsynsobjekt",
+        "orgnummer": "932869942",
+        "navn": "Grimstad kiosk & grill",
+        "adresse": "Storgaten 27, 4876, Grimstad",
+        "dato": "02112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2207051405082302024AINQK_Tilsynsobjekt",
+        "orgnummer": "977292875",
+        "navn": "Hunan Restaurant",
+        "adresse": "Gamle Ringeriksvei 39, 1357, Bekkestua",
+        "dato": "02112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006050249274801189YVSJE_Tilsynsobjekt",
+        "orgnummer": "980430391",
+        "navn": "Kafé E6",
+        "adresse": "Strandveien 2, 9161, Burfjord",
+        "dato": "28102026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1704071030000243251NLCEW_Tilsynsobjekt",
+        "orgnummer": "911877392",
+        "navn": "Olivia Trondheim",
+        "adresse": "Beddingen 16, 7042, Trondheim",
+        "dato": "02112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006050136089841189DSOUA_Tilsynsobjekt",
+        "orgnummer": "992589604",
+        "navn": "QA Spiseri",
+        "adresse": "Sjøgata 8, 9600, Hammerfest",
+        "dato": "27102026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1911061009157763145RZGVE_Tilsynsobjekt",
+        "orgnummer": "923181121",
+        "navn": "Victoria Verdal",
+        "adresse": "E6 Vinne 51, 7657, Verdal",
+        "dato": "02112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z2012212324041620128JVCDP_Tilsynsobjekt",
+      "Z1006061505054091190OHSBF_Tilsynsobjekt",
+      "Z2303091735231791010MGEWL_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-11-02T14:22:09.193Z",
     "previousDownload": "2026-11-01T12:37:14.338Z",
     "summary": {
