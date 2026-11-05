@@ -1,5 +1,220 @@
 [
   {
+    "generatedAt": "2026-11-05T13:47:59.707Z",
+    "previousDownload": "2026-11-04T13:33:42.464Z",
+    "summary": {
+      "previousTotal": 8499,
+      "currentTotal": 8498,
+      "newCount": 2,
+      "changedCount": 13,
+      "removedCount": 3
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2606301258533310128RBERR_Tilsynsobjekt",
+        "orgnummer": "835678032",
+        "navn": "Aurora Grill AS",
+        "adresse": "Jernveien 1, 9518, Alta",
+        "dato": "04112026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": 2,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2611031402196621037USUNQ_Tilsynsobjekt",
+        "orgnummer": "916469047",
+        "navn": "Brygg & Brød",
+        "adresse": "Olav Tryggvasons gate 29, 7011, Trondheim",
+        "dato": "03112026",
+        "karakter": 1,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z2108271315163930127BHYSK_Tilsynsobjekt",
+        "orgnummer": "927384256",
+        "navn": "Alta Bistro",
+        "adresse": "Svaneveien 7, 9512, Alta",
+        "dato": "04112026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006052054387231190DAXGW_Tilsynsobjekt",
+        "orgnummer": "982345693",
+        "navn": "Cafe Cathedral",
+        "adresse": "Dronningens gate 27, 0154, Oslo",
+        "dato": "04112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006061504493501127FXXDE_Tilsynsobjekt",
+        "orgnummer": "974358190",
+        "navn": "Cafe Dublin",
+        "adresse": "Kongens gate 15, 7013, Trondheim",
+        "dato": "04112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1310041305190153174OVOYG_Tilsynsobjekt",
+        "orgnummer": "997758471",
+        "navn": "Happy Time Oslo",
+        "adresse": "Thorvald Meyers gate 76, 0550, Oslo",
+        "dato": "04112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006300729452010131MDAXE_Tilsynsobjekt",
+        "orgnummer": "973181874",
+        "navn": "Innherredsbakeriet bakeriutsalg og cafe Vektergata",
+        "adresse": "Vektargata 1, 7650, Verdal",
+        "dato": "04112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006050249274801189YVSJE_Tilsynsobjekt",
+        "orgnummer": "980430391",
+        "navn": "Kafé E6",
+        "adresse": "Strandveien 2, 9161, Burfjord",
+        "dato": "04112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2106251453257710240TOPWM_Tilsynsobjekt",
+        "orgnummer": "912096971",
+        "navn": "Kafe K",
+        "adresse": "Storgata 174, 3915, Porsgrunn",
+        "dato": "04112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006061505192701127SWQSF_Tilsynsobjekt",
+        "orgnummer": "981603125",
+        "navn": "Kvilhaugen Gård",
+        "adresse": "Blusuvollsbakken 20, 7052, Trondheim",
+        "dato": "04112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1412191451548693167EKMHA_Tilsynsobjekt",
+        "orgnummer": "999047084",
+        "navn": "Leos Lekeland Kokstad",
+        "adresse": "Kokstaddalen 18, 5257, Kokstad",
+        "dato": "04112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2207171327067890128EOWPS_Tilsynsobjekt",
+        "orgnummer": "929377192",
+        "navn": "PaoPao",
+        "adresse": "Prinsens gate 13, 7013, Trondheim",
+        "dato": "04112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1712121639530773251JSQUQ_Tilsynsobjekt",
+        "orgnummer": "920127878",
+        "navn": "Thai Thai Trondheim Torg",
+        "adresse": "Kongens gate 9, 7013, Trondheim",
+        "dato": "04112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1709180751052122024VRCQU_Tilsynsobjekt",
+        "orgnummer": "971788224",
+        "navn": "Verdal Hotell",
+        "adresse": "Jernbanegata 13, 7650, Verdal",
+        "dato": "04112026",
+        "karakter": 2,
+        "karakter1": 2,
+        "karakter2": 1,
+        "karakter3": 2,
+        "karakter4": 2,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006050041362671126DHTEZ_Tilsynsobjekt",
+        "orgnummer": "995293587",
+        "navn": "Wing Wah House",
+        "adresse": "Markedsgata 4, 9510, Alta",
+        "dato": "04112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z1502230919562963140WNVAY_Tilsynsobjekt",
+      "Z2507311101563232025DOSUH_Tilsynsobjekt",
+      "Z1709061351156503205QOYCV_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-11-04T13:33:42.464Z",
     "previousDownload": "2026-11-03T13:22:39.672Z",
     "summary": {
