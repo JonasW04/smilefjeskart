@@ -1,5 +1,119 @@
 [
   {
+    "generatedAt": "2026-11-10T14:02:08.965Z",
+    "previousDownload": "2026-11-09T14:48:48.556Z",
+    "summary": {
+      "previousTotal": 8512,
+      "currentTotal": 8509,
+      "newCount": 3,
+      "changedCount": 4,
+      "removedCount": 6
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z1201251119408693252KUQNS_Tilsynsobjekt",
+        "orgnummer": "997860314",
+        "navn": "Brasserie Posten",
+        "adresse": "Geirangervegen 4, 6216, Geiranger",
+        "dato": "03062026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006090118566161189ZDZXP_Tilsynsobjekt",
+        "orgnummer": "986429174",
+        "navn": "Sanden Hotell",
+        "adresse": "Haugsundgata 1, 3303, Hokksund",
+        "dato": "27022026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1705081130223362025NJDJW_Tilsynsobjekt",
+        "orgnummer": "918187030",
+        "navn": "Spiseriet // Kunnskapskoppen",
+        "adresse": "Stasjonstorget 5, 1337, Sandvika",
+        "dato": "09112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z2410181341314221012FQRPG_Tilsynsobjekt",
+        "orgnummer": "933513718",
+        "navn": "Alna Grill",
+        "adresse": "Verkseier Furulunds vei 1, 0668, Oslo",
+        "dato": "06112026",
+        "karakter": 1,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2410011219322000127LVAKC_Tilsynsobjekt",
+        "orgnummer": "931987720",
+        "navn": "Bjerka Kro",
+        "adresse": "Bjerkadalsveien 1, 8643, Bjerka",
+        "dato": "04112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1605192104350443251XOVCX_Tilsynsobjekt",
+        "orgnummer": "917118493",
+        "navn": "Mama Rosa",
+        "adresse": "Coldevins gate 28, 8610, Mo i Rana",
+        "dato": "04112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2003040732321712025MNWMR_Tilsynsobjekt",
+        "orgnummer": "996516717",
+        "navn": "Obs! Kafe",
+        "adresse": "Svortdalen 26, 8626, Mo i Rana",
+        "dato": "05112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2001301145587420127HULID_Tilsynsobjekt",
+      "Z2601271206011651031MTUNB_Tilsynsobjekt",
+      "Z2410310857359301029XSQFU_Tilsynsobjekt",
+      "Z1401021352076633251ETYIV_Tilsynsobjekt",
+      "Z2301221152551190127HAJUX_Tilsynsobjekt",
+      "Z2411071018170572024FRHCW_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-11-09T14:48:48.556Z",
     "previousDownload": "2026-11-08T12:32:38.891Z",
     "summary": {
