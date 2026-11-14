@@ -1,5 +1,127 @@
 [
   {
+    "generatedAt": "2026-11-14T12:47:39.792Z",
+    "previousDownload": "2026-11-13T13:43:33.077Z",
+    "summary": {
+      "previousTotal": 8517,
+      "currentTotal": 8520,
+      "newCount": 4,
+      "changedCount": 4,
+      "removedCount": 1
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z1610251255574353211DREJF_Tilsynsobjekt",
+        "orgnummer": "914291933",
+        "navn": "Estar Sushi",
+        "adresse": "Kirkeveien 48, 0368, Oslo",
+        "dato": "13112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2505072214516060127XRRRB_Tilsynsobjekt",
+        "orgnummer": "931007971",
+        "navn": "Flavour",
+        "adresse": "Heimdalsgata 37, 0578, Oslo",
+        "dato": "12112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2607191013433930128ECVBX_Tilsynsobjekt",
+        "orgnummer": "938121567",
+        "navn": "Homies Bergen",
+        "adresse": "Steinkjellergaten 8, 5003, Bergen",
+        "dato": "12112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1305141338298393251DZUWN_Tilsynsobjekt",
+        "orgnummer": "911744732",
+        "navn": "Majorstuen Grill",
+        "adresse": "Bogstadveien 53, 0366, Oslo",
+        "dato": "13112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1802271347068553124YFWZF_Tilsynsobjekt",
+        "orgnummer": "918969497",
+        "navn": "Bakt & Smash",
+        "adresse": "Myntgata 14, 3616, Kongsberg",
+        "dato": "13112026",
+        "karakter": 2,
+        "karakter1": 0,
+        "karakter2": 2,
+        "karakter3": -1,
+        "karakter4": -1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1605231143297393251EKWRO_Tilsynsobjekt",
+        "orgnummer": "917223351",
+        "navn": "E. C. Dahls Pub og Kjøkken",
+        "adresse": "Strandveien 71, 7067, Trondheim",
+        "dato": "13112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006061504529681189WJLVA_Tilsynsobjekt",
+        "orgnummer": "980732908",
+        "navn": "SOT bar&burger",
+        "adresse": "Tmv-Kaia 3, 7042, Trondheim",
+        "dato": "13112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006062253563361126IDZXV_Tilsynsobjekt",
+        "orgnummer": "984097549",
+        "navn": "Thon Hotel Arena",
+        "adresse": "Nesgata 1, 2004, Lillestrøm",
+        "dato": "13112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      }
+    ],
+    "removedIds": [
+      "Z2102100946178210128HEBMI_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-11-13T13:43:33.077Z",
     "previousDownload": "2026-11-12T14:22:40.422Z",
     "summary": {
