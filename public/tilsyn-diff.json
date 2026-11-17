@@ -1,5 +1,193 @@
 [
   {
+    "generatedAt": "2026-11-17T15:17:04.298Z",
+    "previousDownload": "2026-11-16T14:24:56.484Z",
+    "summary": {
+      "previousTotal": 8520,
+      "currentTotal": 8524,
+      "newCount": 6,
+      "changedCount": 7,
+      "removedCount": 2
+    },
+    "newInspections": [
+      {
+        "tilsynsobjektid": "Z2502171311481190127DUIYQ_Tilsynsobjekt",
+        "orgnummer": "974297280",
+        "navn": "Bite’ti",
+        "adresse": "Holmefaret 16, 2320, Furnes",
+        "dato": "12032025",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2604131119040000128CJMVT_Tilsynsobjekt",
+        "orgnummer": "973140272",
+        "navn": "Burger King Hegdehaugsveien 32",
+        "adresse": "Hegdehaugsveien 32, 0352, Oslo",
+        "dato": "16112026",
+        "karakter": 0,
+        "karakter1": -1,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2611101537504890128RBZOU_Tilsynsobjekt",
+        "orgnummer": "938616310",
+        "navn": "Dmj Sushi AS",
+        "adresse": "Helleveien 44, 5042, Bergen",
+        "dato": "16112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2511032120094290128DHNEN_Tilsynsobjekt",
+        "orgnummer": "933936686",
+        "navn": "Icons Rjukan",
+        "adresse": "Sam Eydes gate 97, 3660, Rjukan",
+        "dato": "10112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2611161447377891062FQEZF_Tilsynsobjekt",
+        "orgnummer": "937465866",
+        "navn": "Løren Grill",
+        "adresse": "Lørenveien 40, 0585, Oslo",
+        "dato": "16112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 1,
+        "karakter4": 1,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2004161239317290128YVIWI_Tilsynsobjekt",
+        "orgnummer": "924952555",
+        "navn": "Zouq Restaurant & Take away",
+        "adresse": "Pedersgata 4, 4013, Stavanger",
+        "dato": "08042025",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      }
+    ],
+    "changedInspections": [
+      {
+        "tilsynsobjektid": "Z1802271347068553124YFWZF_Tilsynsobjekt",
+        "orgnummer": "918969497",
+        "navn": "Bakt & Smash",
+        "adresse": "Myntgata 14, 3616, Kongsberg",
+        "dato": "16112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": -1,
+        "karakter4": -1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2503062105320670128BEMDX_Tilsynsobjekt",
+        "orgnummer": "935096170",
+        "navn": "Hos Magnus/ Lavvo",
+        "adresse": "Torgveien 3, 9700, Lakselv",
+        "dato": "16112026",
+        "karakter": 0,
+        "karakter1": 1,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z2412171458326620128BKNNB_Tilsynsobjekt",
+        "orgnummer": "812771442",
+        "navn": "Lett Hegdehaugsveien",
+        "adresse": "Hegdehaugsveien 32, 0352, Oslo",
+        "dato": "16112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z1006052055002101189SVHMY_Tilsynsobjekt",
+        "orgnummer": "979325886",
+        "navn": "Li Li China",
+        "adresse": "Trondheimsveien 157, 0570, Oslo",
+        "dato": "16112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2609210954498660128QAKOR_Tilsynsobjekt",
+        "orgnummer": "938384312",
+        "navn": "Sabrura Elverum AS",
+        "adresse": "Torggata 3, 2408, Elverum",
+        "dato": "16112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 1,
+        "status": "1"
+      },
+      {
+        "tilsynsobjektid": "Z1006121304153601189MWCCH_Tilsynsobjekt",
+        "orgnummer": "973227785",
+        "navn": "Scandic Meyergården Hotel",
+        "adresse": "Fridtjof Nansens gate 25, 8622, Mo i Rana",
+        "dato": "04112026",
+        "karakter": 1,
+        "karakter1": 0,
+        "karakter2": 1,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "0"
+      },
+      {
+        "tilsynsobjektid": "Z2009141225195200366LPYVA_Tilsynsobjekt",
+        "orgnummer": "924915080",
+        "navn": "Zupperia",
+        "adresse": "Vaskerelven 12, 5014, Bergen",
+        "dato": "16112026",
+        "karakter": 0,
+        "karakter1": 0,
+        "karakter2": 0,
+        "karakter3": 0,
+        "karakter4": 0,
+        "status": "1"
+      }
+    ],
+    "removedIds": [
+      "Z2604241509024091072IYJBG_Tilsynsobjekt",
+      "Z2509041342028101027RIBPV_Tilsynsobjekt"
+    ]
+  },
+  {
     "generatedAt": "2026-11-16T14:24:56.484Z",
     "previousDownload": "2026-11-15T13:14:56.543Z",
     "summary": {
