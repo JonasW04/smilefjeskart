@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
 import { getDatasett } from "@/lib/server/data";
+import { lokaleSider, lokalUrlSti } from "@/lib/server/lokal";
 import { fylker, kjeder, kommuner, type Omrade } from "@/lib/server/omrader";
 import { SITEMAP_IDER, type SitemapId } from "@/lib/seo";
 import { sisteTilsyn } from "@/lib/stats";
+import type { Sted } from "@/lib/types";
 
 const SITE = "https://smilefjeskartet.no";
 
@@ -12,7 +14,7 @@ export function generateSitemaps() {
   return SITEMAP_IDER.map((id) => ({ id }));
 }
 
-function sistEndret(o: Omrade): Date {
+function sistEndret(o: { steder: readonly Sted[] }): Date {
   let maks = "";
   for (const s of o.steder) {
     const d = sisteTilsyn(s).dato;
@@ -42,7 +44,17 @@ function omrader(): MetadataRoute.Sitemap {
       changeFrequency: "weekly" as const,
       priority,
     }));
-  return [...liste("fylke", fylker(), 0.7), ...liste("kommune", kommuner(), 0.7), ...liste("kjede", kjeder(), 0.6)];
+  return [
+    ...liste("fylke", fylker(), 0.7),
+    ...liste("kommune", kommuner(), 0.7),
+    ...liste("kjede", kjeder(), 0.6),
+    ...lokaleSider().map((l) => ({
+      url: `${SITE}${lokalUrlSti(l)}`,
+      lastModified: sistEndret(l),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+  ];
 }
 
 function steder(): MetadataRoute.Sitemap {

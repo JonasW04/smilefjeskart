@@ -16,6 +16,7 @@ import {
   stedTupler,
   type Omrade,
 } from "@/lib/server/omrader";
+import { lokaleSiderFor } from "@/lib/server/lokal";
 import { omradeBrodsmulerLd, omradeSmuler } from "@/lib/seo";
 import { kindFromKarakter } from "@/lib/smiley";
 import { andel, formatDato, prosent, sisteTilsyn } from "@/lib/stats";
@@ -24,6 +25,7 @@ import type { Sted } from "@/lib/types";
 import AlleSteder from "./AlleSteder";
 import { Flis, Forklaring, Seksjon, TallTabell } from "./Deler";
 import Kolonner from "./Kolonner";
+import LenkeChips from "./LenkeChips";
 import StedRader from "./StedRader";
 import StabelRader, { StabelForklaring, type StabelRad } from "./StabelRader";
 
@@ -101,6 +103,9 @@ export default function OmradeSide({ o }: { o: Omrade }) {
   const stedListe = o.type === "fylke" ? [] : stedTupler(o);
   const nylig = [...o.steder].sort((a, b) => sisteTilsyn(b).dato.localeCompare(sisteTilsyn(a).dato)).slice(0, 8);
   const gjengangere = flestAnmerkninger(o.steder, 2).slice(0, 6);
+
+  const lokaleKategorier = o.type === "kommune" ? lokaleSiderFor(o.id, "kategori") : [];
+  const lokaleStrok = o.type === "kommune" ? lokaleSiderFor(o.id, "strok") : [];
 
   const sisteAar = aar[aar.length - 1];
   const heleAar = [...aar].reverse().find((r) => !r.delvis);
@@ -248,6 +253,28 @@ export default function OmradeSide({ o }: { o: Omrade }) {
           <StabelRader rader={sammenlign} />
         </Seksjon>
       </div>
+
+      {(lokaleKategorier.length > 0 || lokaleStrok.length > 0) && (
+        <Seksjon
+          id="utforsk"
+          emoji="🧭"
+          tittel={`Utforsk ${o.navn}`}
+          ingress="Egne sider med smilefjes, siste anmerkninger og alle stedene for hver kategori og hvert strøk. Tallet er antall steder."
+        >
+          {lokaleKategorier.length > 0 && (
+            <>
+              <h3 className="mb-2 font-display text-lg font-extrabold">Kategorier</h3>
+              <LenkeChips sider={lokaleKategorier} />
+            </>
+          )}
+          {lokaleStrok.length > 0 && (
+            <>
+              <h3 className={`mb-2 font-display text-lg font-extrabold ${lokaleKategorier.length > 0 ? "mt-5" : ""}`}>Strøk</h3>
+              <LenkeChips sider={lokaleStrok} />
+            </>
+          )}
+        </Seksjon>
+      )}
 
       {o.type === "fylke" ? (
         <FylkeKommuner o={o} landSmil={landSmil} />

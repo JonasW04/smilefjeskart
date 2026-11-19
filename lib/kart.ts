@@ -248,6 +248,33 @@ export function lesUrl(search: string, kategorier: readonly string[]): UrlTilsta
   };
 }
 
+/** Grovt utsnitt rundt Norge og Svalbard. Utsnitt i URL-en utenfor dette avvises. */
+const NORGE_GRENSER: [number, number, number, number] = [-10, 55, 35, 82];
+
+/**
+ * Startutsnitt fra `?utsnitt=vest,sør,øst,nord` (lenker fra kommune- og strøksider). Gjelder bare
+ * ved oppstart, så det skrives ikke tilbake til URL-en. Ugyldige verdier gir null.
+ */
+export function lesUtsnitt(search: string): [number, number, number, number] | null {
+  const raw = new URLSearchParams(search).get("utsnitt");
+  if (!raw) return null;
+  const tall = raw.split(",").map((x) => (x.trim() === "" ? NaN : Number(x)));
+  if (tall.length !== 4 || !tall.every(Number.isFinite)) return null;
+  const [v, s, o, n] = tall;
+  const [gv, gs, go, gn] = NORGE_GRENSER;
+  if (v > o || s > n || v < gv || o > go || s < gs || n > gn) return null;
+  return [v, s, o, n];
+}
+
+/** Lenke til kartet med startutsnitt og eventuelt kategorifilter. */
+export function kartLenke(utsnitt: readonly [number, number, number, number] | null, kategori?: Kategori): string {
+  const p = new URLSearchParams();
+  if (kategori) p.set("kategori", kategori);
+  if (utsnitt) p.set("utsnitt", utsnitt.join(","));
+  const q = p.toString();
+  return q ? `/?${q}` : "/";
+}
+
 export function skrivUrl(t: UrlTilstand): string {
   const p = new URLSearchParams();
   if (t.sted) p.set("sted", t.sted);
