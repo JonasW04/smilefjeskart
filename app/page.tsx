@@ -15,9 +15,37 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title, description },
 };
 
+// Gjelder nettstedet som helhet, så det hører hjemme på forsiden og ikke på hver av de over 9 000 sidene.
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Smilefjeskartet",
+    url,
+    description:
+      "Alle Mattilsynets smilefjestilsyn siden 2016 på ett kart. Se hvordan restauranter, kafeer og spisesteder i Norge har gjort det over tid – smil, strekmunn eller sur munn. Oppdateres hver morgen.",
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "All",
+    inLanguage: "nb",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "NOK" },
+    provider: { "@type": "Organization", name: "Smilefjeskartet", url },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Smilefjeskartet",
+    url,
+    description: "Interaktivt kart over Mattilsynets smilefjeskontroller for restauranter og spisesteder i Norge.",
+    inLanguage: "nb",
+  },
+];
+
 export default function Forside() {
   return (
     <div className="site h-dvh overflow-hidden">
+      {jsonLd.map((ld) => (
+        <script key={ld["@type"]} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      ))}
       <SiteHeader />
       <main id="innhold" className="relative min-h-0 flex-1">
         <h1 className="sr-only">Smilefjeskartet – Mattilsynets smilefjestilsyn på kart</h1>
