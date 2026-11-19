@@ -29,6 +29,7 @@ function core(): MetadataRoute.Sitemap {
   return [
     { url: SITE, lastModified: oppdatert, changeFrequency: "daily", priority: 1.0 },
     { url: `${SITE}/siste`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.8 },
+    { url: `${SITE}/quiz`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE}/kommune`, lastModified: oppdatert, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE}/analyse`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE}/rapport`, lastModified: oppdatert, changeFrequency: "monthly", priority: 0.8 },

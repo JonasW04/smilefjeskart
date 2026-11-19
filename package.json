@@ -10,6 +10,7 @@
     "lint": "eslint",
     "build:data": "tsx scripts/build-data.ts",
     "build:prediksjon": "tsx scripts/build-prediksjon.ts",
+    "build:quiz": "tsx scripts/build-quiz.ts",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "send:varsler": "tsx scripts/send-varsler.ts",

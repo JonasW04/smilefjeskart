@@ -18,7 +18,7 @@ function csp(frameAncestors: string): string {
 const nextConfig: NextConfig = {
   // Serversider leser generated/steder.json fra disk; sørg for at fila følger med i deployen.
   outputFileTracingIncludes: {
-    "/**": ["./generated/steder.json", "./assets/fonts/*.ttf", "./generated/prediksjon.json"],
+    "/**": ["./generated/steder.json", "./assets/fonts/*.ttf", "./generated/prediksjon.json", "./generated/quiz.json"],
   },
   async redirects() {
     return [

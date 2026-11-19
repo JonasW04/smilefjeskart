@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 export const NAV = [
   { href: "/", label: "Kart", emoji: "🗺️" },
   { href: "/siste", label: "Ferskt", emoji: "🥐" },
+  { href: "/quiz", label: "Quiz", emoji: "🎲" },
   { href: "/kommune", label: "Kommuner", emoji: "📍" },
   { href: "/analyse", label: "Analyse", emoji: "📊" },
   { href: "/rapport", label: "Rapport", emoji: "📰" },
