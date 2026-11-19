@@ -24,6 +24,6 @@ export function lesVarslingParams(sp: Params): VarslingStart | null {
   if (!tall.test(lat) || !tall.test(lng)) return null;
   const p = { lat: Number(lat), lng: Number(lng) };
   if (!iNorge(p.lat, p.lng)) return null;
-  const navn = (forste(sp.navn) ?? "").replace(/[\u0000-\u001f\u007f]/g, "").replace(/\s+/g, " ").trim().slice(0, MAKS_NAVN);
+  const navn = (forste(sp.navn) ?? "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, MAKS_NAVN);
   return { ...p, navn: navn || "Valgt sted" };
 }

@@ -122,9 +122,11 @@ const MND_LANG = ["januar", "februar", "mars", "april", "mai", "juni", "juli", "
 /**
  * Smil på hvert eneste tilsyn de siste årene: den sammenhengende rekka bakover fra siste tilsyn der alt
  * har gitt smil. Et tilsyn uten karakter bryter rekka, så "100 % smil" aldri hviler på et hull.
- * Gir null med færre enn `minOrdinaere` ordinære tilsyn i rekka.
+ * Gir null med færre enn `minOrdinaere` ordinære tilsyn i rekka, eller når siste tilsyn er mer enn
+ * `maksDager` eldre enn `iDag` (stedet kan ha stengt, og rekka er ikke lenger fersk).
  */
-export function renRekke(s: Sted, minOrdinaere = 3): RenRekke | null {
+export function renRekke(s: Sted, iDag: string, { minOrdinaere = 3, maksDager = 730 } = {}): RenRekke | null {
+  if (dagerMellom(sisteTilsyn(s).dato, iDag) > maksDager) return null;
   let i = s.tilsyn.length;
   let ordinaere = 0;
   while (i > 0 && smileFromKarakter(s.tilsyn[i - 1].karakter) === "smil") {

@@ -41,11 +41,14 @@ const FAQ = [
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
+// Siden leses per forespørsel (searchParams), men stedslista endres bare ved deploy.
+let lister: ReturnType<typeof sokelister> | null = null;
+
 export default async function VarslingSide({ searchParams }: { searchParams: Promise<SearchParams> }) {
   // ?lat=&lng=&navn= kommer fra «Varsle meg»-lenkene på stedsider og i kartet: området er da valgt på forhånd.
   const start = lesVarslingParams(await searchParams);
   const aktiv = varslingAktiv();
-  const { kommuner, poststeder } = aktiv ? sokelister(getSteder()) : { kommuner: [], poststeder: [] };
+  const { kommuner, poststeder } = aktiv ? (lister ??= sokelister(getSteder())) : { kommuner: [], poststeder: [] };
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -71,7 +74,7 @@ export default async function VarslingSide({ searchParams }: { searchParams: Pro
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
-        {aktiv ? <VarslingSkjema kommuner={kommuner} poststeder={poststeder} start={start} /> : <KommerSnart />}
+        {aktiv ? <VarslingSkjema key={start ? `${start.lat},${start.lng}` : "tom"} kommuner={kommuner} poststeder={poststeder} start={start} /> : <KommerSnart />}
 
         <aside className="space-y-6">
           <section className="card p-5" aria-labelledby="steg-tittel">

@@ -94,7 +94,7 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
   const kSlug = kommuneSlug(s.kommunenr);
   const fSlug = fylkeSlugFraNr(s.fylkenr);
   const kjedeSide = s.kjedeSlug ? getOmrade("kjede", s.kjedeSlug) : null;
-  const rekke = renRekke(s);
+  const rekke = renRekke(s, iDag);
   const merkeAlt = `Smilefjes-merke for ${s.navn}: ${kind === "ukjent" ? "ukjent" : SMILE_LABEL[kind].toLowerCase()}`;
   const smil = smileFromKarakter(siste.karakter);
   const delTekst = smil ? `${s.navn} fikk ${SMILE_LABEL[smil].toLowerCase()} ved siste tilsyn fra Mattilsynet.` : `Se tilsynene til ${s.navn} fra Mattilsynet.`;

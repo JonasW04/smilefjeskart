@@ -42,6 +42,7 @@ describe("lesVarslingParams", () => {
   });
 
   it("vasker og kutter navnet", () => {
+    expect(lesVarslingParams({ lat: "59.9", lng: "10.7", navn: "Bar\nGrill" })?.navn).toBe("Bar Grill");
     const p = lesVarslingParams({ lat: "59.9", lng: "10.7", navn: `  Bar\n\t "Grill"  ${"x".repeat(200)}` });
     expect(p?.navn.startsWith(`Bar "Grill" x`)).toBe(true);
     expect(p?.navn.length).toBe(80);
@@ -56,33 +57,41 @@ describe("lesVarslingParams", () => {
 });
 
 describe("renRekke", () => {
+  const iDag = "2023-12-01";
+
   it("finner rekka fra første tilsyn når alt er smil", () => {
-    expect(renRekke(sted([t("2019-03-01", 0), t("2021-05-01", 1), t("2023-06-01", 0)]))).toEqual({ fra: "2019-03-01", ordinaere: 3, siden: "2019" });
+    expect(renRekke(sted([t("2019-03-01", 0), t("2021-05-01", 1), t("2023-06-01", 0)]), iDag)).toEqual({ fra: "2019-03-01", ordinaere: 3, siden: "2019" });
   });
 
   it("starter etter siste tilsyn uten smil", () => {
-    const s = sted([t("2018-01-01", 0), t("2019-02-01", 2), t("2020-04-01", 0), t("2022-01-01", 1), t("2024-01-01", 0)]);
-    expect(renRekke(s)).toEqual({ fra: "2020-04-01", ordinaere: 3, siden: "2020" });
+    const s = sted([t("2018-01-01", 0), t("2019-02-01", 2), t("2020-04-01", 0), t("2022-01-01", 1), t("2023-11-01", 0)]);
+    expect(renRekke(s, iDag)).toEqual({ fra: "2020-04-01", ordinaere: 3, siden: "2020" });
   });
 
   it("tar med måneden når bruddet var samme år", () => {
     const s = sted([t("2020-02-01", 3), t("2020-03-10", 0, true), t("2021-01-01", 0), t("2022-01-01", 0), t("2023-01-01", 0)]);
-    expect(renRekke(s)).toEqual({ fra: "2020-03-10", ordinaere: 3, siden: "mars 2020" });
+    expect(renRekke(s, iDag)).toEqual({ fra: "2020-03-10", ordinaere: 3, siden: "mars 2020" });
   });
 
   it("teller ikke oppfølgingstilsyn mot minstekravet", () => {
     const s = sted([t("2020-01-01", 2), t("2020-02-01", 0, true), t("2021-01-01", 0), t("2022-01-01", 0)]);
-    expect(renRekke(s)).toBeNull();
-    expect(renRekke(s, 2)?.ordinaere).toBe(2);
+    expect(renRekke(s, iDag)).toBeNull();
+    expect(renRekke(s, iDag, { minOrdinaere: 2 })?.ordinaere).toBe(2);
   });
 
   it("gir null når siste tilsyn ikke er smil", () => {
-    expect(renRekke(sted([t("2019-01-01", 0), t("2020-01-01", 0), t("2021-01-01", 0), t("2022-01-01", 2)]))).toBeNull();
+    expect(renRekke(sted([t("2019-01-01", 0), t("2020-01-01", 0), t("2021-01-01", 0), t("2022-01-01", 2)]), iDag)).toBeNull();
+  });
+
+  it("gir null når siste tilsyn er over to år gammelt", () => {
+    const s = sted([t("2019-01-01", 0), t("2020-01-01", 0), t("2022-12-01", 0)]);
+    expect(renRekke(s, "2024-11-30")?.siden).toBe("2019");
+    expect(renRekke(s, "2025-01-01")).toBeNull();
   });
 
   it("lar et tilsyn uten karakter bryte rekka", () => {
     const s = sted([t("2018-01-01", 0), t("2019-01-01", -1), t("2020-01-01", 0), t("2021-01-01", 0), t("2022-01-01", 0)]);
-    expect(renRekke(s)?.fra).toBe("2020-01-01");
+    expect(renRekke(s, iDag)?.fra).toBe("2020-01-01");
   });
 });
 

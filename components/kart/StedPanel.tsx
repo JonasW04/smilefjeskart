@@ -133,8 +133,8 @@ function Innhold({ d }: { d: StedApi }) {
           Se hele historikken →
         </Link>
         {/* Del stedssiden: den har eget delingsbilde og mer innhold enn en kartlenke. */}
-        <DelKnapp etikett="🔗 Del resultat" tittel={d.navn} tekst={delTekst(d.navn, sisteSmil)} url={`/sted/${encodeURIComponent(d.slug)}`} />
-        <BildekortKnapp slug={d.slug} navn={d.navn} />
+        <DelKnapp key={`del-${d.slug}`} etikett="🔗 Del resultat" tittel={d.navn} tekst={delTekst(d.navn, sisteSmil)} url={`/sted/${encodeURIComponent(d.slug)}`} />
+        <BildekortKnapp key={`kort-${d.slug}`} slug={d.slug} navn={d.navn} />
       </div>
 
       {d.lat !== null && d.lng !== null && (
