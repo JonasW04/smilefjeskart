@@ -15,6 +15,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return {
+      // Google kjenner /sitemap.xml. Next.js reserverer den adressen for app/sitemap.ts, men med generateSitemaps
+      // ligger delene på /sitemap/<id>.xml og ingenting svarer på /sitemap.xml. Indeksen svarer i stedet.
+      beforeFiles: [{ source: "/sitemap.xml", destination: "/sitemap-index.xml" }],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async headers() {
     return [
       {

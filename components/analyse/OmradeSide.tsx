@@ -16,6 +16,7 @@ import {
   stedTupler,
   type Omrade,
 } from "@/lib/server/omrader";
+import { omradeBrodsmulerLd, omradeSmuler } from "@/lib/seo";
 import { kindFromKarakter } from "@/lib/smiley";
 import { andel, formatDato, prosent, sisteTilsyn } from "@/lib/stats";
 import { FORSTE_RADER, HELE_LISTA_MAKS, stedRad } from "@/lib/stedliste";
@@ -78,22 +79,8 @@ export default function OmradeSide({ o }: { o: Omrade }) {
   const liteUtvalg = o.ordinaer.total < 30;
 
   // Brødsmuler
-  const smuler: Array<{ navn: string; href?: string }> = [{ navn: "Analyse", href: "/analyse" }];
-  if (o.type === "kommune" && fylke) smuler.push({ navn: fylke.navn, href: `/fylke/${fylke.slug}` });
-  if (o.type === "fylke") smuler.push({ navn: "Fylker", href: "/analyse#fylker" });
-  if (o.type === "kjede") smuler.push({ navn: "Kjeder", href: "/analyse#kjeder" });
-  smuler.push({ navn: o.navn });
-
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: smuler.map((s, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: s.navn,
-      item: s.href ? `${SITE}${s.href.split("#")[0]}` : omradeUrl(o),
-    })),
-  };
+  const smuler = omradeSmuler(o.type, o.navn, fylke);
+  const breadcrumbLd = omradeBrodsmulerLd(smuler, omradeUrl(o));
 
   // Sammenligning
   const sammenlign: StabelRad[] = [

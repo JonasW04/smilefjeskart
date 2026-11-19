@@ -28,6 +28,11 @@ export const metadata: Metadata = {
     locale: "nb_NO",
     siteName: "Smilefjeskartet",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ferskt fra Mattilsynet | Smilefjeskartet",
+    description: `Nye sure munner, comebacks og nye steder – alle smilefjestilsyn de siste ${FERSK_DAGER} dagene.`,
+  },
 };
 
 function ukedag(iso: string): string {
