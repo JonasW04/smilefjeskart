@@ -1,5 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { byggSokIndeks, gruppe, klyngeHumor, kommuneBbox, lesUrl, skrivUrl, sok, spredKoordinater, tilGeoJson, type Filter } from "@/lib/kart";
+import {
+  byggSokIndeks,
+  gruppe,
+  harAktivtFilter,
+  klyngeHumor,
+  kommuneBbox,
+  lesUrl,
+  skrivUrl,
+  sok,
+  spredKoordinater,
+  tilGeoJson,
+  vekslSmil,
+  type Filter,
+} from "@/lib/kart";
+import { SMILES } from "@/lib/smile";
 import type { KartData, KartRad } from "@/lib/types";
 
 const rad = (slug: string, navn: string, adresse: string, lng: number, lat: number, k: number, v: number, kommune: number, kat: number): KartRad =>
@@ -121,5 +135,29 @@ describe("klyngeHumor", () => {
 
   it("is null when nothing has a known result", () => {
     expect(klyngeHumor(0, 0, 0)).toBeNull();
+  });
+});
+
+describe("smilefilter", () => {
+  const sett = (...s: Array<(typeof SMILES)[number]>) => new Set(s);
+
+  it("shows only the clicked face when all three are on", () => {
+    expect(vekslSmil(sett(...SMILES), "sur", SMILES)).toEqual(sett("sur"));
+  });
+
+  it("toggles faces once the filter is narrowed", () => {
+    expect(vekslSmil(sett("sur"), "strek", SMILES)).toEqual(sett("sur", "strek"));
+    expect(vekslSmil(sett("sur", "strek"), "strek", SMILES)).toEqual(sett("sur"));
+    expect(vekslSmil(sett("sur", "strek"), "smil", SMILES)).toEqual(sett(...SMILES));
+  });
+
+  it("falls back to all faces instead of an empty filter", () => {
+    expect(vekslSmil(sett("sur"), "sur", SMILES)).toEqual(sett(...SMILES));
+  });
+
+  it("knows when the filter hides places", () => {
+    expect(harAktivtFilter(alle, 3)).toBe(false);
+    expect(harAktivtFilter({ ...alle, kategori: "indisk" }, 3)).toBe(true);
+    expect(harAktivtFilter({ ...alle, smil: sett("sur") }, 3)).toBe(true);
   });
 });
