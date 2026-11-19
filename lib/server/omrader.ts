@@ -3,7 +3,9 @@
  * Alt regnes ut én gang per serverinstans (data endres bare ved deploy).
  */
 import { grupper, perAar, rangerEtterSmil, sisteDato, unikeSlugs, type AarRad, type Gruppe } from "../analyse";
-import { tomFordeling, type Fordeling } from "../stats";
+import { kindFromKarakter } from "../smiley";
+import { fordeling, ordinaereKarakterer, sisteTilsyn, tomFordeling, type Fordeling } from "../stats";
+import type { StedTuppel } from "../stedliste";
 import { slugify } from "../text";
 import type { Sted } from "../types";
 import { getSteder } from "./data";
@@ -193,4 +195,18 @@ export function plassering(o: Omrade): { plass: number; av: number } | null {
   const r = rangert(o.type);
   const i = r.findIndex((x) => x.id === o.id);
   return i < 0 ? null : { plass: i + 1, av: r.length };
+}
+
+/**
+ * Alle stedene i et område, alfabetisk, i det kompakte formatet «Alle steder»-lista bruker.
+ * Linja under navnet er kommunen for kjeder og adressen ellers; tallet til høyre er smil av ordinære tilsyn.
+ */
+export function stedTupler(o: Omrade): StedTuppel[] {
+  return [...o.steder]
+    .sort((a, b) => a.navn.localeCompare(b.navn, "nb"))
+    .map((s) => {
+      const f = fordeling(ordinaereKarakterer(s));
+      const under = o.type === "kjede" ? (s.kommune ?? s.poststed) : s.adresse || s.poststed;
+      return [s.slug, s.navn, kindFromKarakter(sisteTilsyn(s).karakter), under, f.total ? `${f.smil}/${f.total}` : "–"];
+    });
 }

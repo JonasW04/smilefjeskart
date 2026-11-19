@@ -1,3 +1,4 @@
+import Smiley from "@/components/Smiley";
 import type { SmileyKind } from "@/lib/smiley";
 
 export type StedRad = {
@@ -23,7 +24,7 @@ const KOLONNER = {
 /**
  * Kompakt liste med steder, hvert med smilefjes og lenke til /sted/[slug].
  * Stilene ligger på <ul> (Tailwind-varianter for etterkommere), så hver rad er minimal markup –
- * viktig når Oslo har over tusen steder. Krever <SmileySprite /> på siden (fjesene er <use>-referanser).
+ * viktig når Oslo har over tusen steder.
  */
 export default function StedRader({ rader, kolonner = 1 }: { rader: StedRad[]; kolonner?: keyof typeof KOLONNER }) {
   return (
@@ -34,14 +35,12 @@ export default function StedRader({ rader, kolonner = 1 }: { rader: StedRad[]; k
         <li key={r.key}>
           {/* Vanlig <a>: lange lister skal ikke forhåndslaste hundrevis av sider, og gir mindre RSC-payload. */}
           <a href={`/sted/${r.slug}`}>
-            <svg width={24} height={24} role={r.label ? "img" : undefined} aria-label={r.label} aria-hidden={r.label ? undefined : true}>
-              <use href={`#sf-${r.kind}`} />
-            </svg>
+            <Smiley kind={r.kind} size={24} label={r.label} />
             <span>
               <strong>{r.navn}</strong>
               {r.under && <span>{r.under}</span>}
             </span>
-            {r.meta && <small title={r.metaTittel}>{r.meta}</small>}
+            {r.meta && <small {...(r.metaTittel ? { title: r.metaTittel } : {})}>{r.meta}</small>}
           </a>
         </li>
       ))}
