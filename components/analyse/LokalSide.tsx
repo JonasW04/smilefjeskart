@@ -33,6 +33,8 @@ function tekster(side: Side) {
       emoji: KATEGORI_EMOJI[side.kategori],
       tittel: `${t.tittel} i ${k}: smilefjes for ${tall(side.steder.length)} ${t.ubestemt}`,
       flertall: "kategorier",
+      /** «sushistedene», «Grünerløkka» */
+      rangNavn: t.bestemt,
     };
   }
   const iNavn = side.strok!.iNavn;
@@ -43,6 +45,7 @@ function tekster(side: Side) {
     emoji: "🏘️",
     tittel: `Spisesteder ${iNavn} i ${k}: smilefjes og tilsyn`,
     flertall: "strøk",
+    rangNavn: side.navn,
   };
 }
 
@@ -190,7 +193,7 @@ export default function LokalSide({ side }: { side: Side }) {
           </p>
           {plass.av >= 2 && (
             <p>
-              Rangert etter andel smil er det plass {plass.plass} av {plass.av} {t.flertall} i {k.navn} som har egen side her.
+              Blant de {plass.av} {t.flertall} i {k.navn} som har egen side her, ligger {t.rangNavn} på plass {plass.plass} etter andel smil.
             </p>
           )}
           <p>
@@ -220,12 +223,12 @@ export default function LokalSide({ side }: { side: Side }) {
           id="rene"
           emoji="✨"
           tittel="Helt rene tilsyn"
-          ingress="Siste ordinære tilsyn uten ett eneste avvik (karakter 0), de siste 12 månedene."
+          ingress="Steder der det siste ordinære tilsynet de siste 12 månedene var helt uten avvik (karakter 0)."
         >
           {stats.beste.length > 0 ? (
             <TilsynListe liste={stats.beste} />
           ) : (
-            <p className="text-sm">Ingen helt feilfrie ordinære tilsyn her de siste 12 månedene.</p>
+            <p className="text-sm">Ingen steder her har hatt et helt feilfritt siste tilsyn de siste 12 månedene.</p>
           )}
         </Seksjon>
       </div>

@@ -89,6 +89,7 @@ describe("strøk og postnumre", () => {
     expect(strokForPostnr("0301", "0366")?.slug).toBe("majorstuen");
     expect(strokForPostnr("0301", "0194")?.navn).toBe("Bjørvika");
     expect(strokForPostnr("0301", "0178")).toBeNull();
+    expect(strokForPostnr("0301", "0150")).toBeNull();
     expect(strokForPostnr("4601", "0552")).toBeNull();
     expect(strokForPostnr(null, "0552")).toBeNull();
   });
@@ -111,6 +112,8 @@ describe("lokale grupper", () => {
     const liste = [
       ...flere(10, kat("sushi")),
       ...flere(9, kat("pizza")),
+      // Ni burgersteder med 27 ordinære tilsyn: nok tilsyn, men for få steder.
+      ...flere(9, () => sted({ kategori: "burger", tilsyn: [t("2026-01-01", 0), t("2026-02-01", 0), t("2026-03-01", 0)] })),
       ...flere(30, kat("annet")),
       // Ti kebabsteder, men bare ti ordinære tilsyn: for tynt.
       ...flere(10, () => sted({ kategori: "kebab", tilsyn: [t("2026-01-01", 0), t("2026-02-01", 0, true)] })),
@@ -141,7 +144,7 @@ describe("nøkkeltall", () => {
     expect(ettAarFor("2024-02-29")).toBe("2023-02-28");
   });
 
-  it("finds the worst and best ordinary inspections in the last 12 months", () => {
+  it("finds the worst inspections and the places whose latest inspection was spotless", () => {
     const a = sted({ navn: "A", tilsyn: [t("2025-06-30", 3), t("2025-09-01", 2), t("2025-09-20", 0, true), t("2026-05-01", 0)] });
     const b = sted({ navn: "B", tilsyn: [t("2026-01-01", 3), t("2026-01-10", 3, true), t("2026-02-01", 0), t("2026-04-01", 1)] });
     const c = sted({ navn: "C", tilsyn: [t("2026-06-01", 2), t("2026-07-01", 3)] });
@@ -149,7 +152,10 @@ describe("nøkkeltall", () => {
     // 2025-06-30 er utenfor (eksakt ett år), oppfølging og datoer etter sluttDato telles ikke.
     expect(s.sisteAar).toEqual({ smil: 3, strek: 2, sur: 1, total: 6 });
     expect(s.verste.map((v) => `${v.sted.navn} ${v.tilsyn.dato}`)).toEqual(["B 2026-01-01", "C 2026-06-01", "A 2025-09-01"]);
-    expect(s.beste.map((v) => `${v.sted.navn} ${v.tilsyn.dato}`)).toEqual(["A 2026-05-01", "B 2026-02-01"]);
+    // B hadde karakter 0 i februar, men karakter 1 etterpå, og C har ingen feilfrie tilsyn.
+    expect(s.beste.map((v) => `${v.sted.navn} ${v.tilsyn.dato}`)).toEqual(["A 2026-05-01"]);
+    const d = sted({ navn: "D", tilsyn: [t("2026-02-01", 0), t("2026-04-01", 3), t("2026-04-20", 0, true)] });
+    expect(lokalStats([d], "2026-06-30").beste).toEqual([]);
     expect(lokalStats([a, b, c], "2026-06-30", 1).verste).toHaveLength(1);
   });
 

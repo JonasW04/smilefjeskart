@@ -44,8 +44,9 @@ export const STROK: Readonly<Record<string, readonly Strok[]>> = {
       slug: "sentrum",
       navn: "Sentrum",
       iNavn: "i sentrum",
-      // Kvadraturen, Karl Johan, Stortinget, Youngstorget og Hausmannskvartalene.
-      postnr: ["0050", ...postnrSerie(150, 162), ...postnrSerie(164, 166), ...postnrSerie(179, 181), "0183", "0184"],
+      // Kvadraturen, Karl Johan, Stortinget, Youngstorget og Torggata. 0150 er utelatt: det dekker både
+      // Akershusstranda, Operaen og Bjørvika og øyene i indre Oslofjord.
+      postnr: ["0050", ...postnrSerie(151, 162), ...postnrSerie(164, 166), ...postnrSerie(179, 181), "0183", "0184"],
     },
     { slug: "gronland", navn: "Grønland", iNavn: "på Grønland", postnr: [...postnrSerie(185, 190), "0656"] },
     { slug: "bjorvika", navn: "Bjørvika", iNavn: "i Bjørvika", postnr: ["0191", "0194"] },
@@ -201,7 +202,7 @@ export type LokalStats = {
   sisteAar: Fordeling;
   /** Ordinære tilsyn med strekmunn eller sur munn siste 12 måneder, sur munn først, så nyeste. */
   verste: LokaltTilsyn[];
-  /** Siste ordinære tilsyn uten noen brudd (karakter 0), ett per sted, nyeste først. */
+  /** Steder der siste ordinære tilsyn i perioden var helt uten avvik (karakter 0), nyeste først. */
   beste: LokaltTilsyn[];
 };
 
@@ -215,15 +216,16 @@ export function lokalStats(steder: Iterable<Sted>, sluttDato: string, antall = 8
   const verste: LokaltTilsyn[] = [];
   const beste: LokaltTilsyn[] = [];
   for (const sted of steder) {
-    let besteHer: Tilsyn | null = null;
+    let sisteHer: Tilsyn | null = null;
     for (const t of sted.tilsyn) {
       if (t.oppfolging || t.dato <= fra || t.dato > sluttDato) continue;
       leggTil(sisteAar, t.karakter);
       const smil = smileFromKarakter(t.karakter);
       if (smil === "strek" || smil === "sur") verste.push({ sted, tilsyn: t });
-      if (t.karakter === 0 && (!besteHer || t.dato > besteHer.dato)) besteHer = t;
+      if (!sisteHer || t.dato >= sisteHer.dato) sisteHer = t;
     }
-    if (besteHer) beste.push({ sted, tilsyn: besteHer });
+    // Bare steder der det nyeste ordinære tilsynet var feilfritt, så et sted med sur munn etterpå ikke listes som rent.
+    if (sisteHer?.karakter === 0) beste.push({ sted, tilsyn: sisteHer });
   }
   const nyestFoerst = (a: LokaltTilsyn, b: LokaltTilsyn) => b.tilsyn.dato.localeCompare(a.tilsyn.dato) || a.sted.navn.localeCompare(b.sted.navn, "nb");
   verste.sort((a, b) => b.tilsyn.karakter - a.tilsyn.karakter || nyestFoerst(a, b));
@@ -242,8 +244,9 @@ function persentil(sortert: number[], p: number): number {
 }
 
 /**
- * Kartutsnitt rundt stedene, uten de ytterste 2 % i hver retning, så ett feilgeokodet sted ikke drar
- * utsnittet ut over halve landet. Null uten koordinater.
+ * Kartutsnitt rundt stedene. Med minst 26 steder kuttes de ytterste 2 % i hver retning, så noen få
+ * feilgeokodede steder ikke drar utsnittet ut over halve landet. Med færre steder tas alle med.
+ * Null uten koordinater.
  */
 export function utsnitt(steder: Iterable<Sted>): Utsnitt | null {
   const lng: number[] = [];
