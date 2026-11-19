@@ -107,3 +107,36 @@ export function ordinaerFordeling(steder: Iterable<Sted>): Fordeling {
   }
   return f;
 }
+
+export type RenRekke = {
+  /** Dato for første tilsyn i rekka. */
+  fra: string;
+  /** Antall ordinære tilsyn i rekka. */
+  ordinaere: number;
+  /** "2019", eller "mars 2024" når forrige tilsyn uten smil var samme år. */
+  siden: string;
+};
+
+const MND_LANG = ["januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"];
+
+/**
+ * Smil på hvert eneste tilsyn de siste årene: den sammenhengende rekka bakover fra siste tilsyn der alt
+ * har gitt smil. Et tilsyn uten karakter bryter rekka, så "100 % smil" aldri hviler på et hull.
+ * Gir null med færre enn `minOrdinaere` ordinære tilsyn i rekka, eller når siste tilsyn er mer enn
+ * `maksDager` eldre enn `iDag` (stedet kan ha stengt, og rekka er ikke lenger fersk).
+ */
+export function renRekke(s: Sted, iDag: string, { minOrdinaere = 3, maksDager = 730 } = {}): RenRekke | null {
+  if (dagerMellom(sisteTilsyn(s).dato, iDag) > maksDager) return null;
+  let i = s.tilsyn.length;
+  let ordinaere = 0;
+  while (i > 0 && smileFromKarakter(s.tilsyn[i - 1].karakter) === "smil") {
+    i--;
+    if (!s.tilsyn[i].oppfolging) ordinaere++;
+  }
+  if (ordinaere < minOrdinaere) return null;
+  const fra = s.tilsyn[i].dato;
+  const brudd = i > 0 ? s.tilsyn[i - 1].dato : null;
+  const aar = fra.slice(0, 4);
+  const siden = brudd && brudd.slice(0, 4) === aar ? `${MND_LANG[Number(fra.slice(5, 7)) - 1]} ${aar}` : aar;
+  return { fra, ordinaere, siden };
+}

@@ -2,15 +2,22 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Smiley from "@/components/Smiley";
 import VarslingSkjema from "@/components/varsling/VarslingSkjema";
+import { lesVarslingParams } from "@/lib/deling";
 import { getSteder } from "@/lib/server/data";
 import { varslingAktiv } from "@/lib/varsling/config";
 import { sokelister } from "@/lib/varsling/omrade";
 
+const TITTEL = "Varsling – få nye smilefjes rett i innboksen | Smilefjeskartet";
+const BESKRIVELSE =
+  "Få en e-post når Mattilsynet deler ut smil, strekmunn eller sur munn i nabolaget ditt eller kommunen din. Gratis, maks én e-post om dagen, og enkel avmelding.";
+const SIDE = "https://smilefjeskartet.no/varsling";
+
 export const metadata: Metadata = {
-  title: "Varsling – få nye smilefjes rett i innboksen | Smilefjeskartet",
-  description:
-    "Få en e-post når Mattilsynet deler ut smil, strekmunn eller sur munn i nabolaget ditt eller kommunen din. Gratis, maks én e-post om dagen, og enkel avmelding.",
-  alternates: { canonical: "https://smilefjeskartet.no/varsling" },
+  title: TITTEL,
+  description: BESKRIVELSE,
+  alternates: { canonical: SIDE },
+  openGraph: { title: TITTEL, description: BESKRIVELSE, url: SIDE, type: "website", locale: "nb_NO", siteName: "Smilefjeskartet" },
+  twitter: { card: "summary_large_image", title: TITTEL, description: BESKRIVELSE },
 };
 
 const STEG = [
@@ -38,9 +45,16 @@ const FAQ = [
   },
 ];
 
-export default function VarslingSide() {
+type SearchParams = Record<string, string | string[] | undefined>;
+
+// Siden leses per forespørsel (searchParams), men stedslista endres bare ved deploy.
+let lister: ReturnType<typeof sokelister> | null = null;
+
+export default async function VarslingSide({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  // ?lat=&lng=&navn= kommer fra «Varsle meg»-lenkene på stedsider og i kartet: området er da valgt på forhånd.
+  const start = lesVarslingParams(await searchParams);
   const aktiv = varslingAktiv();
-  const { kommuner, poststeder } = aktiv ? sokelister(getSteder()) : { kommuner: [], poststeder: [] };
+  const { kommuner, poststeder } = aktiv ? (lister ??= sokelister(getSteder())) : { kommuner: [], poststeder: [] };
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -66,7 +80,7 @@ export default function VarslingSide() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
-        {aktiv ? <VarslingSkjema kommuner={kommuner} poststeder={poststeder} /> : <KommerSnart />}
+        {aktiv ? <VarslingSkjema key={start ? `${start.lat},${start.lng}` : "tom"} kommuner={kommuner} poststeder={poststeder} start={start} /> : <KommerSnart />}
 
         <aside className="space-y-6">
           <section className="card p-5" aria-labelledby="steg-tittel">

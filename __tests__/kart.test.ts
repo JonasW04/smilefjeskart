@@ -1,5 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { byggSokIndeks, gruppe, klyngeHumor, kommuneBbox, lesUrl, skrivUrl, sok, spredKoordinater, tilGeoJson, type Filter } from "@/lib/kart";
+import {
+  byggSokIndeks,
+  gruppe,
+  harAktivtFilter,
+  klyngeHumor,
+  kommuneBbox,
+  lesUrl,
+  skrivUrl,
+  sok,
+  spredKoordinater,
+  tilGeoJson,
+  vekslSmil,
+  type Filter,
+} from "@/lib/kart";
+import { SMILES } from "@/lib/smile";
 import type { KartData, KartRad } from "@/lib/types";
 
 const rad = (slug: string, navn: string, adresse: string, lng: number, lat: number, k: number, v: number, kommune: number, kat: number): KartRad =>
@@ -121,5 +135,56 @@ describe("klyngeHumor", () => {
 
   it("is null when nothing has a known result", () => {
     expect(klyngeHumor(0, 0, 0)).toBeNull();
+  });
+});
+
+describe("missing base map icons", () => {
+  it("draws an anti-aliased round dot", async () => {
+    const { prikkIkon } = await import("@/components/kart/kartStil");
+    const { width, height, data } = prikkIkon(22, [101, 101, 101]);
+    expect([width, height, data.length]).toEqual([22, 22, 22 * 22 * 4]);
+    const alfa = (x: number, y: number) => data[(y * 22 + x) * 4 + 3];
+    expect(alfa(11, 11)).toBe(255);
+    expect(alfa(0, 0)).toBe(0);
+    expect(alfa(0, 11)).toBeGreaterThan(0);
+    expect(alfa(0, 11)).toBeLessThan(255);
+    expect(Array.from(data.slice((11 * 22 + 11) * 4, (11 * 22 + 11) * 4 + 3))).toEqual([101, 101, 101]);
+  });
+
+  it("fills in only the icons the base style is known to lack, once", async () => {
+    const { leggTilManglendeIkon } = await import("@/components/kart/kartStil");
+    const bilder = new Map<string, unknown>();
+    const map = { hasImage: (id: string) => bilder.has(id), addImage: (id: string, img: unknown) => void bilder.set(id, img) };
+    const m = map as unknown as Parameters<typeof leggTilManglendeIkon>[0];
+    leggTilManglendeIkon(m, "circle-11");
+    const forste = bilder.get("circle-11");
+    leggTilManglendeIkon(m, "circle-11");
+    leggTilManglendeIkon(m, "noe-annet");
+    expect([...bilder.keys()]).toEqual(["circle-11"]);
+    expect(bilder.get("circle-11")).toBe(forste);
+  });
+});
+
+describe("smilefilter", () => {
+  const sett = (...s: Array<(typeof SMILES)[number]>) => new Set(s);
+
+  it("shows only the clicked face when all three are on", () => {
+    expect(vekslSmil(sett(...SMILES), "sur", SMILES)).toEqual(sett("sur"));
+  });
+
+  it("toggles faces once the filter is narrowed", () => {
+    expect(vekslSmil(sett("sur"), "strek", SMILES)).toEqual(sett("sur", "strek"));
+    expect(vekslSmil(sett("sur", "strek"), "strek", SMILES)).toEqual(sett("sur"));
+    expect(vekslSmil(sett("sur", "strek"), "smil", SMILES)).toEqual(sett(...SMILES));
+  });
+
+  it("falls back to all faces instead of an empty filter", () => {
+    expect(vekslSmil(sett("sur"), "sur", SMILES)).toEqual(sett(...SMILES));
+  });
+
+  it("knows when the filter hides places", () => {
+    expect(harAktivtFilter(alle, 3)).toBe(false);
+    expect(harAktivtFilter({ ...alle, kategori: "indisk" }, 3)).toBe(true);
+    expect(harAktivtFilter({ ...alle, smil: sett("sur") }, 3)).toBe(true);
   });
 });

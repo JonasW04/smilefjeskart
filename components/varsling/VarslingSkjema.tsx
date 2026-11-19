@@ -3,13 +3,19 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Smiley from "@/components/Smiley";
 import { SMILE_LABEL, SMILES, type Smile } from "@/lib/smile";
+import type { VarslingStart } from "@/lib/deling";
 import { asciiFold, foldForSearch } from "@/lib/text";
 import type { KommuneValg, PoststedValg } from "@/lib/varsling/omrade";
 import { MAKS_KOMMUNER, RADIUSER, type Radius } from "@/lib/varsling/typer";
 import { iNorge, punktFraUrl, validerAbonnement, type Valideringsfeil } from "@/lib/varsling/validering";
 import StedSok, { type SokValg } from "./StedSok";
 
-type Props = { kommuner: KommuneValg[]; poststeder: PoststedValg[] };
+type Props = {
+  kommuner: KommuneValg[];
+  poststeder: PoststedValg[];
+  /** Punkt valgt på forhånd, fra ?lat=&lng=&navn= (f.eks. et serveringssted). */
+  start?: VarslingStart | null;
+};
 
 type Punkt = { lat: number; lng: number; navn: string };
 type Estimat = { steder: number; siste12: Record<Smile, number>; dagerMedTreff: number };
@@ -46,9 +52,9 @@ function epostPerMaaned(dager: number): string {
   return `rundt ${n === 1 ? "én e-post" : `${n} e-poster`} i måneden`;
 }
 
-export default function VarslingSkjema({ kommuner, poststeder }: Props) {
+export default function VarslingSkjema({ kommuner, poststeder, start = null }: Props) {
   const [modus, setModus] = useState<"punkt" | "kommuner">("punkt");
-  const [punkt, setPunkt] = useState<Punkt | null>(null);
+  const [punkt, setPunkt] = useState<Punkt | null>(start ? { lat: start.lat, lng: start.lng, navn: `Rundt ${start.navn}` } : null);
   const [km, setKm] = useState<Radius>(5);
   const [valgte, setValgte] = useState<string[]>([]);
   const [filtre, setFiltre] = useState<Smile[]>(["strek", "sur"]);
@@ -70,8 +76,11 @@ export default function VarslingSkjema({ kommuner, poststeder }: Props) {
     setBruktSearch(search);
     const fraKart = punktFraUrl(search);
     if (fraKart) {
-      setPunkt({ lat: fraKart.lat, lng: fraKart.lng, navn: "Der du sjekket på kartet" });
-      setKm(fraKart.km);
+      const params = new URLSearchParams(search);
+      const harNavn = Boolean(params.get("navn")?.trim());
+      const harKm = params.has("km");
+      if (!harNavn) setPunkt({ lat: fraKart.lat, lng: fraKart.lng, navn: "Der du sjekket på kartet" });
+      if (!harNavn || harKm) setKm(fraKart.km);
     }
   }
 
