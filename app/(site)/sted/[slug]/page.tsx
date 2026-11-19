@@ -6,9 +6,9 @@ import Smiley from "@/components/Smiley";
 import StedSpaakort from "@/components/prediksjon/StedSpaakort";
 import Tidslinje from "@/components/sted/Tidslinje";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
-import { getDatasett, getSted, kjedeFordeling, kjedeSteder, kommuneFordeling, landFordeling, naermeste } from "@/lib/server/data";
+import { getDatasett, getSted, getSteder, kjedeFordeling, kjedeSteder, kommuneFordeling, landFordeling, naermeste } from "@/lib/server/data";
 import { fylkeSlugFraNr, getOmrade, kommuneSlug } from "@/lib/server/omrader";
-import { merkeSnippet, stedBrodsmulerLd, stedTittel } from "@/lib/seo";
+import { forhandsbygdeSteder, merkeSnippet, stedBeskrivelse, stedBrodsmulerLd, stedLd, stedTittel } from "@/lib/seo";
 import { KARAKTER_FORKLARING, SMILE_LABEL, TEMAER, isGraded, smileFromKarakter } from "@/lib/smile";
 import { kindFromKarakter } from "@/lib/smiley";
 import { andel, dagerMellom, fordeling, formatDato, ordinaereKarakterer, prosent, sisteTilsyn, stedStats, tidSiden } from "@/lib/stats";
@@ -16,9 +16,13 @@ import type { Sted } from "@/lib/types";
 
 type Params = { slug: string };
 
-// Sidene lages ved første besøk og caches til neste deploy (data oppdateres daglig via deploy).
+/** Så mange stedsider bygges ved deploy. Resten lages ved første besøk og caches til neste deploy. */
+const FORHANDSBYGD = 250;
+
+// Data oppdateres daglig via deploy, og hver deploy tømmer cachen. De sist inspiserte stedene bygges derfor på
+// forhånd, så de som søkes opp mest etter et tilsyn ikke må lages på nytt ved første besøk.
 export function generateStaticParams(): Params[] {
-  return [];
+  return forhandsbygdeSteder(getSteder(), FORHANDSBYGD).map((slug) => ({ slug }));
 }
 
 const SITE = "https://smilefjeskartet.no";
@@ -27,10 +31,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { slug } = await params;
   const s = getSted(slug);
   if (!s) return { title: "Fant ikke stedet – Smilefjeskartet" };
-  const t = sisteTilsyn(s);
-  const smil = smileFromKarakter(t.karakter);
-  const title = stedTittel(s);
-  const description = `${s.navn} fikk ${smil ? SMILE_LABEL[smil].toLowerCase() : "ukjent karakter"} ved siste tilsyn ${formatDato(t.dato)}. Se alle ${s.tilsyn.length} tilsyn fra Mattilsynet siden ${s.tilsyn[0].dato.slice(0, 4)}, tema for tema.`;
+  const title = stedTittel(s, getDatasett().generert.slice(0, 10));
+  const description = stedBeskrivelse(s);
   return {
     title,
     description,
@@ -46,23 +48,6 @@ const HERO_TEKST: Record<string, { tittel: string; undertekst: string; bg: strin
   sur: { tittel: "Sur munn! 🚨", undertekst: "Mattilsynet fant alvorlige brudd på regelverket.", bg: "bg-sur-soft" },
   ukjent: { tittel: "Ukjent", undertekst: "Siste tilsyn mangler karakter.", bg: "bg-ukjent-soft" },
 };
-
-function jsonLd(s: Sted) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FoodEstablishment",
-    name: s.navn,
-    url: `${SITE}/sted/${s.slug}`,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: s.adresse,
-      postalCode: s.postnr || undefined,
-      addressLocality: s.poststed || undefined,
-      addressCountry: "NO",
-    },
-    ...(s.lat !== null && s.lng !== null ? { geo: { "@type": "GeoCoordinates", latitude: s.lat, longitude: s.lng } } : {}),
-  };
-}
 
 export default async function StedSide({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
@@ -97,7 +82,7 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
 
   return (
     <article className="space-y-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(s)).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(stedLd(s)).replace(/</g, "\\u003c") }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(stedBrodsmulerLd(s, fSlug, kSlug)).replace(/</g, "\\u003c") }} />
 
       <nav aria-label="Brødsmuler" className="text-sm font-semibold text-ink-soft">

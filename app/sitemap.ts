@@ -1,9 +1,16 @@
 import type { MetadataRoute } from "next";
 import { getDatasett } from "@/lib/server/data";
 import { fylker, kjeder, kommuner, type Omrade } from "@/lib/server/omrader";
+import { SITEMAP_IDER, type SitemapId } from "@/lib/seo";
 import { sisteTilsyn } from "@/lib/stats";
 
 const SITE = "https://smilefjeskartet.no";
+
+// Delt etter sidetype, så Search Console viser indekseringen for hver type for seg. Delene ligger på
+// /sitemap/<id>.xml, og /sitemap.xml er indeksen som lister dem (app/sitemap-index.xml).
+export function generateSitemaps() {
+  return SITEMAP_IDER.map((id) => ({ id }));
+}
 
 function sistEndret(o: Omrade): Date {
   let maks = "";
@@ -14,16 +21,8 @@ function sistEndret(o: Omrade): Date {
   return new Date(maks);
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const d = getDatasett();
-  const oppdatert = new Date(d.generert);
-  const omrader = (sti: string, liste: Omrade[], priority: number) =>
-    liste.map((o) => ({
-      url: `${SITE}/${sti}/${o.slug}`,
-      lastModified: sistEndret(o),
-      changeFrequency: "weekly" as const,
-      priority,
-    }));
+function core(): MetadataRoute.Sitemap {
+  const oppdatert = new Date(getDatasett().generert);
   return [
     { url: SITE, lastModified: oppdatert, changeFrequency: "daily", priority: 1.0 },
     { url: `${SITE}/siste`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.8 },
@@ -32,14 +31,32 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/prediksjon`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE}/varsling`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE}/om`, changeFrequency: "monthly", priority: 0.5 },
-    ...omrader("fylke", fylker(), 0.7),
-    ...omrader("kommune", kommuner(), 0.7),
-    ...omrader("kjede", kjeder(), 0.6),
-    ...d.steder.map((s) => ({
-      url: `${SITE}/sted/${s.slug}`,
-      lastModified: new Date(sisteTilsyn(s).dato),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
   ];
+}
+
+function omrader(): MetadataRoute.Sitemap {
+  const liste = (sti: string, o: Omrade[], priority: number) =>
+    o.map((o) => ({
+      url: `${SITE}/${sti}/${o.slug}`,
+      lastModified: sistEndret(o),
+      changeFrequency: "weekly" as const,
+      priority,
+    }));
+  return [...liste("fylke", fylker(), 0.7), ...liste("kommune", kommuner(), 0.7), ...liste("kjede", kjeder(), 0.6)];
+}
+
+function steder(): MetadataRoute.Sitemap {
+  return getDatasett().steder.map((s) => ({
+    url: `${SITE}/sted/${s.slug}`,
+    lastModified: new Date(sisteTilsyn(s).dato),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+}
+
+const DELER: Record<SitemapId, () => MetadataRoute.Sitemap> = { core, omrader, steder };
+
+export default async function sitemap({ id }: { id: Promise<string> }): Promise<MetadataRoute.Sitemap> {
+  const del = DELER[(await id) as SitemapId];
+  return del ? del() : [];
 }

@@ -6,11 +6,17 @@ import { getSteder } from "@/lib/server/data";
 import { varslingAktiv } from "@/lib/varsling/config";
 import { sokelister } from "@/lib/varsling/omrade";
 
+const TITTEL = "Varsling – få nye smilefjes rett i innboksen | Smilefjeskartet";
+const BESKRIVELSE =
+  "Få en e-post når Mattilsynet deler ut smil, strekmunn eller sur munn i nabolaget ditt eller kommunen din. Gratis, maks én e-post om dagen, og enkel avmelding.";
+const SIDE = "https://smilefjeskartet.no/varsling";
+
 export const metadata: Metadata = {
-  title: "Varsling – få nye smilefjes rett i innboksen | Smilefjeskartet",
-  description:
-    "Få en e-post når Mattilsynet deler ut smil, strekmunn eller sur munn i nabolaget ditt eller kommunen din. Gratis, maks én e-post om dagen, og enkel avmelding.",
-  alternates: { canonical: "https://smilefjeskartet.no/varsling" },
+  title: TITTEL,
+  description: BESKRIVELSE,
+  alternates: { canonical: SIDE },
+  openGraph: { title: TITTEL, description: BESKRIVELSE, url: SIDE, type: "website", locale: "nb_NO", siteName: "Smilefjeskartet" },
+  twitter: { card: "summary_large_image", title: TITTEL, description: BESKRIVELSE },
 };
 
 const STEG = [
