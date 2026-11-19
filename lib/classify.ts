@@ -91,8 +91,6 @@ const KATEGORI_REGLER: Array<[Kategori, RegExp]> = [
       del("burger", "burgr", "burgasm"),
       start("mcdonald", "smash", "smaesh"),
       ord("holy ?cow", "johnny rockets"),
-      // Max Burgers heter ofte bare "Max <sted>" i datasettet.
-      "^max (?!i\\b|grill)",
     ),
   ],
   [
@@ -124,8 +122,8 @@ const KATEGORI_REGLER: Array<[Kategori, RegExp]> = [
   [
     "asiatisk",
     regel(
-      del("thai", "wok", "china", "chinese"),
-      start("asia", "kina", "kinesisk", "vietnam", "noodle", "nudel", "dumpling", "korea", "japan", "bento", "obento"),
+      del("thai", "wok"),
+      start("china", "chinese", "asia", "kina", "kinesisk", "vietnam", "noodle", "nudel", "dumpling", "korea", "japan", "bento", "obento"),
       ord("pho", "compho", "ramen", "dim sum", "bao", "banh mi", "bangkok", "saigon", "hanoi", "tokyo", "izakaya"),
       ord("izkaya", "yakitori", "teriyaki", "tempura", "karaage", "bambus", "bamboo", "beijing", "peking", "nanjing"),
       ord("shanghai", "hong kong", "kowloon", "canton", "guangdong", "sichuan", "szechuan", "sze chuan", "hunan"),
@@ -147,7 +145,7 @@ const KATEGORI_REGLER: Array<[Kategori, RegExp]> = [
   [
     "kafe",
     regel(
-      del("kafe", "cafe", "(?<!s)kaffe", "kaffi", "caffe", "coffee", "espresso", "vaffel"),
+      del("kafe", "cafe", "kaffe(?!ri)", "kaffi", "caffe", "coffee", "espresso", "vaffel"),
       ord("bistro", "ritazza", "bubble tea", "tesalongen", "teaology"),
     ),
   ],
@@ -169,8 +167,9 @@ const KATEGORI_REGLER: Array<[Kategori, RegExp]> = [
     ),
   ],
   ["kantine", regel(del("kantin"))],
-  // Diner til slutt, så "Thai Diner" blir asiatisk og "Bar og Diner" blir bar.
-  ["burger", regel(ord("diner"))],
+  // Til slutt, så "Thai Diner" blir asiatisk, "Bar og Diner" bar og "Max Kebab" kebab.
+  // Max Burgers heter ofte bare "Max <sted>" i datasettet.
+  ["burger", regel(ord("diner"), "^max (?!i\\b|grill)")],
 ];
 
 export function kategoriFraNavn(navn: string): Kategori {

@@ -52,7 +52,7 @@ const TREFF: Record<Exclude<Kategori, "annet">, string[]> = {
   kebab: ["Istanbul Grillkebab AS", "Gyros House", "Mr Shaworma AS"],
   meksikansk: ["El Camino Sandvika", "La Taqueria", "Las Cazuelas Sabor a Mexico", "Azteko"],
   bar: ["O’Learys Tromsø Airport", "Furu Gastropub", "Ægir Bryggeripub", "The Dubliner", "Trafalgar sportsbar"],
-  kafe: ["Kulturkafeen", "Gårdskafeen, Glasshytta Vikten", "Caffè Ritazza", "Kaffistova", "Vaffelbua"],
+  kafe: ["Torsdagskaffe", "Kulturkafeen", "Gårdskafeen, Glasshytta Vikten", "Caffè Ritazza", "Kaffistova", "Vaffelbua"],
   bakeri: ["Backstube Grønland", "Kanelsnurren Tasta", "Solbrød Lagunen", "Geheb Conditori Markensgate", "Jærbakeren Sola"],
   hotell: ["Askvoll Fjordhotell", "Bygdin Høyfjellshotell", "Eidfjord Gjestgiveri", "Aure Gjestegård", "Geilo Mountain Lodge"],
   gatekjokken: ["Jafs Kongsberg", "Moskusgrillen", "Crispy Chicken House", "Snoopy Fast Food", "Kaupanger Storkiosk"],
@@ -68,6 +68,9 @@ const IKKE: Array<[string, Kategori]> = [
   ["Indie", "annet"],
   ["Max Grill Stovner Senter", "gatekjokken"], // ikke Max Burgers
   ["Maxi Fast Food", "gatekjokken"],
+  ["Max Kebab", "kebab"],
+  ["Max Thai", "asiatisk"],
+  ["Ex Machina", "annet"],
   ["Byblos Orientalsk grill", "gatekjokken"], // libanesisk
   ["Kristiansand dyrepark - Bambuskiosken", "gatekjokken"],
   ["City Bar og Diner", "bar"],

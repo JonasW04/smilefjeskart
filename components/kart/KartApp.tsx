@@ -93,6 +93,7 @@ export default function KartApp() {
   const harFloyddStart = useRef(false);
   const aktivStil = useRef<boolean | null>(null);
   const valgtRef = useRef(valgt);
+  const filterKnappRef = useRef<HTMLButtonElement>(null);
 
   // ---- Data ----
   useEffect(() => {
@@ -336,6 +337,8 @@ export default function KartApp() {
   const nullstillFilter = () => {
     setSmil(new Set(SMILES));
     setKategori("alle");
+    // Knappen forsvinner når filteret er nullstilt, så fokus flyttes til filterknappen.
+    filterKnappRef.current?.focus();
   };
 
   const naerMeg = () => {
@@ -434,13 +437,14 @@ export default function KartApp() {
         <Sok indeks={indeks} onVelg={velgTreff} />
         <div className="flex flex-wrap items-center gap-2">
           <button
+            ref={filterKnappRef}
             type="button"
             className="btn !px-3 !py-1.5 text-sm"
             aria-expanded={visFilter}
             aria-controls="kart-filter"
             onClick={() => setVisFilter((v) => !v)}
           >
-            🎛️ {visFilter ? "Skjul filter" : "Filter og forklaring"}
+            <span aria-hidden>🎛️</span> {visFilter ? "Skjul filter" : "Filter og forklaring"}
           </button>
           {!visFilter && filterAktivt && (
             <span className="card inline-flex flex-wrap items-center gap-1 !rounded-full px-2 py-1 text-xs font-bold">
@@ -462,7 +466,7 @@ export default function KartApp() {
           )}
           {filterAktivt && (
             <button type="button" className="btn !px-3 !py-1.5 text-sm" onClick={nullstillFilter}>
-              ✖ Nullstill
+              <span aria-hidden>✖</span> Nullstill filter
             </button>
           )}
         </div>
