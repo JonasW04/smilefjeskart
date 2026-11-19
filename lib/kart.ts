@@ -35,6 +35,23 @@ export type Filter = {
   kategori: Kategori | "alle";
 };
 
+/**
+ * Klikk på et smilefjes i filteret. Når alle tre vises, viser klikket bare det fjeset
+ * (vanligste ønske: "bare sur munn"). Ellers slås fjeset av eller på, og tomt valg blir alle tre igjen.
+ */
+export function vekslSmil(cur: ReadonlySet<Smile>, s: Smile, alle: readonly Smile[]): Set<Smile> {
+  if (cur.size === alle.length) return new Set([s]);
+  const neste = new Set(cur);
+  if (neste.has(s)) neste.delete(s);
+  else neste.add(s);
+  return neste.size === 0 ? new Set(alle) : neste;
+}
+
+/** Om filteret skjuler noen steder (modus er fargevalg, ikke filter). */
+export function harAktivtFilter(f: Filter, antallSmil: number): boolean {
+  return f.kategori !== "alle" || f.smil.size < antallSmil;
+}
+
 export function radGruppe(r: KartRad, modus: Modus): number {
   return gruppe(modus === "siste" ? r[KART.KARAKTER] : r[KART.VERSTE_3AAR]);
 }
@@ -229,6 +246,33 @@ export function lesUrl(search: string, kategorier: readonly string[]): UrlTilsta
     kategori: kat && kategorier.includes(kat) ? (kat as Kategori) : "alle",
     smil: smil.size > 0 ? smil : new Set(ALLE_SMIL),
   };
+}
+
+/** Grovt utsnitt rundt Norge og Svalbard. Utsnitt i URL-en utenfor dette avvises. */
+const NORGE_GRENSER: [number, number, number, number] = [-10, 55, 35, 82];
+
+/**
+ * Startutsnitt fra `?utsnitt=vest,sør,øst,nord` (lenker fra kommune- og strøksider). Gjelder bare
+ * ved oppstart, så det skrives ikke tilbake til URL-en. Ugyldige verdier gir null.
+ */
+export function lesUtsnitt(search: string): [number, number, number, number] | null {
+  const raw = new URLSearchParams(search).get("utsnitt");
+  if (!raw) return null;
+  const tall = raw.split(",").map((x) => (x.trim() === "" ? NaN : Number(x)));
+  if (tall.length !== 4 || !tall.every(Number.isFinite)) return null;
+  const [v, s, o, n] = tall;
+  const [gv, gs, go, gn] = NORGE_GRENSER;
+  if (v > o || s > n || v < gv || o > go || s < gs || n > gn) return null;
+  return [v, s, o, n];
+}
+
+/** Lenke til kartet med startutsnitt og eventuelt kategorifilter. */
+export function kartLenke(utsnitt: readonly [number, number, number, number] | null, kategori?: Kategori): string {
+  const p = new URLSearchParams();
+  if (kategori) p.set("kategori", kategori);
+  if (utsnitt) p.set("utsnitt", utsnitt.join(","));
+  const q = p.toString();
+  return q ? `/?${q}` : "/";
 }
 
 export function skrivUrl(t: UrlTilstand): string {

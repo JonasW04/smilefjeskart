@@ -4,11 +4,17 @@ import Smiley from "@/components/Smiley";
 import { getDatasett, landFordeling } from "@/lib/server/data";
 import { andel, formatDato, prosent } from "@/lib/stats";
 
+const TITTEL = "Om Smilefjeskartet – slik leser du smilefjesene";
+const BESKRIVELSE =
+  "Hva betyr smil, strekmunn og sur munn? Slik fungerer Mattilsynets smilefjesordning, hvor dataene kommer fra, og hvorfor vi ser på ordinære tilsyn.";
+const SIDE = "https://smilefjeskartet.no/om";
+
 export const metadata: Metadata = {
-  title: "Om Smilefjeskartet – slik leser du smilefjesene",
-  description:
-    "Hva betyr smil, strekmunn og sur munn? Slik fungerer Mattilsynets smilefjesordning, hvor dataene kommer fra, og hvorfor vi ser på ordinære tilsyn.",
-  alternates: { canonical: "https://smilefjeskartet.no/om" },
+  title: TITTEL,
+  description: BESKRIVELSE,
+  alternates: { canonical: SIDE },
+  openGraph: { title: TITTEL, description: BESKRIVELSE, url: SIDE, type: "website", locale: "nb_NO", siteName: "Smilefjeskartet" },
+  twitter: { card: "summary_large_image", title: TITTEL, description: BESKRIVELSE },
 };
 
 const FAQ = [

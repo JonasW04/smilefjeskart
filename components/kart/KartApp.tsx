@@ -11,20 +11,26 @@ import Smiley from "@/components/Smiley";
 import { KATEGORI_EMOJI, KATEGORI_NAVN, type Kategori } from "@/lib/classify";
 import {
   byggSokIndeks,
+  harAktivtFilter,
   kommuneBbox,
   lesUrl,
+  lesUtsnitt,
   passerFilter,
   radGruppe,
   skrivUrl,
   spredKoordinater,
   tilGeoJson,
+  vekslSmil,
   type Modus,
   type SokTreff,
   type StedProps,
 } from "@/lib/kart";
+import { boksRundt, naerhetsDom, stederInnen, velgRadius, type NaerRadius, type Punkt } from "@/lib/naerhet";
 import { SMILES, SMILE_LABEL, type Smile } from "@/lib/smile";
-import { KART, type KartData } from "@/lib/types";
-import { klyngeElement, leggTilLag, leggTilSmilefjes, settModus, STIL_URL, tilpassGrunnkart } from "./kartStil";
+import { KART, type KartData, type KartRad } from "@/lib/types";
+import { klyngeElement, leggTilLag, leggTilManglendeIkon, leggTilSmilefjes, settModus, STIL_URL, tilpassGrunnkart } from "./kartStil";
+import KartVenter from "./KartVenter";
+import NaerMegKort from "./NaerMegKort";
 import Sok from "./Sok";
 import StedPanel from "./StedPanel";
 
@@ -64,6 +70,7 @@ const MODUS_TEKST: Record<Modus, { navn: string; hjelp: string }> = {
 export default function KartApp() {
   // Komponenten lastes kun i nettleseren (ssr: false), så vi kan lese URL-en direkte.
   const [start] = useState(() => lesUrl(window.location.search, KATEGORIER));
+  const [startUtsnitt] = useState(() => lesUtsnitt(window.location.search));
   const [data, setData] = useState<KartData | null>(null);
   const [lastefeil, setLastefeil] = useState(false);
   const [modus, setModus] = useState<Modus>(start.modus);
@@ -73,9 +80,14 @@ export default function KartApp() {
   const [kartKlart, setKartKlart] = useState(false);
   const [kartfeil, setKartfeil] = useState(false);
   const [kartForsok, setKartForsok] = useState(0);
-  const [visFilter, setVisFilter] = useState(false);
+  // Åpent som standard på brede skjermer, lukket på mobil der kortet dekker kartet.
+  const [visFilter, setVisFilter] = useState(() => window.matchMedia("(min-width: 640px)").matches);
   const [finnerMeg, setFinnerMeg] = useState(false);
   const [melding, setMelding] = useState<string | null>(null);
+  /** Posisjonen fra «Nær meg». Nabolagskortet vises så lenge den er satt. */
+  const [meg, setMeg] = useState<Punkt | null>(null);
+  /** Radius valgt av brukeren; null betyr automatisk. */
+  const [naerRadius, setNaerRadius] = useState<NaerRadius | null>(null);
   const mork = useMorkModus();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -90,6 +102,7 @@ export default function KartApp() {
   const harFloyddStart = useRef(false);
   const aktivStil = useRef<boolean | null>(null);
   const valgtRef = useRef(valgt);
+  const filterKnappRef = useRef<HTMLButtonElement>(null);
 
   // ---- Data ----
   useEffect(() => {
@@ -113,6 +126,14 @@ export default function KartApp() {
     }
     return t;
   }, [data, modus, kategori]);
+
+  // Steder rundt brukeren, nærmeste først. Radius og modus filtrerer videre uten nytt søk.
+  const naerSteder = useMemo(() => (data && meg ? stederInnen(data, meg, undefined, kategori) : null), [data, meg, kategori]);
+  const naerDom = useMemo(
+    () => (naerSteder ? naerhetsDom(naerSteder, naerRadius ?? velgRadius(naerSteder), modus) : null),
+    [naerSteder, naerRadius, modus],
+  );
+  const aktivRadius = naerDom?.radius ?? null;
 
   useEffect(() => {
     modusRef.current = modus;
@@ -169,7 +190,7 @@ export default function KartApp() {
       map = new maplibregl.Map({
         container: containerRef.current,
         style: morkRef.current ? STIL_URL.mork : STIL_URL.lys,
-        bounds: NORGE,
+        bounds: startUtsnitt ?? NORGE,
         fitBoundsOptions: {
           padding: window.innerWidth >= 640 ? { top: 30, bottom: 30, left: 400, right: 30 } : { top: 120, bottom: 60, left: 10, right: 10 },
         },
@@ -192,6 +213,8 @@ export default function KartApp() {
     map.on("error", () => {
       if (!avsluttet && !map.getLayer("steder-ikon")) setKartfeil(true);
     });
+    // MapLibre 6: en «styleimagemissing»-lytter kan ikke lenger levere bildet; det må gå via resolveren.
+    map.setMissingStyleImageResolver((id) => leggTilManglendeIkon(map, id));
     map.on("style.load", async () => {
       try {
         tilpassGrunnkart(map, morkRef.current);
@@ -241,7 +264,7 @@ export default function KartApp() {
       map.remove();
       mapRef.current = null;
     };
-  }, [data, kartForsok, nullstillKlynger, oppdaterKlynger]);
+  }, [data, kartForsok, nullstillKlynger, oppdaterKlynger, startUtsnitt]);
 
   // Bytt grunnkart når lys/mørk modus endres.
   useEffect(() => {
@@ -294,6 +317,32 @@ export default function KartApp() {
     [koordinater],
   );
 
+  // Vis hele radiusen rundt brukeren, med plass til nabolagskortet.
+  useEffect(() => {
+    const map = mapRef.current;
+    // Et åpent stedspanel har kartet; flytt det ikke bort fra stedet.
+    if (!map || !kartKlart || !meg || aktivRadius === null || valgtRef.current) return;
+    const kart = map.getContainer().getBoundingClientRect();
+    let padding: maplibregl.PaddingOptions;
+    if (kart.width < 640) {
+      // Kortet dekker opptil 58 % av kartet nedenfra (max-h i NaerMegKort).
+      padding = { top: 100, bottom: kart.height * 0.58 + 10, left: 20, right: 20 };
+    } else if (kart.width - 810 >= 250) {
+      // Filterkolonnen til venstre, kortet til høyre.
+      padding = { top: 40, bottom: 40, left: 400, right: 410 };
+    } else {
+      // Smalt (nettbrett): bruk plassen under filterkolonnen.
+      const filter = document.getElementById("kart-filter")?.getBoundingClientRect();
+      const top = filter ? filter.bottom - kart.top + 20 : 40;
+      padding = { top: Math.min(top, kart.height - 200), bottom: 40, left: 20, right: 410 };
+    }
+    map.fitBounds(boksRundt(meg, aktivRadius), {
+      padding,
+      maxZoom: 16.5,
+      duration: 900,
+    });
+  }, [meg, aktivRadius, kartKlart]);
+
   // Fly til sted fra URL når kartet er klart.
   useEffect(() => {
     if (!kartKlart || harFloyddStart.current) return;
@@ -301,40 +350,46 @@ export default function KartApp() {
     if (start.sted) flyTil(start.sted);
   }, [kartKlart, start.sted, flyTil]);
 
-  // Escape lukker panelet.
+  // Escape lukker stedspanelet, og deretter nabolagskortet.
   useEffect(() => {
-    if (!valgt) return;
+    if (!valgt && !meg) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !(e.target instanceof HTMLInputElement)) setValgt(null);
+      if (e.key !== "Escape" || e.target instanceof HTMLInputElement) return;
+      if (valgt) setValgt(null);
+      else setMeg(null);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [valgt]);
+  }, [valgt, meg]);
 
   // ---- Handlinger ----
+  const visSted = (rad: KartRad) => {
+    const slug = rad[KART.SLUG];
+    // Sørg for at stedet er synlig selv om filteret ellers skjuler det.
+    if (data && !passerFilter(rad, data, modus, filter)) {
+      setSmil(new Set(SMILES));
+      if (data.kategorier[rad[KART.KATEGORI]] !== kategori) setKategori("alle");
+    }
+    setValgt(slug);
+    flyTil(slug);
+  };
+
   const velgTreff = (t: SokTreff) => {
     if (t.type === "sted") {
-      const slug = t.rad[KART.SLUG];
-      // Sørg for at stedet er synlig selv om filteret ellers skjuler det.
-      if (data && !passerFilter(t.rad, data, modus, filter)) {
-        setSmil(new Set(SMILES));
-        setKategori("alle");
-      }
-      setValgt(slug);
-      flyTil(slug);
+      visSted(t.rad);
     } else if (data) {
       const bbox = kommuneBbox(data, t.nr);
       if (bbox) mapRef.current?.fitBounds(bbox, { padding: 60, maxZoom: 14, duration: 900 });
     }
   };
 
-  const toggleSmil = (s: Smile) => {
-    setSmil((cur) => {
-      const neste = new Set(cur);
-      if (neste.has(s)) neste.delete(s);
-      else neste.add(s);
-      return neste.size === 0 ? new Set(SMILES) : neste;
-    });
+  const toggleSmil = (s: Smile) => setSmil((cur) => vekslSmil(cur, s, SMILES));
+
+  const nullstillFilter = () => {
+    setSmil(new Set(SMILES));
+    setKategori("alle");
+    // Knappen forsvinner når filteret er nullstilt, så fokus flyttes til filterknappen.
+    filterKnappRef.current?.focus();
   };
 
   const naerMeg = () => {
@@ -346,6 +401,10 @@ export default function KartApp() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setFinnerMeg(false);
+        // Kortet virker selv uten bakgrunnskart; kartet zoomes til radiusen når den er regnet ut.
+        setValgt(null);
+        setNaerRadius(null);
+        setMeg({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         const map = mapRef.current;
         if (!map) return;
         const lngLat: [number, number] = [pos.coords.longitude, pos.coords.latitude];
@@ -356,7 +415,6 @@ export default function KartApp() {
           megMarker.current = new maplibregl.Marker({ element: el });
         }
         megMarker.current.setLngLat(lngLat).addTo(map);
-        map.easeTo({ center: lngLat, zoom: Math.max(map.getZoom(), 14.5), duration: 900 });
       },
       (err) => {
         setFinnerMeg(false);
@@ -381,6 +439,12 @@ export default function KartApp() {
   }, [melding]);
 
   const antallVist = geojson?.features.length ?? 0;
+  const filterAktivt = harAktivtFilter(filter, SMILES.length);
+  const antallIKategori = useMemo(() => {
+    if (!data || kategori === "alle") return 0;
+    const ki = data.kategorier.indexOf(kategori);
+    return data.steder.reduce((n, r) => n + (r[KART.KATEGORI] === ki ? 1 : 0), 0);
+  }, [data, kategori]);
 
   return (
     <div className="absolute inset-0">
@@ -389,24 +453,15 @@ export default function KartApp() {
       </div>
 
       {!kartfeil && (!kartKlart || !data) && (
-        <div className="absolute inset-0 z-30 grid place-items-center bg-paper">
-          {lastefeil ? (
+        lastefeil ? (
+          <div className="absolute inset-0 z-30 grid place-items-center bg-paper">
             <p className="card max-w-sm p-5 text-center font-semibold">
               Oi! Klarte ikke å laste kartdata. Sjekk nettet og last siden på nytt. 🙈
             </p>
-          ) : (
-            <div className="text-center" role="status">
-              <div className="flex justify-center gap-2" aria-hidden>
-                {(["smil", "strek", "sur"] as const).map((k, i) => (
-                  <span key={k} className="inline-block animate-bounce" style={{ animationDelay: `${i * 150}ms` }}>
-                    <Smiley kind={k} size={44} />
-                  </span>
-                ))}
-              </div>
-              <p className="mt-3 font-display text-lg font-extrabold">Teller smilefjes…</p>
-            </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <KartVenter />
+        )
       )}
 
       {kartfeil && data && (
@@ -425,19 +480,45 @@ export default function KartApp() {
       {/* Søk og filter */}
       <div className="absolute left-2 right-2 top-2 z-20 space-y-2 sm:left-3 sm:right-auto sm:top-3 sm:w-[370px]">
         <Sok indeks={indeks} onVelg={velgTreff} />
-        <button
-          type="button"
-          className="btn !px-3 !py-1.5 text-sm sm:hidden"
-          aria-expanded={visFilter}
-          aria-controls="kart-filter"
-          onClick={() => setVisFilter((v) => !v)}
-        >
-          🎛️ {visFilter ? "Skjul filter" : "Filter og forklaring"}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            ref={filterKnappRef}
+            type="button"
+            className="btn !px-3 !py-1.5 text-sm"
+            aria-expanded={visFilter}
+            aria-controls="kart-filter"
+            onClick={() => setVisFilter((v) => !v)}
+          >
+            <span aria-hidden>🎛️</span> {visFilter ? "Skjul filter" : "Filter og forklaring"}
+          </button>
+          {!visFilter && filterAktivt && (
+            <span className="card inline-flex flex-wrap items-center gap-1 !rounded-full px-2 py-1 text-xs font-bold">
+              <span className="sr-only">Aktivt filter:</span>
+              {smil.size < SMILES.length &&
+                SMILES.filter((s) => smil.has(s)).map((s) => (
+                  <span key={s} className="inline-flex items-center gap-1">
+                    <Smiley kind={s} size={16} />
+                    {SMILE_LABEL[s]}
+                  </span>
+                ))}
+              {kategori !== "alle" && (
+                <span>
+                  {KATEGORI_EMOJI[kategori]} {KATEGORI_NAVN[kategori]}
+                </span>
+              )}
+              <span className="font-semibold tabular-nums text-ink-soft">· {antallVist.toLocaleString("nb-NO")} steder</span>
+            </span>
+          )}
+          {filterAktivt && (
+            <button type="button" className="btn !px-3 !py-1.5 text-sm" onClick={nullstillFilter}>
+              <span aria-hidden>✖</span> Nullstill filter
+            </button>
+          )}
+        </div>
         <section
           id="kart-filter"
           aria-label="Filter og forklaring"
-          className={`card space-y-3 p-4 ${visFilter ? "block" : "hidden"} sm:block`}
+          className={`card space-y-3 p-4 ${visFilter ? "block" : "hidden"}`}
         >
           <fieldset>
             <legend className="mb-1.5 text-xs font-bold uppercase tracking-wide text-ink-soft">Farg etter</legend>
@@ -457,39 +538,54 @@ export default function KartApp() {
             <p className="mt-2 text-xs leading-relaxed text-ink-soft">{MODUS_TEKST[modus].hjelp}</p>
           </fieldset>
 
-          <div role="group" aria-label="Vis smilefjes" className="flex flex-wrap gap-1.5">
-            {SMILES.map((s) => (
-              <button
-                key={s}
-                type="button"
-                aria-pressed={smil.has(s)}
-                onClick={() => toggleSmil(s)}
-                className={`inline-flex items-center gap-1.5 rounded-full border-2 border-line py-1 pl-1 pr-2.5 text-sm font-bold transition ${
-                  smil.has(s) ? "bg-card shadow-[2px_2px_0_var(--shadow-ink)]" : "bg-paper opacity-50"
-                }`}
-              >
-                <Smiley kind={s} size={22} />
-                {SMILE_LABEL[s]}
-                <span className="font-semibold tabular-nums text-ink-soft">{telling[s].toLocaleString("nb-NO")}</span>
-              </button>
-            ))}
+          <div>
+            <div role="group" aria-label="Vis smilefjes" className="flex flex-wrap gap-1.5">
+              {SMILES.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  aria-pressed={smil.has(s)}
+                  onClick={() => toggleSmil(s)}
+                  className={`inline-flex items-center gap-1.5 rounded-full border-2 border-line py-1 pl-1 pr-2.5 text-sm font-bold transition ${
+                    smil.has(s) ? "bg-card shadow-[2px_2px_0_var(--shadow-ink)]" : "bg-paper opacity-50"
+                  }`}
+                >
+                  <Smiley kind={s} size={22} />
+                  {SMILE_LABEL[s]}
+                  <span className="font-semibold tabular-nums text-ink-soft">{telling[s].toLocaleString("nb-NO")}</span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-1.5 text-xs text-ink-soft">
+              {smil.size === SMILES.length
+                ? "Trykk på et fjes for å vise bare det."
+                : "Trykk på flere fjes for å kombinere."}
+            </p>
           </div>
 
-          <label className="flex items-center gap-2 text-sm font-semibold">
-            <span className="shrink-0">Type sted</span>
-            <select
-              value={kategori}
-              onChange={(e) => setKategori(e.target.value as Kategori | "alle")}
-              className="min-w-0 flex-1 rounded-full border-2 border-line bg-card px-3 py-1.5 font-semibold text-ink"
-            >
-              <option value="alle">🍴 Alle typer</option>
-              {KATEGORIER.map((k) => (
-                <option key={k} value={k}>
-                  {KATEGORI_EMOJI[k]} {KATEGORI_NAVN[k]}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div>
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <span className="shrink-0">Type sted</span>
+              <select
+                value={kategori}
+                onChange={(e) => setKategori(e.target.value as Kategori | "alle")}
+                className="min-w-0 flex-1 rounded-full border-2 border-line bg-card px-3 py-1.5 font-semibold text-ink"
+              >
+                <option value="alle">🍴 Alle typer</option>
+                {KATEGORIER.map((k) => (
+                  <option key={k} value={k}>
+                    {KATEGORI_EMOJI[k]} {KATEGORI_NAVN[k]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {kategori !== "alle" && (
+              <p className="mt-1.5 text-xs leading-relaxed text-ink-soft">
+                {antallIKategori.toLocaleString("nb-NO")} steder har denne typen. Mattilsynet oppgir ikke type, så vi
+                gjetter ut fra navnet. Steder med nøytrale navn havner i «{KATEGORI_NAVN.annet}».
+              </p>
+            )}
+          </div>
 
           <p className="text-xs leading-relaxed text-ink-soft">
             Fjesene i klyngene viser humøret i området: bredt glis når nesten alle har smil, sur munn når mange ikke har det.
@@ -503,7 +599,7 @@ export default function KartApp() {
       </div>
 
       {/* Handlingsknapper */}
-      <div className={`absolute bottom-8 left-2 z-10 flex gap-2 sm:left-3 ${valgt ? "max-sm:hidden" : ""}`}>
+      <div className={`absolute bottom-8 left-2 z-10 flex gap-2 sm:left-3 ${valgt || meg ? "max-sm:hidden" : ""}`}>
         <button type="button" className="btn text-sm" onClick={naerMeg} disabled={finnerMeg}>
           {finnerMeg ? "⏳ Finner deg…" : "📍 Nær meg"}
         </button>
@@ -516,6 +612,21 @@ export default function KartApp() {
         <p role="alert" className="card absolute bottom-24 left-1/2 z-30 -translate-x-1/2 px-4 py-2 text-sm font-semibold">
           {melding}
         </p>
+      )}
+
+      {naerDom && meg && (
+        <NaerMegKort
+          key={`${meg.lat},${meg.lng}`}
+          dom={naerDom}
+          punkt={meg}
+          auto={naerRadius === null}
+          modus={modus}
+          kategori={kategori}
+          skjult={!!valgt}
+          onRadius={setNaerRadius}
+          onVelg={visSted}
+          onLukk={() => setMeg(null)}
+        />
       )}
 
       {valgt && <StedPanel slug={valgt} onLukk={() => setValgt(null)} />}

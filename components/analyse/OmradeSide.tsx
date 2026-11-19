@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import KopierKode from "@/components/KopierKode";
 import Smiley from "@/components/Smiley";
 import { anmerkningAndel, endringPp, flestAnmerkninger } from "@/lib/analyse";
 import { aksePst, pp, tall } from "@/lib/chart";
+import { EMBED_HOYDE, EMBED_MAKS_BREDDE, embedSnippet } from "@/lib/embed";
 import { getDatasett, landFordeling } from "@/lib/server/data";
 import {
   getOmrade,
@@ -13,15 +15,19 @@ import {
   MIN_KOMMUNE,
   omradePerAar,
   plassering,
+  stedTupler,
   type Omrade,
 } from "@/lib/server/omrader";
-import { SMILE_LABEL, smileFromKarakter } from "@/lib/smile";
+import { lokaleSiderFor } from "@/lib/server/lokal";
+import { omradeBrodsmulerLd, omradeSmuler } from "@/lib/seo";
 import { kindFromKarakter } from "@/lib/smiley";
-import { andel, formatDato, ordinaereKarakterer, fordeling, prosent, sisteTilsyn } from "@/lib/stats";
+import { andel, formatDato, prosent, sisteTilsyn } from "@/lib/stats";
+import { FORSTE_RADER, HELE_LISTA_MAKS, stedRad } from "@/lib/stedliste";
 import type { Sted } from "@/lib/types";
+import AlleSteder from "./AlleSteder";
 import { Flis, Forklaring, Seksjon, TallTabell } from "./Deler";
 import Kolonner from "./Kolonner";
-import { SmileySprite } from "./SmileySprite";
+import LenkeChips from "./LenkeChips";
 import StedRader from "./StedRader";
 import StabelRader, { StabelForklaring, type StabelRad } from "./StabelRader";
 
@@ -64,10 +70,6 @@ export function omradeMetadata(o: Omrade | null): Metadata {
   };
 }
 
-function ordinaerFor(s: Sted) {
-  return fordeling(ordinaereKarakterer(s));
-}
-
 export default function OmradeSide({ o }: { o: Omrade }) {
   const tt = TYPE_TEKST[o.type];
   const land = landFordeling();
@@ -81,22 +83,8 @@ export default function OmradeSide({ o }: { o: Omrade }) {
   const liteUtvalg = o.ordinaer.total < 30;
 
   // Brødsmuler
-  const smuler: Array<{ navn: string; href?: string }> = [{ navn: "Analyse", href: "/analyse" }];
-  if (o.type === "kommune" && fylke) smuler.push({ navn: fylke.navn, href: `/fylke/${fylke.slug}` });
-  if (o.type === "fylke") smuler.push({ navn: "Fylker", href: "/analyse#fylker" });
-  if (o.type === "kjede") smuler.push({ navn: "Kjeder", href: "/analyse#kjeder" });
-  smuler.push({ navn: o.navn });
-
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: smuler.map((s, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: s.navn,
-      item: s.href ? `${SITE}${s.href.split("#")[0]}` : omradeUrl(o),
-    })),
-  };
+  const smuler = omradeSmuler(o.type, o.navn, fylke);
+  const breadcrumbLd = omradeBrodsmulerLd(smuler, omradeUrl(o));
 
   // Sammenligning
   const sammenlign: StabelRad[] = [
@@ -114,16 +102,18 @@ export default function OmradeSide({ o }: { o: Omrade }) {
   sammenlign.push({ key: "n", navn: "Hele Norge", tekst: "Hele Norge", href: "/analyse", fordeling: land });
 
   // Steder
-  const steder = [...o.steder].sort((a, b) => a.navn.localeCompare(b.navn, "nb"));
+  const stedListe = o.type === "fylke" ? [] : stedTupler(o);
   const nylig = [...o.steder].sort((a, b) => sisteTilsyn(b).dato.localeCompare(sisteTilsyn(a).dato)).slice(0, 8);
   const gjengangere = flestAnmerkninger(o.steder, 2).slice(0, 6);
+
+  const lokaleKategorier = o.type === "kommune" ? lokaleSiderFor(o.id, "kategori") : [];
+  const lokaleStrok = o.type === "kommune" ? lokaleSiderFor(o.id, "strok") : [];
 
   const sisteAar = aar[aar.length - 1];
   const heleAar = [...aar].reverse().find((r) => !r.delvis);
 
   return (
     <article className="space-y-6">
-      <SmileySprite />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd).replace(/</g, "\\u003c") }} />
 
       <nav aria-label="Brødsmuler" className="text-sm font-semibold text-ink-soft">
@@ -266,6 +256,28 @@ export default function OmradeSide({ o }: { o: Omrade }) {
         </Seksjon>
       </div>
 
+      {(lokaleKategorier.length > 0 || lokaleStrok.length > 0) && (
+        <Seksjon
+          id="utforsk"
+          emoji="🧭"
+          tittel={`Utforsk ${o.navn}`}
+          ingress="Egne sider med smilefjes, siste anmerkninger og alle stedene for hver kategori og hvert strøk. Tallet er antall steder."
+        >
+          {lokaleKategorier.length > 0 && (
+            <>
+              <h3 className="mb-2 font-display text-lg font-extrabold">Kategorier</h3>
+              <LenkeChips sider={lokaleKategorier} />
+            </>
+          )}
+          {lokaleStrok.length > 0 && (
+            <>
+              <h3 className={`mb-2 font-display text-lg font-extrabold ${lokaleKategorier.length > 0 ? "mt-5" : ""}`}>Strøk</h3>
+              <LenkeChips sider={lokaleStrok} />
+            </>
+          )}
+        </Seksjon>
+      )}
+
       {o.type === "fylke" ? (
         <FylkeKommuner o={o} landSmil={landSmil} />
       ) : (
@@ -291,28 +303,19 @@ export default function OmradeSide({ o }: { o: Omrade }) {
             </Seksjon>
           </div>
 
+          {o.type === "kommune" && <ByggInn o={o} />}
+
           <Seksjon
             id="steder"
             emoji="🍽️"
-            tittel={`Alle ${tall(steder.length)} steder`}
+            tittel={`Alle ${tall(stedListe.length)} steder`}
             ingress="Fjeset viser siste tilsyn. Tallet til høyre viser hvor mange av de ordinære tilsynene som endte med smil, f.eks. 3/4."
           >
-            <StedRader
-              kolonner={3}
-              rader={steder.map((s) => {
-                const f = ordinaerFor(s);
-                const k = smileFromKarakter(sisteTilsyn(s).karakter);
-                return {
-                  key: s.slug,
-                  slug: s.slug,
-                  navn: s.navn,
-                  kind: kindFromKarakter(sisteTilsyn(s).karakter),
-                  label: k ? SMILE_LABEL[k] : "Ukjent",
-                  under: o.type === "kjede" ? (s.kommune ?? s.poststed) : s.adresse || s.poststed,
-                  meta: f.total ? `${f.smil}/${f.total}` : "–",
-                };
-              })}
-            />
+            {stedListe.length <= HELE_LISTA_MAKS ? (
+              <StedRader kolonner={3} rader={stedListe.map(stedRad)} />
+            ) : (
+              <AlleSteder forste={stedListe.slice(0, FORSTE_RADER)} totalt={stedListe.length} kilde={`/${tt.sti}/${o.slug}/steder.json`} />
+            )}
           </Seksjon>
         </>
       )}
@@ -325,6 +328,30 @@ export default function OmradeSide({ o }: { o: Omrade }) {
         </Link>
       </p>
     </article>
+  );
+}
+
+/** Widget-snutt for lokalaviser og blogger, med forhåndsvisning. */
+function ByggInn({ o }: { o: Omrade }) {
+  return (
+    <Seksjon
+      id="bygg-inn"
+      emoji="🧩"
+      tittel="Bygg inn på nettsiden din"
+      ingress={`For lokalaviser, blogger og kommunens egne sider: lim inn koden, så viser siden oppdaterte smilefjes-tall for ${o.navn}. Tallene oppdateres hver morgen, og widgeten lenker tilbake hit som kilde.`}
+    >
+      <div className="grid items-start gap-5 lg:grid-cols-[1fr_auto]">
+        <KopierKode tekst={embedSnippet({ slug: o.slug, navn: o.visningsnavn })} etikett="Kopier koden" />
+        <iframe
+          src={`/embed/kommune/${o.slug}`}
+          title={`Forhåndsvisning av widgeten for ${o.visningsnavn}`}
+          width={EMBED_MAKS_BREDDE}
+          height={EMBED_HOYDE}
+          loading="lazy"
+          className="w-full max-w-[480px] rounded-[22px] border-0"
+        />
+      </div>
+    </Seksjon>
   );
 }
 

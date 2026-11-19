@@ -1,5 +1,20 @@
 import type { NextConfig } from "next";
 
+/** Felles innholdssikkerhet; bare frame-ancestors (hvem som kan ramme inn siden) varierer. */
+function csp(frameAncestors: string): string {
+  return [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' https://tiles.openfreemap.org data: blob:",
+    "font-src 'self'",
+    "connect-src 'self' https://tiles.openfreemap.org https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+    "worker-src 'self' blob:",
+    "child-src 'self' blob:",
+    `frame-ancestors ${frameAncestors}`,
+  ].join("; ");
+}
+
 const nextConfig: NextConfig = {
   // Serversider leser generated/steder.json fra disk; sørg for at fila følger med i deployen.
   outputFileTracingIncludes: {
@@ -15,33 +30,33 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return {
+      // Google kjenner /sitemap.xml. Next.js reserverer den adressen for app/sitemap.ts, men med generateSitemaps
+      // ligger delene på /sitemap/<id>.xml og ingenting svarer på /sitemap.xml. Indeksen svarer i stedet.
+      beforeFiles: [{ source: "/sitemap.xml", destination: "/sitemap-index.xml" }],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async headers() {
     return [
       {
-        source: "/(.*)",
+        // Alt unntatt /embed/*: bare egne sider kan ramme inn nettstedet.
+        source: "/((?!embed/).*)",
         headers: [
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' https://tiles.openfreemap.org data: blob:",
-              "font-src 'self'",
-              "connect-src 'self' https://tiles.openfreemap.org https://vitals.vercel-insights.com https://va.vercel-scripts.com",
-              "worker-src 'self' blob:",
-              "child-src 'self' blob:",
-              "frame-ancestors 'self'",
-            ].join("; "),
-          },
-          {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
-          },
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
+          { key: "Content-Security-Policy", value: csp("'self'") },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+        ],
+      },
+      {
+        // Widgetene er laget for å bygges inn på andres nettsider (iframe).
+        // Ingen X-Frame-Options her: den kan ikke uttrykke «alle», og frame-ancestors styrer innrammingen.
+        source: "/embed/:path+",
+        headers: [
+          { key: "Content-Security-Policy", value: csp("*") },
+          { key: "X-Content-Type-Options", value: "nosniff" },
         ],
       },
     ];

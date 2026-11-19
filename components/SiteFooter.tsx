@@ -33,6 +33,7 @@ export default function SiteFooter() {
           <li><Link className="link" href="/quiz">Gjett smilefjeset</Link></li>
           <li><Link className="link" href="/kommune">Alle kommuner</Link></li>
           <li><Link className="link" href="/analyse">Analyse</Link></li>
+          <li><Link className="link" href="/rapport">Smilefjes-rapporten</Link></li>
           <li><Link className="link" href="/prediksjon">Spåkula</Link></li>
           <li><Link className="link" href="/varsling">Varsling</Link></li>
           <li><Link className="link" href="/om">Om tjenesten</Link></li>

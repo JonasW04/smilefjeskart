@@ -10,6 +10,8 @@ export type StedApi = {
   kommune: string | null;
   kategori: string;
   kjede: string | null;
+  lat: number | null;
+  lng: number | null;
   tilsyn: Array<{ dato: string; karakter: number; oppfolging: boolean }>;
   ordinaer: { smil: number; strek: number; sur: number; total: number };
   landAndelSmil: number;
@@ -28,6 +30,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
     kommune: s.kommune,
     kategori: `${KATEGORI_EMOJI[s.kategori]} ${KATEGORI_NAVN[s.kategori]}`,
     kjede: s.kjede,
+    lat: s.lat,
+    lng: s.lng,
     tilsyn: s.tilsyn.map(({ dato, karakter, oppfolging }) => ({ dato, karakter, oppfolging })),
     ordinaer: fordeling(ordinaereKarakterer(s)),
     landAndelSmil: andel(landFordeling(), "smil"),
