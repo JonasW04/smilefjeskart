@@ -8,7 +8,7 @@ import { SmileySprite } from "@/components/analyse/SmileySprite";
 import StabelRader, { StabelForklaring, type StabelRad } from "@/components/analyse/StabelRader";
 import StedRader, { type StedRad } from "@/components/analyse/StedRader";
 import { pp, tall } from "@/lib/chart";
-import { MIN_KJEDE_12MND, MIN_KOMMUNE_MAANED, maanedNavn, sitatTekst, smilEndringPp, type RapportTilsyn } from "@/lib/rapport";
+import { MIN_KJEDE_12MND, MIN_KOMMUNE_MAANED, MIN_COMEBACK_DAGER, MIN_KOMMUNER_KAARING, maanedNavn, sitatTekst, smilEndringPp, type RapportTilsyn } from "@/lib/rapport";
 import { maaneder, rapport, type OmradeRad } from "@/lib/server/rapport";
 import { SMILE_LABEL, smileFromKarakter } from "@/lib/smile";
 import { kindFromKarakter } from "@/lib/smiley";
@@ -133,14 +133,14 @@ export default async function RapportSide({ params }: { params: Promise<Params> 
                   , mot {prosent(andel(r.fjor.ordinaer, "smil"))} i {maanedNavn(r.fjor.ym)}
                 </>
               ) : null}
-              . {tall(r.sur.length)} {r.sur.length === 1 ? "sted" : "steder"} fikk sur munn.
+              . {tall(r.sur.length)} tilsyn endte med sur munn.
             </p>
           </div>
         </div>
       </header>
 
       <dl className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <Flis etikett="Ordinære tilsyn" verdi={tall(r.ordinaer.total)} under={`${tall(r.alle)} med oppfølgingstilsyn`} />
+        <Flis etikett="Ordinære tilsyn" verdi={tall(r.ordinaer.total)} under={`${tall(r.alle)} inkl. oppfølgingstilsyn`} />
         <Flis etikett="Med smil" verdi={prosent(smil)} under={`${pp(smilEndringPp(r.snitt12, r.ordinaer))} mot snittet siste 12 mnd`} />
         <Flis
           etikett={`Mot ${mndKort} i fjor`}
@@ -196,7 +196,7 @@ export default async function RapportSide({ params }: { params: Promise<Params> 
           )}
         </Seksjon>
 
-        <Seksjon id="comeback" emoji="🔄" tittel="Månedens største comeback" ingress="Fikk strekmunn eller sur munn ved forrige ordinære tilsyn, og smil denne gangen.">
+        <Seksjon id="comeback" emoji="🔄" tittel="Månedens største comeback" ingress={`Fikk strekmunn eller sur munn ved forrige ordinære tilsyn, og smil denne gangen. Nye tilsyn innen ${MIN_COMEBACK_DAGER} dager regnes som oppfølging og teller ikke.`}>
           {topp ? (
             <>
               <a href={`/sted/${topp.sted.slug}`} className="mb-4 flex items-center gap-4 rounded-2xl bg-smil-soft p-4 hover:bg-accent-soft">
@@ -236,7 +236,7 @@ export default async function RapportSide({ params }: { params: Promise<Params> 
         id="kommuner"
         emoji="📍"
         tittel="Kommunene med best og svakest resultat"
-        ingress={`Andel smil i ordinære tilsyn i ${r.navn}. Bare kommuner med minst ${MIN_KOMMUNE_MAANED} ordinære tilsyn i måneden er med – ${r.kommuneRader.length} kommuner denne gangen.`}
+        ingress={`Andel smil i ordinære tilsyn i ${r.navn}, blant de ${r.kommuneRader.length} kommunene med minst ${MIN_KOMMUNE_MAANED} ordinære tilsyn i måneden. Kommuner med færre tilsyn er ikke med, så dette er ikke en rangering av alle landets kommuner.`}
       >
         {r.best.length > 0 ? (
           <>
@@ -266,8 +266,17 @@ export default async function RapportSide({ params }: { params: Promise<Params> 
               ])}
             />
           </>
+        ) : r.kommuneRader.length > 0 ? (
+          <>
+            <p className="mb-3 font-semibold">
+              Bare {r.kommuneRader.length} {r.kommuneRader.length === 1 ? "kommune" : "kommuner"} hadde minst {MIN_KOMMUNE_MAANED} ordinære tilsyn i{" "}
+              {r.navn}. Med færre enn {MIN_KOMMUNER_KAARING} kårer vi ingen best eller svakest, men her er tallene:
+            </p>
+            <StabelForklaring referanseNavn={`Norge i ${mndKort}`} referanse={smil} />
+            <StabelRader referanse={smil} referanseNavn={`Norge i ${mndKort}`} rader={stabel(r.kommuneRader, "kommune")} />
+          </>
         ) : (
-          <p className="font-semibold">For få kommuner hadde {MIN_KOMMUNE_MAANED} eller flere ordinære tilsyn i {r.navn} til en rangering.</p>
+          <p className="font-semibold">Ingen kommuner hadde {MIN_KOMMUNE_MAANED} eller flere ordinære tilsyn i {r.navn}.</p>
         )}
       </Seksjon>
 

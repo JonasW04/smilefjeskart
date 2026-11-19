@@ -6,9 +6,11 @@ import {
   forrigeMaaned,
   grupperPeriode,
   lagRapport,
+  MIN_COMEBACK_DAGER,
   maanedNavn,
   maanedSummer,
   MIN_KOMMUNE_MAANED,
+  MIN_KOMMUNER_KAARING,
   ordinaereIMaaned,
   periodeSum,
   rapportMaaneder,
@@ -111,12 +113,27 @@ describe("comebacksIMaaned", () => {
     sted("oppfolging", [t("2026-09-28", 3), t("2026-10-04", 0, true)]),
     // Ny anmerkning denne måneden: ikke comeback.
     sted("fortsatt-strek", [t("2025-08-01", 3), t("2026-10-11", 2)]),
+    // Nytt ordinært tilsyn 19 dager etter sur munn: i praksis en oppfølging, ikke comeback.
+    sted("kort-gap", [t("2026-10-01", 3), t("2026-10-20", 0)]),
+    // Et tilsyn uten smilefjes (karakter 5) i mellom skjuler ikke strekmunnen før.
+    sted("ugradert", [t("2025-01-10", 2), t("2025-06-01", 5), t("2026-10-25", 0)]),
   ];
   const maaned = ordinaereIMaaned(steder, "2026-10");
   const cb = comebacksIMaaned(maaned);
 
   it("finner steder som gikk fra strek/sur til smil på ordinære tilsyn", () => {
-    expect(cb.map((c) => c.sted.slug)).toEqual(["fra-sur", "fra-strek"]);
+    expect(cb.map((c) => c.sted.slug)).toEqual(["fra-sur", "ugradert", "fra-strek"]);
+  });
+
+  it("regner ikke et nytt ordinært tilsyn kort tid etter som comeback", () => {
+    expect(MIN_COMEBACK_DAGER).toBe(60);
+    expect(cb.some((c) => c.sted.slug === "kort-gap")).toBe(false);
+    // Sur munn i måneden står fortsatt på listen over månedens tilsyn.
+    expect(maaned.find((m) => m.sted.slug === "kort-gap" && m.tilsyn.karakter === 3)).toBeDefined();
+  });
+
+  it("bruker forrige tilsyn med smilefjes som sammenligning", () => {
+    expect(cb.find((c) => c.sted.slug === "ugradert")?.forrige?.dato).toBe("2025-01-10");
   });
 
   it("hopper over oppfølgingstilsyn når forrige tilsyn finnes", () => {
@@ -161,8 +178,12 @@ describe("grupperPeriode og bestOgSvakest", () => {
     expect(bestOgSvakest(femten, 5)).toEqual({ best: [1, 2, 3, 4, 5], svakest: [15, 14, 13, 12, 11] });
     expect(bestOgSvakest([...femten, 16, 17, 18], 5).best).toHaveLength(5);
     expect(bestOgSvakest([1, 2, 3, 4, 5, 6], 5)).toEqual({ best: [1, 2], svakest: [6, 5] });
-    expect(bestOgSvakest([1, 2], 5)).toEqual({ best: [1], svakest: [2] });
-    expect(bestOgSvakest([1], 5)).toEqual({ best: [], svakest: [] });
+  });
+
+  it("kårer ingen best eller svakest blant færre enn MIN_KOMMUNER_KAARING", () => {
+    expect(MIN_KOMMUNER_KAARING).toBe(6);
+    expect(bestOgSvakest([1, 2, 3, 4, 5], 5)).toEqual({ best: [], svakest: [] });
+    expect(bestOgSvakest([1, 2], 5)).toEqual({ best: [], svakest: [] });
   });
 });
 
@@ -204,9 +225,9 @@ describe("lagRapport", () => {
 
   it("lager et sitat med tall og kilde", () => {
     const tekst = sitatTekst(r, "https://smilefjeskartet.no/rapport/2026-10");
-    expect(tekst).toContain("I oktober 2026 gjennomførte Mattilsynet 22 ordinære smilefjestilsyn");
+    expect(tekst).toContain("I oktober 2026 ga Mattilsynet smilefjes ved 22 ordinære tilsyn av serveringssteder.");
     expect(tekst).toContain("mot 0 % i oktober 2025");
-    expect(tekst).toContain("10 steder fikk sur munn og 1 fikk strekmunn.");
+    expect(tekst).toContain("10 tilsyn endte med sur munn og 1 med strekmunn.");
     expect(tekst).toContain("Kilde: Smilefjeskartet.no (https://smilefjeskartet.no/rapport/2026-10)");
   });
 });

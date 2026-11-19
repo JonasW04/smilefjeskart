@@ -43,7 +43,7 @@ describe("sikkerhetshoder", () => {
   });
 
   it("beholder innrammingssperren på resten av nettstedet", async () => {
-    for (const sti of ["/", "/kommune/oslo", "/rapport/2026-10", "/embedded", "/sted/embed"]) {
+    for (const sti of ["/", "/embed", "/kommune/oslo", "/rapport/2026-10", "/embedded", "/sted/embed"]) {
       const h = await hoder(sti);
       expect(h["X-Frame-Options"], sti).toBe("SAMEORIGIN");
       expect(h["Content-Security-Policy"], sti).toContain("frame-ancestors 'self'");

@@ -5,7 +5,7 @@
 import { endringPp, FORSTE_AAR, leggTil, rangerEtterSmil, type Gruppe } from "./analyse";
 import { MND_LANG } from "./chart";
 import { anmerkninger } from "./siste";
-import { andel, prosent, tomFordeling, type Fordeling } from "./stats";
+import { andel, dagerMellom, prosent, tomFordeling, type Fordeling } from "./stats";
 import { smileFromKarakter } from "./smile";
 import type { Sted, Tilsyn } from "./types";
 
@@ -50,6 +50,13 @@ export const MIN_KOMMUNE_MAANED = 10;
 export const MIN_KJEDE_12MND = 10;
 /** Hvor mange kommuner som vises på hver side (best og svakest). */
 export const ANTALL_KOMMUNER = 5;
+/** Færre rangerte kommuner enn dette gir ingen kåring av best og svakest, bare tabellen. */
+export const MIN_KOMMUNER_KAARING = 6;
+/**
+ * Et ordinært tilsyn så kort tid etter forrige regnes ikke som comeback: det er i praksis en
+ * oppfølging, selv om Mattilsynet ikke har merket det slik.
+ */
+export const MIN_COMEBACK_DAGER = 60;
 
 export type MaanedSum = {
   ym: Ym;
@@ -106,7 +113,7 @@ export type RapportTilsyn = {
   anmerkninger: string[];
 };
 
-/** Ordinære tilsyn i måneden, nyeste først, med forrige ordinære tilsyn. */
+/** Ordinære tilsyn i måneden, nyeste først, med forrige ordinære tilsyn som fikk smilefjes. */
 export function ordinaereIMaaned(steder: Iterable<Sted>, ym: Ym): RapportTilsyn[] {
   const ut: RapportTilsyn[] = [];
   for (const s of steder) {
@@ -114,7 +121,7 @@ export function ordinaereIMaaned(steder: Iterable<Sted>, ym: Ym): RapportTilsyn[
     for (const t of s.tilsyn) {
       if (t.oppfolging) continue;
       if (t.dato.startsWith(ym)) ut.push({ sted: s, tilsyn: t, forrige, anmerkninger: anmerkninger(t) });
-      forrige = t;
+      if (smileFromKarakter(t.karakter)) forrige = t;
     }
   }
   return ut.sort((a, b) => b.tilsyn.dato.localeCompare(a.tilsyn.dato) || a.sted.navn.localeCompare(b.sted.navn, "nb"));
@@ -122,7 +129,8 @@ export function ordinaereIMaaned(steder: Iterable<Sted>, ym: Ym): RapportTilsyn[
 
 /**
  * «Comeback»: et ordinært tilsyn med smil der forrige ordinære tilsyn ga strekmunn eller sur munn.
- * Oppfølgingstilsyn i mellom teller ikke – de ender nesten alltid med smil.
+ * Oppfølgingstilsyn i mellom teller ikke – de ender nesten alltid med smil – og et nytt ordinært tilsyn
+ * innen MIN_COMEBACK_DAGER regnes heller ikke.
  * Sortert med de største snuoperasjonene først: fra sur munn før fra strekmunn, så karakter 0 før 1.
  */
 export function comebacksIMaaned(maaned: readonly RapportTilsyn[]): RapportTilsyn[] {
@@ -131,7 +139,7 @@ export function comebacksIMaaned(maaned: readonly RapportTilsyn[]): RapportTilsy
     .filter((r) => {
       if (smileFromKarakter(r.tilsyn.karakter) !== "smil" || !r.forrige) return false;
       const før = smileFromKarakter(r.forrige.karakter);
-      return før === "strek" || før === "sur";
+      return (før === "strek" || før === "sur") && dagerMellom(r.forrige.dato, r.tilsyn.dato) >= MIN_COMEBACK_DAGER;
     })
     .sort(
       (a, b) =>
@@ -174,11 +182,11 @@ export function grupperPeriode(
 }
 
 /**
- * Best og svakest fra en rangert liste (best først). Hver side får høyst en tredjedel av listen
- * (minst én når det er to eller flere), så midtfeltet havner i ingen av dem og listene aldri overlapper.
+ * Best og svakest fra en rangert liste (best først). Hver side får høyst en tredjedel av listen,
+ * så midtfeltet havner i ingen av dem. Under MIN_KOMMUNER_KAARING kandidater kåres ingen.
  */
 export function bestOgSvakest<T>(rangert: readonly T[], n: number): { best: T[]; svakest: T[] } {
-  const k = Math.min(n, Math.max(Math.floor(rangert.length / 3), rangert.length >= 2 ? 1 : 0));
+  const k = rangert.length < MIN_KOMMUNER_KAARING ? 0 : Math.min(n, Math.floor(rangert.length / 3));
   return { best: rangert.slice(0, k), svakest: k ? rangert.slice(-k).reverse() : [] };
 }
 
@@ -237,9 +245,9 @@ export function sitatTekst(r: Rapport, url: string): string {
   if (r.fjor) mot.push(`${prosent(andel(r.fjor.ordinaer, "smil"))} i ${maanedNavn(r.fjor.ym)}`);
   mot.push(`${prosent(andel(r.snitt12, "smil"))} i snitt de siste tolv månedene`);
   return [
-    `I ${r.navn} gjennomførte Mattilsynet ${flertall(r.ordinaer.total, "ordinært smilefjestilsyn", "ordinære smilefjestilsyn")} ved serveringssteder.`,
+    `I ${r.navn} ga Mattilsynet smilefjes ved ${flertall(r.ordinaer.total, "ordinært tilsyn", "ordinære tilsyn")} av serveringssteder.`,
     `${prosent(smil)} endte med smil, mot ${mot.join(" og ")}.`,
-    `${flertall(r.sur.length, "sted", "steder")} fikk sur munn og ${r.strek.length.toLocaleString("nb-NO")} fikk strekmunn.`,
+    `${flertall(r.sur.length, "tilsyn", "tilsyn")} endte med sur munn og ${r.strek.length.toLocaleString("nb-NO")} med strekmunn.`,
     `Kilde: Smilefjeskartet.no (${url}), basert på Mattilsynets åpne tilsynsdata.`,
   ].join(" ");
 }

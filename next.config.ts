@@ -44,7 +44,7 @@ const nextConfig: NextConfig = {
       {
         // Widgetene er laget for å bygges inn på andres nettsider (iframe).
         // Ingen X-Frame-Options her: den kan ikke uttrykke «alle», og frame-ancestors styrer innrammingen.
-        source: "/embed/:path*",
+        source: "/embed/:path+",
         headers: [
           { key: "Content-Security-Policy", value: csp("*") },
           { key: "X-Content-Type-Options", value: "nosniff" },
