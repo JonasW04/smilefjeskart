@@ -55,24 +55,121 @@ export const KATEGORI_EMOJI: Record<Kategori, string> = {
   annet: "🍴",
 };
 
-// Rekkefølgen betyr noe: første treff vinner ("Pizza & Kebab" blir pizza).
+/** Hele ord: "pub" treffer "the pub", ikke "republic". */
+const ord = (...w: string[]) => `\\b(?:${w.join("|")})\\b`;
+/** Ordstart: "kina" treffer "kinamat", ikke "maskinal". */
+const start = (...w: string[]) => `\\b(?:${w.join("|")})`;
+/** Hvor som helst i navnet, for sammensatte ord: "kafe" treffer "gardskafe". */
+const del = (...w: string[]) => `(?:${w.join("|")})`;
+const regel = (...deler: string[]) => new RegExp(deler.join("|"));
+
+/**
+ * Navneregler per kategori, kjørt mot asciiFold(navn). Rekkefølgen betyr noe: første treff vinner
+ * ("Pizza & Kebab" blir pizza, "Sushi & Thai" blir sushi). Ordene er plukket ut fra navnene i
+ * Mattilsynets datasett; __tests__/classify.test.ts har eksempler og falske treff som skal unngås.
+ */
 const KATEGORI_REGLER: Array<[Kategori, RegExp]> = [
-  ["hotell", /\b(hotel|hotell|hotels)\b/],
-  ["sushi", /\bsushi\b/],
-  ["pizza", /\b(pizza\w*|pizzeria)\b/],
-  ["burger", /\b(burger\w*|mcdonald\w*|hamburger\w*)\b/],
-  ["kebab", /\b(kebab\w*|kebap|shawarma|falafel|doner)\b/],
-  ["meksikansk", /\b(taco\w*|mexican\w*|burrito\w*|cantina|tex mex)\b/],
-  ["indisk", /\b(india\w*|indisk|curry|tandoori|masala|nepal\w*|himalaya\w*|tikka|punjab\w*|bombay|delhi)\b/],
+  [
+    "hotell",
+    regel(
+      del("hotel", "motel", "gjestgiver", "gjestgjevar", "gjaestgiveri", "gjestegiveri", "pensjonat", "vandrerhjem"),
+      start("gjestega", "gjestehus", "gjesteheim", "fjordtell"),
+      ord("hostel", "lodge", "lodgen", "resort", "fjellresort", "best western", "moxy", "park inn", "bed breakfast"),
+    ),
+  ],
+  ["sushi", regel(del("sushi"), ord("sush", "sashimi", "maki", "nigiri", "omakase", "sabrura", "sumo"))],
+  [
+    "pizza",
+    regel(
+      del("pizz"),
+      ord("napoli", "napoletana", "margherita", "pinsa", "al forno", "il forno", "mama rosa", "mamma rosa", "slice"),
+    ),
+  ],
+  [
+    "burger",
+    regel(
+      del("burger", "burgr", "burgasm"),
+      start("mcdonald", "smash", "smaesh"),
+      ord("holy ?cow", "johnny rockets"),
+    ),
+  ],
+  [
+    "kebab",
+    regel(
+      del("kebab", "kebap", "shawarma", "shaworma", "shawerma", "falafel"),
+      ord("doner", "durum", "gyros", "lahmacun"),
+    ),
+  ],
+  [
+    "meksikansk",
+    regel(
+      start("taco", "taqu", "mexi", "burrito", "enchilada", "quesadilla", "nacho"),
+      ord("mexa", "cantina", "tex ?mex", "el camino", "el caminio", "agave", "azteca", "azteko"),
+    ),
+  ],
+  [
+    "indisk",
+    regel(
+      start("india", "indisk", "indiya", "indique", "nepal", "himalaya", "punjab", "namaste", "maharaj", "pakistan"),
+      ord("indi", "curry", "tandoori", "tandori", "masala", "masalabar", "tikka", "bombay", "mumbai", "delhi", "dehli"),
+      ord("jaipur", "marajah", "maharani", "taj", "tajmahal", "gandhi", "ganges", "ganga", "anarkali", "der peppern gror"),
+      ord("everest", "kathmandu", "katmandu", "rasoi", "mirchi", "darbar", "durbar", "kohinoor", "koh i noo?r"),
+      ord("haveli", "gurkha", "gorkha", "sherpa", "biryani", "naan", "dosa", "mughal", "moghul", "kashmir"),
+      ord("lahore", "lahori", "lahoree", "karachi", "nawabs?", "natraj", "chowk", "dil se", "desi", "samosa"),
+      ord("badmash", "zaika", "krishnas?", "agra", "chaskka", "momo", "thali", "dhaba"),
+    ),
+  ],
   [
     "asiatisk",
-    /\b(thai\w*|wok|asia\w*|china|kina|kinesisk|vietnam\w*|pho|ramen|noodle\w*|dim sum|korea\w*|bao|bangkok|saigon|tokyo|japan\w*)\b/,
+    regel(
+      del("thai", "wok"),
+      start("china", "chinese", "asia", "kina", "kinesisk", "vietnam", "noodle", "nudel", "dumpling", "korea", "japan", "bento", "obento"),
+      ord("pho", "compho", "ramen", "dim sum", "bao", "banh mi", "bangkok", "saigon", "hanoi", "tokyo", "izakaya"),
+      ord("izkaya", "yakitori", "teriyaki", "tempura", "karaage", "bambus", "bamboo", "beijing", "peking", "nanjing"),
+      ord("shanghai", "hong kong", "kowloon", "canton", "guangdong", "sichuan", "szechuan", "sze chuan", "hunan"),
+      ord("hainan", "gui lin", "panda", "dragon", "great wall", "chop ?sticks", "chopstix", "far east", "mekong"),
+      ord("siam", "sukhumvit", "phuket", "pattaya", "sawasdee", "aroi", "chaiyo", "tuk ?tuk", "soi", "lan na"),
+      ord("kimchi", "bibimbap", "seoul", "soju", "k chicken", "ni hao", "nihao", "xin chao", "em oi", "yum cha"),
+      ord("wing wah", "ming", "mandarin", "yokoso", "yuuka yuuka"),
+    ),
   ],
-  ["bakeri", /\b(bakeri\w*|baker|bakst|brod|konditori\w*|bakehus|bakeriet)\b/],
-  ["kafe", /\b(kafe\w*|cafe\w*|kaffe\w*|coffee|espresso|kaffebar|bistro)\b/],
-  ["bar", /\b(pub|bar|bryggeri|olhall|vinbar|brewpub|olbar)\b/],
-  ["gatekjokken", /\b(gatekjokken|grill|grillen|kiosk\w*|polse\w*|snackbar)\b/],
-  ["kantine", /\b(kantine\w*|kantina|kantinen)\b/],
+  [
+    "bakeri",
+    regel(
+      del("bakeri", "bageri", "bakery", "konditori", "conditori", "boulanger", "patisserie", "baguett", "croissant"),
+      "(?<!pasta)bakere?n?\\b",
+      start("baker", "bakehus", "backstub", "bactstube", "bagaren", "kanelsnurr", "kakehus", "kakeriet"),
+      ord("bakes?", "baked", "bakst", "braud", "brod", "solbrod"),
+    ),
+  ],
+  [
+    "kafe",
+    regel(
+      del("kafe", "cafe", "kaffe(?!ri)", "kaffi", "caffe", "coffee", "espresso", "vaffel"),
+      ord("bistro", "ritazza", "bubble tea", "tesalongen", "teaology"),
+    ),
+  ],
+  [
+    "bar",
+    regel(
+      ord("pub", "bar", "vinbar", "olbar", "olhall", "brewpub", "taproom", "pobb", "beer palace"),
+      "\\w*(?:pub|bryggeri|sportsbar|sportsbaren|cocktailbar|gastrobar)\\b",
+      ord("tavern"),
+      start("saloon", "bierstube", "brygghus"),
+      ord("o ?learys", "o ?connors", "irish\\w*", "dubliner", "scotsman", "kings arms"),
+    ),
+  ],
+  [
+    "gatekjokken",
+    regel(
+      del("gatekjokken", "grill", "kiosk", "polse", "snackbar", "snacksbar", "snacbar", "chicken"),
+      ord("fast ?food", "street ?food", "k fried", "wings", "jafs"),
+    ),
+  ],
+  ["kantine", regel(del("kantin"))],
+  // Til slutt, så "Thai Diner" blir asiatisk, "Bar og Diner" bar og "Max Kebab" kebab.
+  // Max Burgers heter ofte bare "Max <sted>" i datasettet.
+  ["burger", regel(ord("diner"), "^max (?!i\\b|grill)")],
 ];
 
 export function kategoriFraNavn(navn: string): Kategori {

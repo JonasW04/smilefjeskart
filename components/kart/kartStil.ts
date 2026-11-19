@@ -1,7 +1,7 @@
 /**
  * MapLibre-oppsett for kartsiden: grunnkart (OpenFreeMap), smilefjesbilder, kilder, lag og klyngemarkører.
  */
-import * as maplibregl from "maplibre-gl";
+import type * as maplibregl from "maplibre-gl";
 import { klyngeHumor, type Modus, type StedProps } from "@/lib/kart";
 import { smileySvg, type SmileyKind } from "@/lib/smiley";
 
@@ -49,6 +49,43 @@ export async function leggTilSmilefjes(map: maplibregl.Map) {
         }),
     ),
   );
+}
+
+/**
+ * Ikoner grunnkartet ber om, men som ikke finnes i OpenFreeMap-spritet. «dark» viser by- og
+ * tettstedsprikker med «circle-11», mens spritet bare har «circle_11» (en brun prikk laget for det
+ * lyse kartet). Uten dette logger MapLibre «Image "circle-11" could not be loaded». Fargen er den
+ * samme grå som stedsnavnene i «dark».
+ */
+const MANGLENDE_IKONER: Record<string, [number, number, number]> = {
+  "circle-11": [101, 101, 101],
+};
+
+/** Rund, kantutjevnet prikk som RGBA-piksler, `px` piksler bred og høy. */
+export function prikkIkon(px: number, [r, g, b]: [number, number, number]) {
+  const data = new Uint8Array(px * px * 4);
+  const midt = px / 2;
+  for (let y = 0; y < px; y++) {
+    for (let x = 0; x < px; x++) {
+      // Dekning: 1 innenfor sirkelen, 0 utenfor, glidende over én piksel langs kanten.
+      const avstand = Math.hypot(x + 0.5 - midt, y + 0.5 - midt);
+      const dekning = Math.min(1, Math.max(0, midt - avstand + 0.5));
+      const i = (y * px + x) * 4;
+      data[i] = r;
+      data[i + 1] = g;
+      data[i + 2] = b;
+      data[i + 3] = Math.round(dekning * 255);
+    }
+  }
+  return { width: px, height: px, data };
+}
+
+/** For map.setMissingStyleImageResolver: legger inn ikoner vi vet at grunnkartet mangler. */
+export function leggTilManglendeIkon(map: maplibregl.Map, id: string) {
+  const farge = MANGLENDE_IKONER[id];
+  if (!farge || map.hasImage(id)) return;
+  // 22 piksler med pixelRatio 2 = 11 CSS-piksler, som navnet «circle-11» lover.
+  map.addImage(id, prikkIkon(22, farge), { pixelRatio: 2 });
 }
 
 const sum = (felt: "k" | "v", g: number): maplibregl.ExpressionSpecification =>

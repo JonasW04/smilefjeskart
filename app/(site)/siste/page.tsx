@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Smiley from "@/components/Smiley";
 import { Flis, Seksjon } from "@/components/analyse/Deler";
-import { SmileySprite } from "@/components/analyse/SmileySprite";
 import StedRader, { type StedRad } from "@/components/analyse/StedRader";
 import { tall, UKEDAGER } from "@/lib/chart";
 import { getSteder } from "@/lib/server/data";
@@ -28,6 +27,11 @@ export const metadata: Metadata = {
     type: "website",
     locale: "nb_NO",
     siteName: "Smilefjeskartet",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ferskt fra Mattilsynet | Smilefjeskartet",
+    description: `Nye sure munner, comebacks og nye steder – alle smilefjestilsyn de siste ${FERSK_DAGER} dagene.`,
   },
 };
 
@@ -103,7 +107,6 @@ export default function SisteSide() {
 
   return (
     <article className="space-y-8">
-      <SmileySprite />
 
       <header className="card relative overflow-hidden bg-accent-soft p-5 sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">

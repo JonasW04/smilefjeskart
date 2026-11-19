@@ -64,6 +64,11 @@ export function smileyElements(kind: SmileyKind): El[] {
 
 export type { El as SmileyElement };
 
+/** Id-en til symbolet i <SmileySprite />, f.eks. "smiley-smil". */
+export function smileyId(kind: SmileyKind): string {
+  return `smiley-${kind}`;
+}
+
 function attrs(el: El): string {
   const a: string[] = [];
   if (el.t === "circle") a.push(`cx="${el.cx}" cy="${el.cy}" r="${el.r}"`);

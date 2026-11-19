@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
+import SmileySprite from "@/components/SmileySprite";
 import VercelAnalytics from "./analytics";
 
 const figtree = Figtree({
@@ -25,28 +26,6 @@ export const metadata: Metadata = {
   title: "Smilefjeskartet – Mattilsynets smilefjestilsyn på kart",
   description:
     "Alle Mattilsynets smilefjestilsyn siden 2016 på ett kart. Se hvordan restauranter, kafeer og spisesteder i Norge har gjort det over tid – smil, strekmunn eller sur munn. Oppdateres hver morgen.",
-  keywords: [
-    "smilefjes",
-    "mattilsynet",
-    "mattilsynet smilefjes",
-    "smilefjesordningen",
-    "smilefjeskartet",
-    "smilefjeskart",
-    "restaurantkontroll",
-    "restaurant hygiene norge",
-    "matkontroll norge",
-    "mattilsynet kart",
-    "mattilsynet restaurantkontroll",
-    "hygienekontroll",
-    "restauranttilsyn",
-    "mattilsynet tilsyn",
-    "smilefjes restaurant",
-    "smilefjes kart norge",
-    "spisested kontroll",
-    "næringsmiddeltilsyn",
-    "mathygiene",
-    "trygg mat",
-  ],
   metadataBase: new URL("https://smilefjeskartet.no"),
   openGraph: {
     title: "Smilefjeskartet – Mattilsynets smilefjestilsyn på kart",
@@ -86,46 +65,7 @@ export default function RootLayout({
       <body
         className={`${figtree.variable} ${bricolage.variable} antialiased`}
       >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebApplication",
-              name: "Smilefjeskartet",
-              url: "https://smilefjeskartet.no",
-              description:
-                "Alle Mattilsynets smilefjestilsyn siden 2016 på ett kart. Se hvordan restauranter, kafeer og spisesteder i Norge har gjort det over tid – smil, strekmunn eller sur munn. Oppdateres hver morgen.",
-              applicationCategory: "UtilitiesApplication",
-              operatingSystem: "All",
-              inLanguage: "nb",
-              offers: {
-                "@type": "Offer",
-                price: "0",
-                priceCurrency: "NOK",
-              },
-              provider: {
-                "@type": "Organization",
-                name: "Smilefjeskartet",
-                url: "https://smilefjeskartet.no",
-              },
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "Smilefjeskartet",
-              url: "https://smilefjeskartet.no",
-              description:
-                "Interaktivt kart over Mattilsynets smilefjeskontroller for restauranter og spisesteder i Norge.",
-              inLanguage: "nb",
-            }),
-          }}
-        />
+        <SmileySprite />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -136,7 +76,7 @@ export default function RootLayout({
               url: "https://smilefjeskartet.no",
               description:
                 "Interaktivt kart over Mattilsynets smilefjeskontroller for restauranter og spisesteder i Norge.",
-              logo: "https://smilefjeskartet.no/opengraph-image.png",
+              logo: "https://smilefjeskartet.no/apple-icon",
             }),
           }}
         />

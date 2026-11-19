@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import KopierKode from "@/components/KopierKode";
 import Smiley from "@/components/Smiley";
 import { Flis, Seksjon, TallTabell } from "@/components/analyse/Deler";
-import { SmileySprite } from "@/components/analyse/SmileySprite";
 import StabelRader, { StabelForklaring, type StabelRad } from "@/components/analyse/StabelRader";
 import StedRader, { type StedRad } from "@/components/analyse/StedRader";
 import { pp, tall } from "@/lib/chart";
@@ -99,7 +98,6 @@ export default async function RapportSide({ params }: { params: Promise<Params> 
 
   return (
     <article className="space-y-6">
-      <SmileySprite />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd).replace(/</g, "\\u003c") }} />
 
       <nav aria-label="Brødsmuler" className="text-sm font-semibold text-ink-soft">

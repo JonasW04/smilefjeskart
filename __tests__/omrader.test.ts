@@ -6,7 +6,9 @@ const steder: Sted[] = [];
 vi.mock("@/lib/server/data", () => ({ getSteder: () => steder }));
 
 import { GET } from "@/app/(site)/analyse/kommuner.csv/route";
-import { fylker, fylkeSlugFraNr, getOmrade, kjeder, kommuneSlug, kommuner, omradePerAar, plassering, rangert } from "@/lib/server/omrader";
+import { GET as kommuneStederGet } from "@/app/(site)/kommune/[slug]/steder.json/route";
+import { GET as kjedeStederGet } from "@/app/(site)/kjede/[slug]/steder.json/route";
+import { fylker, fylkeSlugFraNr, getOmrade, kjeder, kommuneSlug, kommuner, omradePerAar, plassering, rangert, stedTupler } from "@/lib/server/omrader";
 
 function sted(id: string, kommunenr: string, kommune: string, fylkenr: string, fylke: string, tilsyn: Tilsyn[], kjede: string | null = null): Sted {
   return {
@@ -68,5 +70,23 @@ describe("area pages and CSV use the same dataset", () => {
       rangert_min_50: "ja", url: "https://smilefjeskartet.no/kommune/heroy-nordland",
     });
     expect(parsed.data.find((r) => r.kommunenr === "1515")?.rangert_min_50).toBe("nei");
+  });
+
+  it("lists every place alphabetically for the lazily loaded place list", async () => {
+    const nord = getOmrade("kommune", "heroy-nordland")!;
+    expect(stedTupler(nord)).toEqual([
+      ["heroy-nord", "heroy-nord", "smil", "", "50/50"],
+      ["heroy-nord-2", "heroy-nord-2", "sur", "", "0/3"],
+    ]);
+    // Kjeder viser kommunen under navnet, siden stedene ligger spredt.
+    expect(stedTupler(getOmrade("kjede", "storkjede")!)[0]).toEqual(["stor-0", "stor-0", "smil", "Oslo", "1/1"]);
+
+    const params = (slug: string) => ({ params: Promise.resolve({ slug }) });
+    const kommune = await kommuneStederGet(new Request("http://x"), params("heroy-nordland"));
+    expect(kommune.headers.get("content-type")).toContain("application/json");
+    expect(await kommune.json()).toEqual(stedTupler(nord));
+    const kjede = await kjedeStederGet(new Request("http://x"), params("litenkjede"));
+    expect(await kjede.json()).toHaveLength(9);
+    expect((await kommuneStederGet(new Request("http://x"), params("finnes-ikke"))).status).toBe(404);
   });
 });

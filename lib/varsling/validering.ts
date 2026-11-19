@@ -102,3 +102,22 @@ export function validerAbonnement(body: unknown, kommuneFinnes: (nr: string) => 
 export function maskerEpost(tekst: string): string {
   return String(tekst).replace(/([A-Za-z0-9._%+-]{1,2})[A-Za-z0-9._%+-]*@([A-Za-z0-9])[A-Za-z0-9.-]*\.([A-Za-z]{2,})/g, "$1***@$2***.$3");
 }
+
+/**
+ * Punkt fra kartet («Sjekk rundt meg»): /varsling?lat=..&lng=..&km=.. forhåndsutfyller skjemaet.
+ * Ugyldig eller manglende radius gir 2 km; punkt utenfor Norge gir null.
+ */
+export function punktFraUrl(search: string): { lat: number; lng: number; km: Radius } | null {
+  const p = new URLSearchParams(search);
+  const lat = Number(p.get("lat") ?? NaN);
+  const lng = Number(p.get("lng") ?? NaN);
+  if (!iNorge(lat, lng)) return null;
+  const km = Number(p.get("km"));
+  return { lat, lng, km: gyldigRadius(km) ? km : RADIUSER[0] };
+}
+
+/** Lenke til varsling rundt et punkt. Posisjonen avrundes til ca. 100 meter, som når et abonnement lagres. */
+export function varslingLenke(lat: number, lng: number, meter: number): string {
+  const km = RADIUSER.find((r) => r * 1000 >= meter) ?? RADIUSER[RADIUSER.length - 1];
+  return `/varsling?lat=${lat.toFixed(3)}&lng=${lng.toFixed(3)}&km=${km}`;
+}

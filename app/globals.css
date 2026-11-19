@@ -269,3 +269,10 @@ body {
   .kart-klynge-innhold { transition: none; }
   .kart-klynge:hover .kart-klynge-oyne { animation: none; }
 }
+
+/* Forsidens venteskjerm: uten JavaScript kommer kartet aldri, så telleren byttes med <noscript>-teksten. */
+@media (scripting: none) {
+  .kart-venter-status {
+    display: none;
+  }
+}
