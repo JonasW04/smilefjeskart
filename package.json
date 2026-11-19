@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "build:data": "tsx scripts/build-data.ts",
+    "reclassify": "tsx scripts/reclassify.ts",
     "build:prediksjon": "tsx scripts/build-prediksjon.ts",
     "build:quiz": "tsx scripts/build-quiz.ts",
     "test": "vitest run",

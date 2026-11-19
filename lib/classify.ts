@@ -77,7 +77,7 @@ const KATEGORI_REGLER: Array<[Kategori, RegExp]> = [
       ord("hostel", "lodge", "lodgen", "resort", "fjellresort", "best western", "moxy", "park inn", "bed breakfast"),
     ),
   ],
-  ["sushi", regel(del("sushi"), ord("sush", "sashimi", "maki", "nigiri", "omakase", "sabrura", "sumo"))],
+  ["sushi", regel(del("sushi"), ord("sush", "sashimi", "nigiri", "omakase", "sabrura", "sumo"), "\\bmaki\\b(?! burger)")],
   [
     "pizza",
     regel(
@@ -117,6 +117,7 @@ const KATEGORI_REGLER: Array<[Kategori, RegExp]> = [
       ord("haveli", "gurkha", "gorkha", "sherpa", "biryani", "naan", "dosa", "mughal", "moghul", "kashmir"),
       ord("lahore", "lahori", "lahoree", "karachi", "nawabs?", "natraj", "chowk", "dil se", "desi", "samosa"),
       ord("badmash", "zaika", "krishnas?", "agra", "chaskka", "momo", "thali", "dhaba"),
+      ord("p h d eat", "phd eat", "spice village", "spice point", "amraj", "khanateria", "koriander"),
     ),
   ],
   [
@@ -130,7 +131,7 @@ const KATEGORI_REGLER: Array<[Kategori, RegExp]> = [
       ord("hainan", "gui lin", "panda", "dragon", "great wall", "chop ?sticks", "chopstix", "far east", "mekong"),
       ord("siam", "sukhumvit", "phuket", "pattaya", "sawasdee", "aroi", "chaiyo", "tuk ?tuk", "soi", "lan na"),
       ord("kimchi", "bibimbap", "seoul", "soju", "k chicken", "ni hao", "nihao", "xin chao", "em oi", "yum cha"),
-      ord("wing wah", "ming", "mandarin", "yokoso", "yuuka yuuka"),
+      ord("wing wah", "ming", "mandarin", "yokoso", "yuuka yuuka", "monsoon", "monsun"),
     ),
   ],
   [

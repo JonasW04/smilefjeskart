@@ -1,11 +1,15 @@
+import fs from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { kategoriFraNavn, type Kategori } from "@/lib/classify";
+import { kategoriForSted, kategoriFraNavn, kjedeFraNavn, type Kategori } from "@/lib/classify";
+import { KART, type Datasett, type KartData } from "@/lib/types";
 
 // Ekte navn fra Mattilsynets datasett som tidligere havnet i "Restaurant og annet".
 const TREFF: Record<Exclude<Kategori, "annet">, string[]> = {
   indisk: [
     "Der Peppern Gror Via Village",
     "Namaste Ålesund AS",
+    "Namaste Norge Trondheim",
     "Namastey Bergen",
     "New Tajmahal",
     "TajMahal Tandori Restaurant",
@@ -14,6 +18,12 @@ const TREFF: Record<Exclude<Kategori, "annet">, string[]> = {
     "Rasoi Ålesund Restaurant",
     "Haveli Kalbakken",
     "Koh i Nor",
+    "P.H.D EAT AS",
+    "Spice Village DA",
+    "Spice Point",
+    "Amraj",
+    "Khanateria",
+    "Koriander",
     "Marajah",
     "Masalabar",
     "Den Indiske Flamme",
@@ -45,10 +55,12 @@ const TREFF: Record<Exclude<Kategori, "annet">, string[]> = {
     "Sze Chuan House",
     "TukTuk -Thai Diner & Takeaway",
     "Panda Café",
+    "Monsoon",
+    "Monsun",
   ],
   sushi: ["Sabrura Lade", "Sumo Karl Johan", "iSushi Forus", "Sabi Sush", "YESushi & Wok", "Maki Avdeling Bakklandet"],
   pizza: ["Mesterpizzerian", "ZiOPizza Stortingsgata", "Bella Napoli", "Mama Rosa Melhus", "Dobbel Margherita"],
-  burger: ["Trønderburger", "Smash Buddies Ski", "MAX Grønland", "Max Egertorget", "Johnny Rockets Storo", "Brooklyn Diner"],
+  burger: ["Trønderburger", "Smash Buddies Ski", "MAX Grønland", "Max Egertorget", "Johnny Rockets Storo", "Brooklyn Diner", "Maki Burger Byhaven"],
   kebab: ["Istanbul Grillkebab AS", "Gyros House", "Mr Shaworma AS"],
   meksikansk: ["El Camino Sandvika", "La Taqueria", "Las Cazuelas Sabor a Mexico", "Azteko"],
   bar: ["O’Learys Tromsø Airport", "Furu Gastropub", "Ægir Bryggeripub", "The Dubliner", "Trafalgar sportsbar"],
@@ -96,5 +108,18 @@ describe("kategoriFraNavn", () => {
     expect(kategoriFraNavn("Pizza & Kebab")).toBe("pizza");
     expect(kategoriFraNavn("Sushi & Thai")).toBe("sushi");
     expect(kategoriFraNavn("Bens Kafe og Motell AS")).toBe("hotell");
+  });
+
+  it("matcher genererte datafiler (kjør npm run reclassify ved regelendringer)", () => {
+    const root = process.cwd();
+    const datasett = JSON.parse(fs.readFileSync(path.join(root, "generated", "steder.json"), "utf8")) as Datasett;
+    const kart = JSON.parse(fs.readFileSync(path.join(root, "public", "data", "kart.json"), "utf8")) as KartData;
+    const kartKat = new Map(kart.steder.map((r) => [r[KART.SLUG], kart.kategorier[r[KART.KATEGORI]]]));
+
+    const avvikSteder = datasett.steder.filter((s) => s.kategori !== kategoriForSted(s.navn, kjedeFraNavn(s.navn)));
+    const avvikKart = datasett.steder.filter((s) => kartKat.has(s.slug) && kartKat.get(s.slug) !== s.kategori);
+
+    expect(avvikSteder.length).toBe(0);
+    expect(avvikKart.length).toBe(0);
   });
 });
