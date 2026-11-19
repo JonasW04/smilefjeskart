@@ -13,6 +13,7 @@ import {
   byggSokIndeks,
   kommuneBbox,
   lesUrl,
+  lesUtsnitt,
   passerFilter,
   radGruppe,
   skrivUrl,
@@ -64,6 +65,7 @@ const MODUS_TEKST: Record<Modus, { navn: string; hjelp: string }> = {
 export default function KartApp() {
   // Komponenten lastes kun i nettleseren (ssr: false), så vi kan lese URL-en direkte.
   const [start] = useState(() => lesUrl(window.location.search, KATEGORIER));
+  const [startUtsnitt] = useState(() => lesUtsnitt(window.location.search));
   const [data, setData] = useState<KartData | null>(null);
   const [lastefeil, setLastefeil] = useState(false);
   const [modus, setModus] = useState<Modus>(start.modus);
@@ -169,7 +171,7 @@ export default function KartApp() {
       map = new maplibregl.Map({
         container: containerRef.current,
         style: morkRef.current ? STIL_URL.mork : STIL_URL.lys,
-        bounds: NORGE,
+        bounds: startUtsnitt ?? NORGE,
         fitBoundsOptions: {
           padding: window.innerWidth >= 640 ? { top: 30, bottom: 30, left: 400, right: 30 } : { top: 120, bottom: 60, left: 10, right: 10 },
         },
@@ -241,7 +243,7 @@ export default function KartApp() {
       map.remove();
       mapRef.current = null;
     };
-  }, [data, kartForsok, nullstillKlynger, oppdaterKlynger]);
+  }, [data, kartForsok, nullstillKlynger, oppdaterKlynger, startUtsnitt]);
 
   // Bytt grunnkart når lys/mørk modus endres.
   useEffect(() => {

@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
 import { getDatasett } from "@/lib/server/data";
-import { fylker, kjeder, kommuner, type Omrade } from "@/lib/server/omrader";
+import { lokaleSider, lokalUrlSti } from "@/lib/server/lokal";
+import { fylker, kjeder, kommuner } from "@/lib/server/omrader";
+import type { Sted } from "@/lib/types";
 import { sisteTilsyn } from "@/lib/stats";
 
 const SITE = "https://smilefjeskartet.no";
 
-function sistEndret(o: Omrade): Date {
+function sistEndret(o: { steder: readonly Sted[] }): Date {
   let maks = "";
   for (const s of o.steder) {
     const d = sisteTilsyn(s).dato;
@@ -17,7 +19,7 @@ function sistEndret(o: Omrade): Date {
 export default function sitemap(): MetadataRoute.Sitemap {
   const d = getDatasett();
   const oppdatert = new Date(d.generert);
-  const omrader = (sti: string, liste: Omrade[], priority: number) =>
+  const omrader = (sti: string, liste: Array<{ slug: string; steder: readonly Sted[] }>, priority: number) =>
     liste.map((o) => ({
       url: `${SITE}/${sti}/${o.slug}`,
       lastModified: sistEndret(o),
@@ -35,6 +37,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...omrader("fylke", fylker(), 0.7),
     ...omrader("kommune", kommuner(), 0.7),
     ...omrader("kjede", kjeder(), 0.6),
+    ...lokaleSider().map((l) => ({
+      url: `${SITE}${lokalUrlSti(l)}`,
+      lastModified: sistEndret(l),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
     ...d.steder.map((s) => ({
       url: `${SITE}/sted/${s.slug}`,
       lastModified: new Date(sisteTilsyn(s).dato),

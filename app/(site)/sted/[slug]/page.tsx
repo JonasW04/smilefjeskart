@@ -5,8 +5,11 @@ import FordelingBar from "@/components/FordelingBar";
 import Smiley from "@/components/Smiley";
 import StedSpaakort from "@/components/prediksjon/StedSpaakort";
 import Tidslinje from "@/components/sted/Tidslinje";
+import { tall } from "@/lib/chart";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
 import { getDatasett, getSted, kjedeFordeling, kjedeSteder, kommuneFordeling, landFordeling, naermeste } from "@/lib/server/data";
+import { KATEGORI_TEKST } from "@/lib/lokal";
+import { kategoriSideFor, lokalUrlSti, strokSideFor } from "@/lib/server/lokal";
 import { fylkeSlugFraNr, getOmrade, kommuneSlug } from "@/lib/server/omrader";
 import { merkeSnippet, stedBrodsmulerLd, stedTittel } from "@/lib/seo";
 import { KARAKTER_FORKLARING, SMILE_LABEL, TEMAER, isGraded, smileFromKarakter } from "@/lib/smile";
@@ -90,6 +93,8 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
   const kSlug = kommuneSlug(s.kommunenr);
   const fSlug = fylkeSlugFraNr(s.fylkenr);
   const kjedeSide = s.kjedeSlug ? getOmrade("kjede", s.kjedeSlug) : null;
+  const kategoriSide = kategoriSideFor(s.kommunenr, s.kategori);
+  const strokSide = strokSideFor(s);
   const kjedeRate = (k: Sted) => {
     const f = fordeling(ordinaereKarakterer(k));
     return f.total ? andel(f, "smil") : -1;
@@ -122,9 +127,16 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
               {[s.adresse, [s.postnr, s.poststed].filter(Boolean).join(" ")].filter(Boolean).join(", ")}
             </p>
             <div className="flex flex-wrap gap-2">
-              <span className="chip">{KATEGORI_EMOJI[s.kategori]} {KATEGORI_NAVN[s.kategori]}</span>
+              {kategoriSide ? (
+                <Link className="chip" href={lokalUrlSti(kategoriSide)} title={`Alle ${KATEGORI_TEKST[kategoriSide.kategori!].ubestemt} i ${kategoriSide.kommune.navn}`}>
+                  {KATEGORI_EMOJI[s.kategori]} {KATEGORI_NAVN[s.kategori]}
+                </Link>
+              ) : (
+                <span className="chip">{KATEGORI_EMOJI[s.kategori]} {KATEGORI_NAVN[s.kategori]}</span>
+              )}
               {s.kjede && (kjedeSide ? <Link className="chip" href={`/kjede/${kjedeSide.slug}`}>🔗 {s.kjede}</Link> : <span className="chip">🔗 {s.kjede}</span>)}
               {s.kommune && (kSlug ? <Link className="chip" href={`/kommune/${kSlug}`}>📍 {s.kommune}</Link> : <span className="chip">📍 {s.kommune}</span>)}
+              {strokSide && <Link className="chip" href={lokalUrlSti(strokSide)}>🏘️ {strokSide.navn}</Link>}
               {s.orgnr && (
                 <a className="chip" href={`https://virksomhet.brreg.no/oppslag/enheter/${s.orgnr}`} target="_blank" rel="noopener noreferrer">
                   🏢 Org.nr {s.orgnr}
@@ -258,6 +270,24 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
                   <StedLenke key={sted.id} sted={sted} meta={km < 0.03 ? "samme adresse" : km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1).replace(".", ",")} km`} />
                 ))}
               </ul>
+              {(kategoriSide || strokSide) && (
+                <ul className="mt-3 space-y-1 text-sm">
+                  {kategoriSide && (
+                    <li>
+                      <Link className="link" href={lokalUrlSti(kategoriSide)}>
+                        Alle {tall(kategoriSide.steder.length)} {KATEGORI_TEKST[kategoriSide.kategori!].ubestemt} i {kategoriSide.kommune.navn} →
+                      </Link>
+                    </li>
+                  )}
+                  {strokSide && (
+                    <li>
+                      <Link className="link" href={lokalUrlSti(strokSide)}>
+                        Alle {tall(strokSide.steder.length)} steder {strokSide.strok!.iNavn} →
+                      </Link>
+                    </li>
+                  )}
+                </ul>
+              )}
             </section>
           )}
 
