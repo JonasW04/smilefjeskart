@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Smiley from "@/components/Smiley";
 import { SMILE_LABEL, SMILES, type Smile } from "@/lib/smile";
 import type { VarslingStart } from "@/lib/deling";
 import { asciiFold, foldForSearch } from "@/lib/text";
 import type { KommuneValg, PoststedValg } from "@/lib/varsling/omrade";
 import { MAKS_KOMMUNER, RADIUSER, type Radius } from "@/lib/varsling/typer";
-import { iNorge, validerAbonnement, type Valideringsfeil } from "@/lib/varsling/validering";
+import { iNorge, punktFraUrl, validerAbonnement, type Valideringsfeil } from "@/lib/varsling/validering";
 import StedSok, { type SokValg } from "./StedSok";
 
 type Props = {
@@ -39,6 +39,8 @@ const FLERTALL: Record<Smile, [string, string]> = {
   sur: ["sur munn", "sure munner"],
 };
 
+const ingenAbonnement = () => () => {};
+
 const sokTekst = (s: string) => `${foldForSearch(s)} ${asciiFold(s)}`;
 
 function epostPerMaaned(dager: number): string {
@@ -65,6 +67,22 @@ export default function VarslingSkjema({ kommuner, poststeder, start = null }: P
   const [estimat, setEstimat] = useState<{ q: string; data: Estimat } | null>(null);
   const ferdigRef = useRef<HTMLHeadingElement>(null);
   const feilRef = useRef<HTMLDivElement>(null);
+
+  // Lenken fra «Sjekk rundt meg» på kartet (?lat=..&lng=..&km=..) fyller ut punkt og radius.
+  // Leses etter hydrering, så serverens HTML og første klientrender er like.
+  const search = useSyncExternalStore(ingenAbonnement, () => window.location.search, () => "");
+  const [bruktSearch, setBruktSearch] = useState("");
+  if (search !== bruktSearch) {
+    setBruktSearch(search);
+    const fraKart = punktFraUrl(search);
+    if (fraKart) {
+      const params = new URLSearchParams(search);
+      const harNavn = Boolean(params.get("navn")?.trim());
+      const harKm = params.has("km");
+      if (!harNavn) setPunkt({ lat: fraKart.lat, lng: fraKart.lng, navn: "Der du sjekket på kartet" });
+      if (!harNavn || harKm) setKm(fraKart.km);
+    }
+  }
 
   const kommuneNavn = useMemo(() => new Map(kommuner.map((k) => [k[0], k[1]])), [kommuner]);
 
