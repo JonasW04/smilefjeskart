@@ -26,7 +26,8 @@ import {
 } from "@/lib/kart";
 import { SMILES, SMILE_LABEL, type Smile } from "@/lib/smile";
 import { KART, type KartData } from "@/lib/types";
-import { klyngeElement, leggTilLag, leggTilSmilefjes, settModus, STIL_URL, tilpassGrunnkart } from "./kartStil";
+import { klyngeElement, leggTilLag, leggTilManglendeIkon, leggTilSmilefjes, settModus, STIL_URL, tilpassGrunnkart } from "./kartStil";
+import KartVenter from "./KartVenter";
 import Sok from "./Sok";
 import StedPanel from "./StedPanel";
 
@@ -196,6 +197,8 @@ export default function KartApp() {
     map.on("error", () => {
       if (!avsluttet && !map.getLayer("steder-ikon")) setKartfeil(true);
     });
+    // MapLibre 6: en «styleimagemissing»-lytter kan ikke lenger levere bildet; det må gå via resolveren.
+    map.setMissingStyleImageResolver((id) => leggTilManglendeIkon(map, id));
     map.on("style.load", async () => {
       try {
         tilpassGrunnkart(map, morkRef.current);
@@ -399,24 +402,15 @@ export default function KartApp() {
       </div>
 
       {!kartfeil && (!kartKlart || !data) && (
-        <div className="absolute inset-0 z-30 grid place-items-center bg-paper">
-          {lastefeil ? (
+        lastefeil ? (
+          <div className="absolute inset-0 z-30 grid place-items-center bg-paper">
             <p className="card max-w-sm p-5 text-center font-semibold">
               Oi! Klarte ikke å laste kartdata. Sjekk nettet og last siden på nytt. 🙈
             </p>
-          ) : (
-            <div className="text-center" role="status">
-              <div className="flex justify-center gap-2" aria-hidden>
-                {(["smil", "strek", "sur"] as const).map((k, i) => (
-                  <span key={k} className="inline-block animate-bounce" style={{ animationDelay: `${i * 150}ms` }}>
-                    <Smiley kind={k} size={44} />
-                  </span>
-                ))}
-              </div>
-              <p className="mt-3 font-display text-lg font-extrabold">Teller smilefjes…</p>
-            </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <KartVenter />
+        )
       )}
 
       {kartfeil && data && (

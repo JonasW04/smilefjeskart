@@ -138,6 +138,33 @@ describe("klyngeHumor", () => {
   });
 });
 
+describe("missing base map icons", () => {
+  it("draws an anti-aliased round dot", async () => {
+    const { prikkIkon } = await import("@/components/kart/kartStil");
+    const { width, height, data } = prikkIkon(22, [101, 101, 101]);
+    expect([width, height, data.length]).toEqual([22, 22, 22 * 22 * 4]);
+    const alfa = (x: number, y: number) => data[(y * 22 + x) * 4 + 3];
+    expect(alfa(11, 11)).toBe(255);
+    expect(alfa(0, 0)).toBe(0);
+    expect(alfa(0, 11)).toBeGreaterThan(0);
+    expect(alfa(0, 11)).toBeLessThan(255);
+    expect(Array.from(data.slice((11 * 22 + 11) * 4, (11 * 22 + 11) * 4 + 3))).toEqual([101, 101, 101]);
+  });
+
+  it("fills in only the icons the base style is known to lack, once", async () => {
+    const { leggTilManglendeIkon } = await import("@/components/kart/kartStil");
+    const bilder = new Map<string, unknown>();
+    const map = { hasImage: (id: string) => bilder.has(id), addImage: (id: string, img: unknown) => void bilder.set(id, img) };
+    const m = map as unknown as Parameters<typeof leggTilManglendeIkon>[0];
+    leggTilManglendeIkon(m, "circle-11");
+    const forste = bilder.get("circle-11");
+    leggTilManglendeIkon(m, "circle-11");
+    leggTilManglendeIkon(m, "noe-annet");
+    expect([...bilder.keys()]).toEqual(["circle-11"]);
+    expect(bilder.get("circle-11")).toBe(forste);
+  });
+});
+
 describe("smilefilter", () => {
   const sett = (...s: Array<(typeof SMILES)[number]>) => new Set(s);
 

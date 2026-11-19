@@ -13,16 +13,17 @@ import {
   MIN_KOMMUNE,
   omradePerAar,
   plassering,
+  stedTupler,
   type Omrade,
 } from "@/lib/server/omrader";
 import { omradeBrodsmulerLd, omradeSmuler } from "@/lib/seo";
-import { SMILE_LABEL, smileFromKarakter } from "@/lib/smile";
 import { kindFromKarakter } from "@/lib/smiley";
-import { andel, formatDato, ordinaereKarakterer, fordeling, prosent, sisteTilsyn } from "@/lib/stats";
+import { andel, formatDato, prosent, sisteTilsyn } from "@/lib/stats";
+import { FORSTE_RADER, HELE_LISTA_MAKS, stedRad } from "@/lib/stedliste";
 import type { Sted } from "@/lib/types";
+import AlleSteder from "./AlleSteder";
 import { Flis, Forklaring, Seksjon, TallTabell } from "./Deler";
 import Kolonner from "./Kolonner";
-import { SmileySprite } from "./SmileySprite";
 import StedRader from "./StedRader";
 import StabelRader, { StabelForklaring, type StabelRad } from "./StabelRader";
 
@@ -65,10 +66,6 @@ export function omradeMetadata(o: Omrade | null): Metadata {
   };
 }
 
-function ordinaerFor(s: Sted) {
-  return fordeling(ordinaereKarakterer(s));
-}
-
 export default function OmradeSide({ o }: { o: Omrade }) {
   const tt = TYPE_TEKST[o.type];
   const land = landFordeling();
@@ -101,7 +98,7 @@ export default function OmradeSide({ o }: { o: Omrade }) {
   sammenlign.push({ key: "n", navn: "Hele Norge", tekst: "Hele Norge", href: "/analyse", fordeling: land });
 
   // Steder
-  const steder = [...o.steder].sort((a, b) => a.navn.localeCompare(b.navn, "nb"));
+  const stedListe = o.type === "fylke" ? [] : stedTupler(o);
   const nylig = [...o.steder].sort((a, b) => sisteTilsyn(b).dato.localeCompare(sisteTilsyn(a).dato)).slice(0, 8);
   const gjengangere = flestAnmerkninger(o.steder, 2).slice(0, 6);
 
@@ -110,7 +107,6 @@ export default function OmradeSide({ o }: { o: Omrade }) {
 
   return (
     <article className="space-y-6">
-      <SmileySprite />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd).replace(/</g, "\\u003c") }} />
 
       <nav aria-label="Brødsmuler" className="text-sm font-semibold text-ink-soft">
@@ -281,25 +277,14 @@ export default function OmradeSide({ o }: { o: Omrade }) {
           <Seksjon
             id="steder"
             emoji="🍽️"
-            tittel={`Alle ${tall(steder.length)} steder`}
+            tittel={`Alle ${tall(stedListe.length)} steder`}
             ingress="Fjeset viser siste tilsyn. Tallet til høyre viser hvor mange av de ordinære tilsynene som endte med smil, f.eks. 3/4."
           >
-            <StedRader
-              kolonner={3}
-              rader={steder.map((s) => {
-                const f = ordinaerFor(s);
-                const k = smileFromKarakter(sisteTilsyn(s).karakter);
-                return {
-                  key: s.slug,
-                  slug: s.slug,
-                  navn: s.navn,
-                  kind: kindFromKarakter(sisteTilsyn(s).karakter),
-                  label: k ? SMILE_LABEL[k] : "Ukjent",
-                  under: o.type === "kjede" ? (s.kommune ?? s.poststed) : s.adresse || s.poststed,
-                  meta: f.total ? `${f.smil}/${f.total}` : "–",
-                };
-              })}
-            />
+            {stedListe.length <= HELE_LISTA_MAKS ? (
+              <StedRader kolonner={3} rader={stedListe.map(stedRad)} />
+            ) : (
+              <AlleSteder forste={stedListe.slice(0, FORSTE_RADER)} totalt={stedListe.length} kilde={`/${tt.sti}/${o.slug}/steder.json`} />
+            )}
           </Seksjon>
         </>
       )}

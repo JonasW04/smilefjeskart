@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
+import SmileySprite from "@/components/SmileySprite";
 import VercelAnalytics from "./analytics";
 
 const figtree = Figtree({
@@ -64,6 +65,7 @@ export default function RootLayout({
       <body
         className={`${figtree.variable} ${bricolage.variable} antialiased`}
       >
+        <SmileySprite />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

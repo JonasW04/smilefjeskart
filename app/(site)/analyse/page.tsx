@@ -4,7 +4,6 @@ import Smiley from "@/components/Smiley";
 import { Flis, Forklaring, Seksjon, TallTabell } from "@/components/analyse/Deler";
 import Kolonner from "@/components/analyse/Kolonner";
 import SmaaLinjer from "@/components/analyse/SmaaLinjer";
-import { SmileySprite } from "@/components/analyse/SmileySprite";
 import StedRader, { type StedRad } from "@/components/analyse/StedRader";
 import StabelRader, { StabelForklaring } from "@/components/analyse/StabelRader";
 import { anmerkningAndel, endringPp } from "@/lib/analyse";
@@ -115,7 +114,6 @@ export default function AnalyseSide() {
 
   return (
     <article className="space-y-8">
-      <SmileySprite />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasettLd).replace(/</g, "\\u003c") }} />
 
       {/* Hero */}
