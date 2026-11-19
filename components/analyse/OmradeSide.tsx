@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import KopierKode from "@/components/KopierKode";
 import Smiley from "@/components/Smiley";
 import { anmerkningAndel, endringPp, flestAnmerkninger } from "@/lib/analyse";
 import { aksePst, pp, tall } from "@/lib/chart";
+import { EMBED_HOYDE, EMBED_MAKS_BREDDE, embedSnippet } from "@/lib/embed";
 import { getDatasett, landFordeling } from "@/lib/server/data";
 import {
   getOmrade,
@@ -291,6 +293,8 @@ export default function OmradeSide({ o }: { o: Omrade }) {
             </Seksjon>
           </div>
 
+          {o.type === "kommune" && <ByggInn o={o} />}
+
           <Seksjon
             id="steder"
             emoji="🍽️"
@@ -325,6 +329,30 @@ export default function OmradeSide({ o }: { o: Omrade }) {
         </Link>
       </p>
     </article>
+  );
+}
+
+/** Widget-snutt for lokalaviser og blogger, med forhåndsvisning. */
+function ByggInn({ o }: { o: Omrade }) {
+  return (
+    <Seksjon
+      id="bygg-inn"
+      emoji="🧩"
+      tittel="Bygg inn på nettsiden din"
+      ingress={`For lokalaviser, blogger og kommunens egne sider: lim inn koden, så viser siden oppdaterte smilefjes-tall for ${o.navn}. Tallene oppdateres hver morgen, og widgeten lenker tilbake hit som kilde.`}
+    >
+      <div className="grid items-start gap-5 lg:grid-cols-[1fr_auto]">
+        <KopierKode tekst={embedSnippet({ slug: o.slug, navn: o.visningsnavn })} etikett="Kopier koden" />
+        <iframe
+          src={`/embed/kommune/${o.slug}`}
+          title={`Forhåndsvisning av widgeten for ${o.visningsnavn}`}
+          width={EMBED_MAKS_BREDDE}
+          height={EMBED_HOYDE}
+          loading="lazy"
+          className="w-full max-w-[480px] rounded-[22px] border-0"
+        />
+      </div>
+    </Seksjon>
   );
 }
 

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getDatasett } from "@/lib/server/data";
 import { fylker, kjeder, kommuner, type Omrade } from "@/lib/server/omrader";
+import { maaneder } from "@/lib/server/rapport";
 import { sisteTilsyn } from "@/lib/stats";
 
 const SITE = "https://smilefjeskartet.no";
@@ -29,6 +30,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/siste`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE}/kommune`, lastModified: oppdatert, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE}/analyse`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.8 },
+    { url: `${SITE}/rapport`, lastModified: oppdatert, changeFrequency: "monthly", priority: 0.8 },
+    ...maaneder().map((ym) => ({ url: `${SITE}/rapport/${ym}`, changeFrequency: "monthly" as const, priority: 0.6 })),
     { url: `${SITE}/prediksjon`, lastModified: oppdatert, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE}/varsling`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE}/om`, changeFrequency: "monthly", priority: 0.5 },

@@ -8,6 +8,7 @@ export const NAV = [
   { href: "/siste", label: "Ferskt", emoji: "🥐" },
   { href: "/kommune", label: "Kommuner", emoji: "📍" },
   { href: "/analyse", label: "Analyse", emoji: "📊" },
+  { href: "/rapport", label: "Rapport", emoji: "📰" },
   { href: "/prediksjon", label: "Spåkula", emoji: "🔮" },
   { href: "/varsling", label: "Varsling", emoji: "🔔" },
   { href: "/om", label: "Om", emoji: "💡" },
