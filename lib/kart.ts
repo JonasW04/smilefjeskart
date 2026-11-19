@@ -35,6 +35,23 @@ export type Filter = {
   kategori: Kategori | "alle";
 };
 
+/**
+ * Klikk på et smilefjes i filteret. Når alle tre vises, viser klikket bare det fjeset
+ * (vanligste ønske: "bare sur munn"). Ellers slås fjeset av eller på, og tomt valg blir alle tre igjen.
+ */
+export function vekslSmil(cur: ReadonlySet<Smile>, s: Smile, alle: readonly Smile[]): Set<Smile> {
+  if (cur.size === alle.length) return new Set([s]);
+  const neste = new Set(cur);
+  if (neste.has(s)) neste.delete(s);
+  else neste.add(s);
+  return neste.size === 0 ? new Set(alle) : neste;
+}
+
+/** Om filteret skjuler noen steder (modus er fargevalg, ikke filter). */
+export function harAktivtFilter(f: Filter, antallSmil: number): boolean {
+  return f.kategori !== "alle" || f.smil.size < antallSmil;
+}
+
 export function radGruppe(r: KartRad, modus: Modus): number {
   return gruppe(modus === "siste" ? r[KART.KARAKTER] : r[KART.VERSTE_3AAR]);
 }

@@ -14,7 +14,6 @@ import { kindFromKarakter } from "@/lib/smiley";
 import { andel, formatDato, fordeling, ordinaereKarakterer, prosent, sisteTilsyn } from "@/lib/stats";
 import { Flis, Seksjon } from "./Deler";
 import { SITE } from "./OmradeSide";
-import { SmileySprite } from "./SmileySprite";
 import LenkeChips from "./LenkeChips";
 import SorterbarStedListe from "./SorterbarStedListe";
 import StabelRader, { StabelForklaring } from "./StabelRader";
@@ -129,7 +128,6 @@ export default function LokalSide({ side }: { side: Side }) {
 
   return (
     <article className="space-y-6">
-      <SmileySprite />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd).replace(/</g, "\\u003c") }} />
 
       <nav aria-label="Brødsmuler" className="text-sm font-semibold text-ink-soft">

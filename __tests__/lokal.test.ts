@@ -242,8 +242,8 @@ describe("lokale sider fra datasettet", () => {
     expect(lokalPlassering(getLokalSide("bergen", "kafe")!)).toEqual({ plass: 1, av: 1 });
   });
 
-  it("lists every local page in the sitemap with the latest inspection date", () => {
-    const urls = sitemap().filter((e) => /\/kommune\/[^/]+\/[^/]+$/.test(e.url));
+  it("lists every local page in the sitemap with the latest inspection date", async () => {
+    const urls = (await sitemap({ id: Promise.resolve("omrader") })).filter((e) => /\/kommune\/[^/]+\/[^/]+$/.test(e.url));
     expect(urls.map((e) => e.url)).toEqual(lokaleSider().map((s) => `https://smilefjeskartet.no${lokalUrlSti(s)}`));
     expect(urls.find((e) => e.url.endsWith("/bergen/kafe"))?.lastModified).toEqual(new Date("2026-06-01"));
   });
