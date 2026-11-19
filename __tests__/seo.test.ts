@@ -74,6 +74,19 @@ describe("stedTittel", () => {
     expect(stedTittel(s, I_DAG)).toBe("Kafé X, Bergen – Fikk strekmunn i 2026 · 2 tilsyn | Smilefjeskartet");
   });
 
+  it("viser en ny strekmunn selv om det var sur munn tidligere i perioden", () => {
+    const s = lagSted({
+      navn: "Kafé X",
+      poststed: "Bergen",
+      tilsyn: [
+        { dato: "2025-05-22", karakter: 3 },
+        { dato: "2025-06-22", karakter: 0, oppfolging: true },
+        { dato: "2026-11-12", karakter: 2 },
+      ],
+    });
+    expect(stedTittel(s, I_DAG)).toBe("Kafé X, Bergen – Fikk strekmunn i 2026, sur munn i 2025 · 3 tilsyn | Smilefjeskartet");
+  });
+
   it("viser året for den siste av like dårlige karakterer", () => {
     const s = lagSted({
       navn: "Kafé X",
@@ -147,7 +160,7 @@ describe("stedTittel", () => {
 });
 
 describe("stedBeskrivelse", () => {
-  it("teller ordinære tilsyn, viser siste og verste karakter og temaene med brudd", () => {
+  it("viser siste smilefjes og temaene med brudd først, så de ordinære tilsynene og det verste", () => {
     const s = lagSted({
       navn: "Kafé X",
       poststed: "Oslo",
@@ -155,13 +168,12 @@ describe("stedBeskrivelse", () => {
         { dato: "2019-04-01", karakter: 0 },
         { dato: "2023-04-01", karakter: 3 },
         { dato: "2023-05-01", karakter: 0, oppfolging: true },
-        { dato: "2026-09-14", karakter: 2, temaer: [2, 0, 2, 4] },
+        { dato: "2026-09-14", karakter: 2, temaer: [2, 2, 2, 4] },
       ],
     });
     expect(stedBeskrivelse(s)).toBe(
-      "Kafé X i Oslo har hatt 3 ordinære tilsyn hos Mattilsynet siden 2019: 1 smil, 1 strekmunn, 1 sur munn. " +
-        "Siste tilsyn 14. sep. 2026: strekmunn, med brudd på rutiner og ledelse og mathåndtering og tilberedning. " +
-        "Verste: sur munn i 2023. Se alle tilsyn tema for tema.",
+      "Kafé X i Oslo fikk strekmunn fra Mattilsynet 14. sep. 2026, brudd på rutiner, lokaler og mathåndtering. " +
+        "3 ordinære tilsyn siden 2019: 1 smil, 1 strekmunn, 1 sur munn. Verste: sur munn i 2023.",
     );
   });
 
@@ -173,14 +185,17 @@ describe("stedBeskrivelse", () => {
         { dato: "2025-04-01", karakter: 1, temaer: [1, 0, 0, 5] },
       ],
     });
-    expect(stedBeskrivelse(s)).toBe(
-      "Kafé X har hatt 2 ordinære tilsyn hos Mattilsynet siden 2024: 2 smil. Siste tilsyn 1. apr. 2025: smil, alle temaer i orden. Se alle tilsyn tema for tema.",
-    );
+    expect(stedBeskrivelse(s)).toBe("Kafé X fikk smil fra Mattilsynet 1. apr. 2025, alle temaer i orden. 2 ordinære tilsyn siden 2024: 2 smil.");
+  });
+
+  it("bruker entall for ett ordinært tilsyn", () => {
+    const s = lagSted({ navn: "Kafé X", tilsyn: [{ dato: "2026-01-05", karakter: 0 }] });
+    expect(stedBeskrivelse(s)).toContain("1 ordinært tilsyn siden 2026: 1 smil.");
   });
 
   it("teller alle tilsyn når ingen ordinære har karakter", () => {
     const s = lagSted({ navn: "Kafé X", tilsyn: [{ dato: "2025-04-01", karakter: -1, temaer: [-1, -1, -1, -1] }] });
-    expect(stedBeskrivelse(s)).toBe("Kafé X har hatt 1 tilsyn hos Mattilsynet siden 2025. Siste tilsyn 1. apr. 2025: ukjent karakter. Se alle tilsyn tema for tema.");
+    expect(stedBeskrivelse(s)).toBe("Kafé X hadde tilsyn fra Mattilsynet 1. apr. 2025, uten karakter. 1 tilsyn siden 2025.");
   });
 });
 

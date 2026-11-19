@@ -51,7 +51,10 @@ export function stedTittel(s: Sted, iDag: string): string {
   let hale: string;
   if (nylig && nylig.smil !== "smil") {
     const label = SMILE_LABEL[nylig.smil].toLowerCase();
-    hale = siste === "smil" ? `Hadde ${label} i ${nylig.aar} (nå smil) · ${antall}` : `Fikk ${label} i ${nylig.aar} · ${antall}`;
+    if (siste === "smil") hale = `Hadde ${label} i ${nylig.aar} (nå smil) · ${antall}`;
+    // En ny strekmunn skal ikke skjules bak en eldre sur munn.
+    else if (siste && siste !== nylig.smil) hale = `Fikk ${SMILE_LABEL[siste].toLowerCase()} i ${sisteTilsyn(s).dato.slice(0, 4)}, ${label} i ${nylig.aar} · ${antall}`;
+    else hale = `Fikk ${label} i ${nylig.aar} · ${antall}`;
   } else {
     const rad = smilPaaRad(s);
     hale = rad >= 2 ? `${rad} smil på rad hos Mattilsynet` : s.tilsyn.length > 1 ? `${antall} hos Mattilsynet` : "Smilefjes fra Mattilsynet";
@@ -59,35 +62,41 @@ export function stedTittel(s: Sted, iDag: string): string {
   return `${hode} – ${hale} | Smilefjeskartet`;
 }
 
-/** Metabeskrivelse for et sted: ordinære tilsyn, siste og verste smilefjes, og temaene ved siste tilsyn. */
+/** «a», «a og b», «a, b og c». */
+function liste(ord: string[]): string {
+  return ord.length < 2 ? ord.join("") : `${ord.slice(0, -1).join(", ")} og ${ord[ord.length - 1]}`;
+}
+
+/**
+ * Metabeskrivelse for et sted: siste smilefjes og temaene med brudd, de ordinære tilsynene og det verste smilefjeset.
+ * Det viktigste står først, siden Google kutter beskrivelser rundt 160 tegn.
+ */
 export function stedBeskrivelse(s: Sted): string {
   const place = s.poststed || s.kommune;
   const t = sisteTilsyn(s);
   const sisteSmil = smileFromKarakter(t.karakter);
   const ord = fordeling(ordinaereKarakterer(s));
+  const hvem = place ? `${s.navn} i ${place}` : s.navn;
   const deler: string[] = [];
 
-  const hvem = place ? `${s.navn} i ${place}` : s.navn;
+  const brudd = TEMAER.filter((_, i) => isGraded(t.temaer[i]) && t.temaer[i] >= 2).map((tema) => tema.kort.toLowerCase());
+  const tema = brudd.length > 0 ? `, brudd på ${liste(brudd)}` : t.temaer.some(isGraded) ? ", alle temaer i orden" : "";
+  deler.push(
+    sisteSmil
+      ? `${hvem} fikk ${SMILE_LABEL[sisteSmil].toLowerCase()} fra Mattilsynet ${formatDato(t.dato)}${tema}.`
+      : `${hvem} hadde tilsyn fra Mattilsynet ${formatDato(t.dato)}, uten karakter.`,
+  );
+
   const fra = s.tilsyn[0].dato.slice(0, 4);
   if (ord.total > 0) {
-    const fjes = (["smil", "strek", "sur"] as const)
-      .filter((k) => ord[k] > 0)
-      .map((k) => `${ord[k]} ${SMILE_LABEL[k].toLowerCase()}`)
-      .join(", ");
-    deler.push(`${hvem} har hatt ${ord.total} ordinære tilsyn hos Mattilsynet siden ${fra}: ${fjes}.`);
+    const fjes = (["smil", "strek", "sur"] as const).filter((k) => ord[k] > 0).map((k) => `${ord[k]} ${SMILE_LABEL[k].toLowerCase()}`);
+    deler.push(`${ord.total} ${ord.total === 1 ? "ordinært" : "ordinære"} tilsyn siden ${fra}: ${fjes.join(", ")}.`);
   } else {
-    deler.push(`${hvem} har hatt ${s.tilsyn.length} tilsyn hos Mattilsynet siden ${fra}.`);
+    deler.push(`${s.tilsyn.length} tilsyn siden ${fra}.`);
   }
-
-  const brudd = TEMAER.filter((_, i) => isGraded(t.temaer[i]) && t.temaer[i] >= 2).map((tema) => tema.navn.toLowerCase());
-  const vurdert = t.temaer.some(isGraded);
-  const tema = brudd.length > 0 ? `, med brudd på ${brudd.join(" og ")}` : vurdert && sisteSmil ? ", alle temaer i orden" : "";
-  deler.push(`Siste tilsyn ${formatDato(t.dato)}: ${sisteSmil ? SMILE_LABEL[sisteSmil].toLowerCase() : "ukjent karakter"}${tema}.`);
 
   const v = verste(s.tilsyn);
   if (v && v.smil !== "smil" && v.smil !== sisteSmil) deler.push(`Verste: ${SMILE_LABEL[v.smil].toLowerCase()} i ${v.aar}.`);
-
-  deler.push("Se alle tilsyn tema for tema.");
   return deler.join(" ");
 }
 
