@@ -32,6 +32,11 @@ export const metadata: Metadata = {
     locale: "nb_NO",
     siteName: "Smilefjeskartet",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Smilefjes i tall | Smilefjeskartet",
+    description: "Utvikling, temaer, sesong, fylker, kommuner, kjeder og kategorier – alle Mattilsynets smilefjestilsyn siden 2016.",
+  },
 };
 
 const NAV = [
