@@ -22,9 +22,11 @@ import {
   type SokTreff,
   type StedProps,
 } from "@/lib/kart";
+import { boksRundt, naerhetsDom, stederInnen, velgRadius, type NaerRadius, type Punkt } from "@/lib/naerhet";
 import { SMILES, SMILE_LABEL, type Smile } from "@/lib/smile";
-import { KART, type KartData } from "@/lib/types";
+import { KART, type KartData, type KartRad } from "@/lib/types";
 import { klyngeElement, leggTilLag, leggTilSmilefjes, settModus, STIL_URL, tilpassGrunnkart } from "./kartStil";
+import NaerMegKort from "./NaerMegKort";
 import Sok from "./Sok";
 import StedPanel from "./StedPanel";
 
@@ -76,6 +78,10 @@ export default function KartApp() {
   const [visFilter, setVisFilter] = useState(false);
   const [finnerMeg, setFinnerMeg] = useState(false);
   const [melding, setMelding] = useState<string | null>(null);
+  /** Posisjonen fra «Nær meg». Nabolagskortet vises så lenge den er satt. */
+  const [meg, setMeg] = useState<Punkt | null>(null);
+  /** Radius valgt av brukeren; null betyr automatisk. */
+  const [naerRadius, setNaerRadius] = useState<NaerRadius | null>(null);
   const mork = useMorkModus();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -113,6 +119,14 @@ export default function KartApp() {
     }
     return t;
   }, [data, modus, kategori]);
+
+  // Steder rundt brukeren, nærmeste først. Radius og modus filtrerer videre uten nytt søk.
+  const naerSteder = useMemo(() => (data && meg ? stederInnen(data, meg, undefined, kategori) : null), [data, meg, kategori]);
+  const naerDom = useMemo(
+    () => (naerSteder ? naerhetsDom(naerSteder, naerRadius ?? velgRadius(naerSteder), modus) : null),
+    [naerSteder, naerRadius, modus],
+  );
+  const aktivRadius = naerDom?.radius ?? null;
 
   useEffect(() => {
     modusRef.current = modus;
@@ -294,6 +308,23 @@ export default function KartApp() {
     [koordinater],
   );
 
+  // Vis hele radiusen rundt brukeren, med plass til nabolagskortet.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !kartKlart || !meg || aktivRadius === null) return;
+    const bred = window.innerWidth >= 640;
+    const plassTilFilter = window.innerWidth >= 1100;
+    // På mobil dekker kortet opptil 58 % av kartet nedenfra (max-h i NaerMegKort).
+    const hoyde = map.getContainer().clientHeight;
+    map.fitBounds(boksRundt(meg, aktivRadius), {
+      padding: bred
+        ? { top: 40, bottom: 40, left: plassTilFilter ? 400 : 40, right: 410 }
+        : { top: 100, bottom: hoyde * 0.58 + 10, left: 20, right: 20 },
+      maxZoom: 16.5,
+      duration: 900,
+    });
+  }, [meg, aktivRadius, kartKlart]);
+
   // Fly til sted fra URL når kartet er klart.
   useEffect(() => {
     if (!kartKlart || harFloyddStart.current) return;
@@ -301,27 +332,33 @@ export default function KartApp() {
     if (start.sted) flyTil(start.sted);
   }, [kartKlart, start.sted, flyTil]);
 
-  // Escape lukker panelet.
+  // Escape lukker stedspanelet, og deretter nabolagskortet.
   useEffect(() => {
-    if (!valgt) return;
+    if (!valgt && !meg) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !(e.target instanceof HTMLInputElement)) setValgt(null);
+      if (e.key !== "Escape" || e.target instanceof HTMLInputElement) return;
+      if (valgt) setValgt(null);
+      else setMeg(null);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [valgt]);
+  }, [valgt, meg]);
 
   // ---- Handlinger ----
+  const visSted = (rad: KartRad) => {
+    const slug = rad[KART.SLUG];
+    // Sørg for at stedet er synlig selv om filteret ellers skjuler det.
+    if (data && !passerFilter(rad, data, modus, filter)) {
+      setSmil(new Set(SMILES));
+      setKategori("alle");
+    }
+    setValgt(slug);
+    flyTil(slug);
+  };
+
   const velgTreff = (t: SokTreff) => {
     if (t.type === "sted") {
-      const slug = t.rad[KART.SLUG];
-      // Sørg for at stedet er synlig selv om filteret ellers skjuler det.
-      if (data && !passerFilter(t.rad, data, modus, filter)) {
-        setSmil(new Set(SMILES));
-        setKategori("alle");
-      }
-      setValgt(slug);
-      flyTil(slug);
+      visSted(t.rad);
     } else if (data) {
       const bbox = kommuneBbox(data, t.nr);
       if (bbox) mapRef.current?.fitBounds(bbox, { padding: 60, maxZoom: 14, duration: 900 });
@@ -346,6 +383,10 @@ export default function KartApp() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setFinnerMeg(false);
+        // Kortet virker selv uten bakgrunnskart; kartet zoomes til radiusen når den er regnet ut.
+        setValgt(null);
+        setNaerRadius(null);
+        setMeg({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         const map = mapRef.current;
         if (!map) return;
         const lngLat: [number, number] = [pos.coords.longitude, pos.coords.latitude];
@@ -356,7 +397,6 @@ export default function KartApp() {
           megMarker.current = new maplibregl.Marker({ element: el });
         }
         megMarker.current.setLngLat(lngLat).addTo(map);
-        map.easeTo({ center: lngLat, zoom: Math.max(map.getZoom(), 14.5), duration: 900 });
       },
       (err) => {
         setFinnerMeg(false);
@@ -503,7 +543,7 @@ export default function KartApp() {
       </div>
 
       {/* Handlingsknapper */}
-      <div className={`absolute bottom-8 left-2 z-10 flex gap-2 sm:left-3 ${valgt ? "max-sm:hidden" : ""}`}>
+      <div className={`absolute bottom-8 left-2 z-10 flex gap-2 sm:left-3 ${valgt || meg ? "max-sm:hidden" : ""}`}>
         <button type="button" className="btn text-sm" onClick={naerMeg} disabled={finnerMeg}>
           {finnerMeg ? "⏳ Finner deg…" : "📍 Nær meg"}
         </button>
@@ -516,6 +556,21 @@ export default function KartApp() {
         <p role="alert" className="card absolute bottom-24 left-1/2 z-30 -translate-x-1/2 px-4 py-2 text-sm font-semibold">
           {melding}
         </p>
+      )}
+
+      {naerDom && meg && (
+        <NaerMegKort
+          key={`${meg.lat},${meg.lng}`}
+          dom={naerDom}
+          punkt={meg}
+          auto={naerRadius === null}
+          modus={modus}
+          kategori={kategori}
+          skjult={!!valgt}
+          onRadius={setNaerRadius}
+          onVelg={visSted}
+          onLukk={() => setMeg(null)}
+        />
       )}
 
       {valgt && <StedPanel slug={valgt} onLukk={() => setValgt(null)} />}
