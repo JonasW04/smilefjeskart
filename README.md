@@ -11,6 +11,7 @@
 - **Kommuner, fylker og kjeder.** Utviklingen år for år, sammenlignet med fylket og hele landet.
 - **Analyse.** Hva som oftest går galt, sesongvariasjon, typer steder og kjeder.
 - **Ferskt.** De nyeste tilsynene, også som RSS.
+- **Gjett smilefjeset.** En daglig quiz med fem ekte steder: fikk de smil, strekmunn eller sur munn ved siste ordinære tilsyn? Resultatet kan deles uten å røpe svarene, og øvingsrunder kan spilles for hele landet, et fylke eller en kommune.
 - **Spåkula.** To logistiske regresjonsmodeller anslår hvilke steder som får besøk av Mattilsynet de neste 60 dagene, og sjansen for strekmunn eller sur munn ved neste tilsyn. Modellene trenes på nytt hver dag og måles mot en enkel tommelfingerregel. Kjøringen 26. oktober 2026 ga AUC 0,81 mot 0,75 for besøk og 0,72 mot 0,67 for utfall.
 
 | Stedside | Kommuneside |
@@ -66,12 +67,14 @@ Kjør i denne rekkefølgen:
 ```sh
 npm run build:data
 npm run build:prediksjon
+npm run build:quiz
 ```
 
 `build:data` laster ned Mattilsynets CSV, slår opp kommune/fylke med Brings postnummerregister og geokoder adresser med Kartverket. Første kjøring kan ta tid; koordinater lagres i den lokale cachen `data/geocode-cache.json`. Ugyldig eller utilgjengelig kommuneregister stopper jobben før eksisterende datafiler overskrives.
 
 - `generated/steder.json`: steder og full tilsynshistorikk, leses på serveren.
 - `public/data/kart.json`: kompakt kartdata til nettleseren.
+- `generated/quiz.json`: dagsquizene i `/quiz` for i dag og i morgen, fra `build:quiz`. En dag som er skrevet, skrives aldri om, så alle får de samme fem stedene selv om nye tilsyn kommer i løpet av dagen. Dager som mangler i fila, regnes ut av siden.
 - `generated/prediksjon.json`: modellrapporter og anslag fra `build:prediksjon`, samt `fasit`, publiserte spådommer lest tilbake fra git-historikken og sjekket mot det som skjedde siden. Dette trenger full git-historikk, som arbeidsflyten henter med `fetch-depth: 0`.
 - `public/tilsyn.geojson`, `public/tilsyn-diff.json`, `public/tilsyn-meta.json`: beholdte dataformater for bakoverkompatibilitet.
 

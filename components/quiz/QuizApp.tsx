@@ -18,8 +18,17 @@ type Modus = "dag" | "ovelse";
 /** «Gjett smilefjeset»: dagens quiz og øvingsrunder. Rendres bare i nettleseren (dato og lagring). */
 export default function QuizApp({ dagens }: Props) {
   const iDag = useOsloDato();
-  const [modus, setModus] = useState<Modus>("dag");
-  const steder = iDag ? dagens[iDag] : undefined;
+  const [modus, setModusState] = useState<Modus>("dag");
+  // Øvingsdataene hentes først når øvingsrunden åpnes, og komponenten blir værende etterpå.
+  const [ovelseApnet, setOvelseApnet] = useState(false);
+  const setModus = (m: Modus) => {
+    setModusState(m);
+    if (m === "ovelse") setOvelseApnet(true);
+  };
+  // Datoen låses ved første svar, så en runde som pågår ved midnatt kan spilles ferdig.
+  const [laast, setLaast] = useState<string | null>(null);
+  const dato = laast ?? iDag;
+  const steder = dato ? dagens[dato] : undefined;
 
   return (
     <div className="space-y-5">
@@ -28,12 +37,26 @@ export default function QuizApp({ dagens }: Props) {
         <ModusKnapp aktiv={modus === "ovelse"} onClick={() => setModus("ovelse")} emoji="🎯" tekst="Øvingsrunde" />
       </div>
 
-      {iDag === null ? (
+      {laast && iDag && laast !== iDag && modus === "dag" && (
+        <p role="status" className="card flex flex-wrap items-center gap-3 bg-accent-soft px-4 py-3 font-semibold">
+          Klokka har passert midnatt, og en ny quiz er klar.
+          <button type="button" className="btn" onClick={() => setLaast(null)}>
+            Til dagens quiz →
+          </button>
+        </p>
+      )}
+
+      {/* Øvingsrunden holdes montert, så en runde i gang overlever bytte til dagens quiz og tilbake. */}
+      {ovelseApnet && (
+        <div hidden={modus !== "ovelse"}>
+          <QuizOvelse />
+        </div>
+      )}
+
+      {modus === "ovelse" ? null : dato === null ? (
         <div className="card h-80 animate-pulse bg-paper-2" aria-busy="true" aria-label="Laster quizen" />
-      ) : modus === "ovelse" ? (
-        <QuizOvelse />
       ) : steder && steder.length === QUIZ_LENGDE ? (
-        <DagensQuiz key={iDag} dato={iDag} steder={steder} onOvelse={() => setModus("ovelse")} />
+        <DagensQuiz key={dato} dato={dato} steder={steder} onStart={() => setLaast(dato)} onOvelse={() => setModus("ovelse")} />
       ) : (
         <section className="card p-5 sm:p-8">
           <h2 className="font-display text-2xl font-extrabold">Dagens quiz er ikke klar ennå</h2>
@@ -63,7 +86,9 @@ function ModusKnapp({ aktiv, onClick, emoji, tekst }: { aktiv: boolean; onClick:
   );
 }
 
-function DagensQuiz({ dato, steder, onOvelse }: { dato: string; steder: QuizSted[]; onOvelse: () => void }) {
+type DagProps = { dato: string; steder: QuizSted[]; onStart: () => void; onOvelse: () => void };
+
+function DagensQuiz({ dato, steder, onStart, onOvelse }: DagProps) {
   // Lagrede steder for dagen brukes framfor ferske, så svarene stemmer selv om dataene er oppdatert siden.
   const [lagret, setLagret] = useState<QuizLagret>(() => {
     const l = lesQuizLagring();
@@ -71,6 +96,8 @@ function DagensQuiz({ dato, steder, onOvelse }: { dato: string; steder: QuizSted
   });
   const dag = lagret.dag!;
   const [aktiv, setAktiv] = useState(dag.gjett.length);
+  // Fokus flyttes bare etter at spilleren har gått videre, ikke når siden lastes.
+  const [steget, setSteget] = useState(false);
 
   const gjett = (s: Smile) => {
     const g = [...dag.gjett, s];
@@ -82,6 +109,12 @@ function DagensQuiz({ dato, steder, onOvelse }: { dato: string; steder: QuizSted
     };
     setLagret(ny);
     skrivQuizLagring(ny);
+    onStart();
+  };
+
+  const neste = (i: number) => {
+    setAktiv(i + 1);
+    setSteget(true);
   };
 
   if (aktiv >= QUIZ_LENGDE && dag.gjett.length === QUIZ_LENGDE) {
@@ -89,7 +122,7 @@ function DagensQuiz({ dato, steder, onOvelse }: { dato: string; steder: QuizSted
     const spilt = Object.values(lagret.historikk);
     const snitt = spilt.reduce((a, b) => a + b, 0) / spilt.length;
     return (
-      <QuizResultat steder={dag.steder} gjett={dag.gjett} modus={{ type: "dag" }}>
+      <QuizResultat steder={dag.steder} gjett={dag.gjett} modus={{ type: "dag" }} fokuser={steget}>
         <dl className="mx-auto mt-6 grid max-w-xl grid-cols-3 gap-2 text-center sm:gap-3">
           <Stat etikett="Rekke" verdi={`${rekke} 🔥`} under={rekke === 1 ? "dag" : "dager på rad"} />
           <Stat etikett="Snitt" verdi={snitt.toLocaleString("nb-NO", { maximumFractionDigits: 1 })} under={`av 5 over ${spilt.length} ${spilt.length === 1 ? "dag" : "dager"}`} />
@@ -106,7 +139,7 @@ function DagensQuiz({ dato, steder, onOvelse }: { dato: string; steder: QuizSted
   return (
     <div className="space-y-4">
       <Fremdrift steder={dag.steder} gjett={dag.gjett} aktiv={i} />
-      <QuizRunde key={i} sted={dag.steder[i]} nr={i + 1} gjett={dag.gjett[i] ?? null} onGjett={gjett} onNeste={() => setAktiv(i + 1)} />
+      <QuizRunde key={i} sted={dag.steder[i]} nr={i + 1} gjett={dag.gjett[i] ?? null} onGjett={gjett} onNeste={() => neste(i)} fokuser={steget} />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   dagensQuiz,
   delingstekst,
+  frysQuizer,
   kodQuizData,
   KOMPOSISJONER,
   leggTilDager,
@@ -11,6 +12,7 @@ import {
   poengsum,
   QUIZ_LENGDE,
   quizKandidater,
+  quizerForDatoer,
   quizKontekst,
   quizRekke,
   sekunderTilNesteQuiz,
@@ -292,5 +294,41 @@ describe("lesLagret", () => {
     const steder = lagPool().slice(0, QUIZ_LENGDE);
     const dag = { dato: "2026-11-19", steder, gjett: ["smil", "sur"] };
     expect(lesLagret(JSON.stringify({ dag, historikk: {} })).dag).toEqual(dag);
+  });
+});
+
+describe("frysQuizer", () => {
+  const steder = (antallSur: number): Sted[] => [
+    ...Array.from({ length: 200 }, (_, i) => sted(`smil-${i}`, [t("2026-03-01", 0)])),
+    ...Array.from({ length: 20 }, (_, i) => sted(`strek-${i}`, [t("2026-03-01", 2)])),
+    ...Array.from({ length: antallSur }, (_, i) => sted(`sur-${i}`, [t("2026-03-01", 3)])),
+  ];
+  const slugs = (f: Record<string, QuizSted[]>) => Object.fromEntries(Object.entries(f).map(([d, q]) => [d, q.map((s) => s.slug)]));
+
+  it("fryser i dag og i morgen", () => {
+    expect(Object.keys(frysQuizer({}, steder(3), "2026-11-19"))).toEqual(["2026-11-19", "2026-11-20"]);
+  });
+
+  it("skriver aldri om en dag som er frosset, selv om nye steder ville tatt plassen", () => {
+    const forst = frysQuizer({}, steder(3), "2026-11-19");
+    const nyeData = steder(300);
+    // Med de nye dataene ville utvalget for de frosne dagene blitt et annet.
+    expect(slugs(quizerForDatoer({}, nyeData, ["2026-11-19", "2026-11-20"]))).not.toEqual(slugs(forst));
+    const neste = frysQuizer(forst, nyeData, "2026-11-20");
+    expect(neste["2026-11-19"]).toEqual(forst["2026-11-19"]);
+    expect(neste["2026-11-20"]).toEqual(forst["2026-11-20"]);
+    expect(Object.keys(neste)).toEqual(["2026-11-19", "2026-11-20", "2026-11-21"]);
+  });
+
+  it("sletter dager eldre enn to uker", () => {
+    const gammel = frysQuizer({}, steder(3), "2026-11-01");
+    expect(Object.keys(frysQuizer(gammel, steder(3), "2026-11-19"))).toEqual(["2026-11-19", "2026-11-20"]);
+  });
+
+  it("bruker frosne dager og regner ut resten", () => {
+    const frosne = frysQuizer({}, steder(3), "2026-11-19");
+    const dager = quizerForDatoer(frosne, steder(300), ["2026-11-19", "2026-11-25"]);
+    expect(dager["2026-11-19"]).toBe(frosne["2026-11-19"]);
+    expect(dager["2026-11-25"]).toHaveLength(QUIZ_LENGDE);
   });
 });

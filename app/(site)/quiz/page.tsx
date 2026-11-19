@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Smiley from "@/components/Smiley";
 import QuizApp from "@/components/quiz/QuizApp";
-import { dagensQuiz, leggTilDager, osloDato, quizKandidater, type QuizSted } from "@/lib/quiz";
+import { leggTilDager, osloDato, quizerForDatoer } from "@/lib/quiz";
 import { getSteder } from "@/lib/server/data";
+import { lesFrosneQuizer } from "@/lib/server/quiz";
 
 const SITE = "https://smilefjeskartet.no";
 const TITTEL = "Gjett smilefjeset – dagens Smilefjes-quiz";
@@ -29,18 +30,18 @@ export const metadata: Metadata = {
 // holder seg ferske selv om en datajobb skulle feile.
 export const revalidate = 21600;
 
-/** Dager rundt byggetidspunktet som får ferdig utregnet quiz: i går og en uke framover. */
+/**
+ * Dager rundt byggetidspunktet som får ferdig utregnet quiz: i går og en uke framover.
+ * Dagene datajobben har frosset, kommer fra generated/quiz.json. Resten regnes ut her, som
+ * reserve hvis datajobben står stille noen dager.
+ */
 const DAGER_FRA = -1;
 const DAGER_TIL = 7;
 
 export default function QuizSide() {
-  const steder = getSteder();
   const iDag = osloDato(new Date());
-  const dagens: Record<string, QuizSted[]> = {};
-  for (let i = DAGER_FRA; i <= DAGER_TIL; i++) {
-    const dato = leggTilDager(iDag, i);
-    dagens[dato] = dagensQuiz(quizKandidater(steder, dato), dato);
-  }
+  const datoer = Array.from({ length: DAGER_TIL - DAGER_FRA + 1 }, (_, i) => leggTilDager(iDag, DAGER_FRA + i));
+  const dagens = quizerForDatoer(lesFrosneQuizer(), getSteder(), datoer);
 
   return (
     <article className="mx-auto max-w-3xl space-y-6">

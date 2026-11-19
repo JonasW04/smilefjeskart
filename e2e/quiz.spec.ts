@@ -18,6 +18,7 @@ test.describe("Gjett smilefjeset", () => {
 
     const poeng = page.getByRole("heading", { level: 2, name: /^\d\/5$/ });
     await expect(poeng).toBeVisible();
+    await expect(poeng).toBeFocused();
     const resultat = await poeng.textContent();
 
     await page.getByRole("button", { name: /Kopier resultatet/ }).click();
@@ -40,6 +41,14 @@ test.describe("Gjett smilefjeset", () => {
     await page.getByRole("button", { name: /Start runde/ }).click();
     await expect(page.getByText("Øvingsrunde: Bergen")).toBeVisible();
     await expect(page.getByText("Sted 1 av 5")).toBeVisible();
+    const tittel = page.locator("section:has-text('Sted 1 av 5') h2");
+    await expect(tittel).toBeFocused();
     await expect(page.getByText(/Bergen$/).first()).toBeVisible();
+
+    // Runden overlever bytte til dagens quiz og tilbake.
+    const navn = await tittel.textContent();
+    await page.getByRole("button", { name: "Dagens quiz" }).click();
+    await page.getByRole("button", { name: "Øvingsrunde" }).click();
+    await expect(tittel.filter({ visible: true })).toHaveText(navn!);
   });
 });

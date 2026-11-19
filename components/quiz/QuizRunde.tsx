@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import Smiley from "@/components/Smiley";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
 import { QUIZ_LENGDE, quizKontekst, treffEmoji, type QuizSted } from "@/lib/quiz";
@@ -22,10 +22,13 @@ type Props = {
   gjett: Smile | null;
   onGjett: (s: Smile) => void;
   onNeste: () => void;
+  /** Flytt fokus til stedsnavnet ved visning. Av ved første lasting, så siden ikke hopper. */
+  fokuser: boolean;
 };
 
 /** Ett sted i quizen: spørsmålet, og etter gjetningen fasiten med litt historikk. */
-export default function QuizRunde({ sted, nr, gjett, onGjett, onNeste }: Props) {
+export default function QuizRunde({ sted, nr, gjett, onGjett, onNeste, fokuser }: Props) {
+  const tittelId = useId();
   const nesteRef = useRef<HTMLButtonElement>(null);
   const tittelRef = useRef<HTMLHeadingElement>(null);
   const besvart = gjett !== null;
@@ -35,17 +38,17 @@ export default function QuizRunde({ sted, nr, gjett, onGjett, onNeste }: Props) 
     if (besvart) nesteRef.current?.focus({ preventScroll: true });
   }, [besvart]);
   useEffect(() => {
-    if (nr > 1) tittelRef.current?.focus({ preventScroll: true });
-  }, [nr]);
+    if (fokuser) tittelRef.current?.focus();
+  }, [fokuser]);
 
   const sted2 = [sted.adresse, sted.kommune].filter(Boolean).join(", ");
 
   return (
-    <section aria-labelledby="quiz-sted" className={`card overflow-hidden p-5 transition-colors sm:p-8 ${besvart ? BG[sted.fasit] : ""}`}>
+    <section aria-labelledby={tittelId} className={`card overflow-hidden p-5 transition-colors sm:p-8 ${besvart ? BG[sted.fasit] : ""}`}>
       <p className="text-sm font-bold uppercase tracking-wide text-ink-soft">
         Sted {nr} av {QUIZ_LENGDE}
       </p>
-      <h2 id="quiz-sted" ref={tittelRef} tabIndex={-1} className="mt-1 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+      <h2 id={tittelId} ref={tittelRef} tabIndex={-1} className="mt-1 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
         {sted.navn}
       </h2>
       <p className="mt-2 flex flex-wrap items-center gap-2 text-ink-soft">

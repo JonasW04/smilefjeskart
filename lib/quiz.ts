@@ -4,8 +4,9 @@
  * serveren (utvalg ved bygging) og i nettleseren (øvingsrunder, deling, rekker).
  *
  * Utvalget er deterministisk: samme dato og samme data gir de samme fem stedene for alle.
- * Hvert sted får en tilfeldig, men fast rangering per dato (vektet trekning med hash), så
- * nye eller borteblitte steder i datasettet bare endrer utvalget hvis de selv havner øverst.
+ * Nye data kan likevel flytte et sted inn i toppen av rangeringen, så den daglige datajobben
+ * fryser utvalget for i dag og i morgen i generated/quiz.json (se frysQuizer). En frosset dag
+ * regnes aldri ut på nytt, så alle som spiller samme dag, får de samme stedene og svarene.
  */
 import type { Kategori } from "./classify";
 import { SMILES, smileFromKarakter, TEMAER, type Smile } from "./smile";
@@ -232,9 +233,39 @@ export function velgQuiz(kandidater: readonly QuizSted[], fro: string, dato: str
   return valgt.sort((a, b) => plass(a) - plass(b));
 }
 
-/** Dagens fem steder. Alle i Norge får de samme på samme dato. */
+/** Dagens fem steder, regnet ut fra dataene slik de er nå. */
 export function dagensQuiz(kandidater: readonly QuizSted[], dato: string): QuizSted[] {
   return velgQuiz(kandidater, `dag:${dato}`, dato);
+}
+
+/** Frosne dagsquizer, nøkkel = dato i Norge. Lagres i generated/quiz.json. */
+export type FrosneQuizer = Record<string, QuizSted[]>;
+
+/** Hvor mange dager datajobben fryser framover: i dag og i morgen. */
+export const FRYS_DAGER = 2;
+/** Frosne dager eldre enn dette slettes fra fila. */
+export const FRYS_BEHOLD_DAGER = 14;
+
+/**
+ * Legger til dagsquizer for i dag og i morgen som ikke er frosset ennå, og sletter gamle.
+ * Dager som allerede er frosset, beholdes uendret selv om dataene har endret seg siden.
+ */
+export function frysQuizer(frosne: FrosneQuizer, steder: readonly Sted[], iDag: string): FrosneQuizer {
+  const fra = leggTilDager(iDag, -FRYS_BEHOLD_DAGER);
+  const ut: FrosneQuizer = {};
+  for (const [dato, quiz] of Object.entries(frosne)) if (dato >= fra) ut[dato] = quiz;
+  for (let i = 0; i < FRYS_DAGER; i++) {
+    const dato = leggTilDager(iDag, i);
+    ut[dato] ??= dagensQuiz(quizKandidater(steder, dato), dato);
+  }
+  return Object.fromEntries(Object.entries(ut).sort(([a], [b]) => a.localeCompare(b)));
+}
+
+/** Dagsquizene for datoene: frosne der de finnes, ellers regnet ut fra dataene nå. */
+export function quizerForDatoer(frosne: FrosneQuizer, steder: readonly Sted[], datoer: readonly string[]): FrosneQuizer {
+  return Object.fromEntries(
+    datoer.map((dato) => [dato, frosne[dato]?.length === QUIZ_LENGDE ? frosne[dato] : dagensQuiz(quizKandidater(steder, dato), dato)]),
+  );
 }
 
 // ------------------------------------------------------------------ //

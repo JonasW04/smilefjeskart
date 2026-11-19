@@ -75,7 +75,7 @@ export default function QuizOvelse() {
 
   if (spill && spill.aktiv >= QUIZ_LENGDE) {
     return (
-      <QuizResultat steder={spill.steder} gjett={spill.gjett} modus={{ type: "ovelse", omrade: spill.omrade }}>
+      <QuizResultat steder={spill.steder} gjett={spill.gjett} modus={{ type: "ovelse", omrade: spill.omrade }} fokuser>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button type="button" className="btn btn-primary" onClick={start}>
             <span aria-hidden>🔁</span> Ny runde{omradeNavn ? ` i ${omradeNavn}` : ""}
@@ -105,6 +105,7 @@ export default function QuizOvelse() {
           gjett={spill.gjett[i] ?? null}
           onGjett={(s) => setSpill({ ...spill, gjett: [...spill.gjett, s] })}
           onNeste={() => setSpill({ ...spill, aktiv: i + 1 })}
+          fokuser
         />
       </div>
     );
