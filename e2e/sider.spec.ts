@@ -34,6 +34,21 @@ test.describe("Sidevekt (#42)", () => {
     await expect(liste.first()).toBeVisible();
     await expect(page.getByText(/\d+ treff/)).toBeVisible();
   });
+
+  test("Alle steder: søker i radene som finnes og lar deg prøve igjen hvis hentingen feiler", async ({ page }) => {
+    let tillat = false;
+    await page.route("**/kommune/oslo/steder.json", (route) => (tillat ? route.continue() : route.abort()));
+    await page.goto("/kommune/oslo");
+    const liste = page.locator("#steder ul a");
+    const forsteNavn = (await liste.first().locator("strong").textContent())!;
+    await page.getByRole("searchbox", { name: /Søk blant/ }).fill(forsteNavn);
+    await expect(page.getByText("Klarte ikke å hente alle stedene.")).toBeVisible();
+    // Treffet blant de server-rendrede radene vises fortsatt.
+    await expect(liste.first()).toContainText(forsteNavn);
+    tillat = true;
+    await page.getByRole("button", { name: "Prøv igjen" }).click();
+    await expect(page.getByText(/\d+ treff/)).toBeVisible();
+  });
 });
 
 test.describe("Mobil og forside (#44)", () => {
@@ -52,6 +67,18 @@ test.describe("Mobil og forside (#44)", () => {
     // «Om» er sist i menyen; den aktive lenken rulles fram.
     expect(scrollLeft).toBeGreaterThan(0);
     await expect(page.getByRole("link", { name: /Om/, exact: false }).and(page.locator('[aria-current="page"]'))).toBeInViewport();
+  });
+
+  test("med mus kan menyen rulles via et synlig rullefelt på mellomstore skjermer", async ({ page }) => {
+    await page.setViewportSize({ width: 800, height: 600 });
+    await page.goto("/analyse");
+    const meny = page.getByRole("navigation", { name: "Hovedmeny" }).locator("ul");
+    const { overflow, scrollbar } = await meny.evaluate((ul) => ({
+      overflow: ul.scrollWidth > ul.clientWidth,
+      scrollbar: getComputedStyle(ul).scrollbarWidth,
+    }));
+    expect(overflow).toBe(true);
+    expect(scrollbar).toBe("thin");
   });
 
   test("forsiden har innhold og lenker i HTML-en før kartet er lastet", async ({ request }) => {

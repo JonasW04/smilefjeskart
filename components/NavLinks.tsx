@@ -16,8 +16,9 @@ export const NAV = [
 
 /**
  * Menyen er én rad på alle skjermbredder. Når den ikke får plass (under lg), kan den rulles sidelengs,
- * og høyre kant tones ut så det synes at det er mer. Padding rundt lenkene gir plass til fokusringen,
- * som ellers ville blitt klippet av rullefeltet.
+ * og høyre kant tones ut så det synes at det er mer. Med mus vises et tynt rullefelt (et vanlig
+ * musehjul ruller ikke sidelengs); på berøringsskjerm skjules det. Padding rundt lenkene gir plass
+ * til fokusringen, som ellers ville blitt klippet av rullefeltet.
  */
 export default function NavLinks() {
   const path = usePathname();
@@ -34,7 +35,7 @@ export default function NavLinks() {
   return (
     <ul
       ref={ref}
-      className="relative -my-1.5 flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto overscroll-x-contain p-1.5 [scrollbar-width:none] sm:gap-2 max-lg:pr-6 max-lg:[mask-image:linear-gradient(to_right,#000_calc(100%-1.5rem),transparent)] [&::-webkit-scrollbar]:hidden [&>li]:shrink-0 [&>li:first-child]:ml-auto"
+      className="relative -my-1.5 flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto overscroll-x-contain p-1.5 [scrollbar-width:thin] pointer-coarse:[scrollbar-width:none] sm:gap-2 max-lg:pr-6 max-lg:[mask-image:linear-gradient(to_right,#000_calc(100%-1.5rem),transparent)] pointer-coarse:[&::-webkit-scrollbar]:hidden [&>li]:shrink-0 [&>li:first-child]:ml-auto"
     >
       {NAV.map((n) => {
         const active = n.href === "/" ? path === "/" : path.startsWith(n.href);

@@ -51,9 +51,10 @@ export default function AlleSteder({ forste, totalt, kilde }: Props) {
 
   const kilderader = alle ?? forste;
   const soker = sok.trim() !== "";
-  const liste = soker && alle ? filtrerSteder(alle, sok) : kilderader;
-  const vist = soker && !alle ? [] : liste.slice(0, antall);
-  const igjen = (soker ? liste.length : totalt) - vist.length;
+  // Mens resten lastes (eller hvis det feilet) søkes det i radene vi har.
+  const liste = soker ? filtrerSteder(kilderader, sok) : kilderader;
+  const vist = liste.slice(0, antall);
+  const igjen = soker ? (alle ? liste.length - vist.length : 0) : totalt - vist.length;
 
   return (
     <div className="space-y-3">
@@ -76,13 +77,18 @@ export default function AlleSteder({ forste, totalt, kilde }: Props) {
         />
         <p className="text-xs font-semibold text-ink-soft" aria-live="polite">
           {status === "laster" && soker
-            ? "Henter steder …"
+            ? "Henter alle stedene …"
             : status === "feil"
-              ? "Klarte ikke å hente stedene. Prøv igjen."
+              ? "Klarte ikke å hente alle stedene."
               : soker
                 ? `${tall(liste.length)} treff`
                 : `Viser ${tall(vist.length)} av ${tall(totalt)}`}
         </p>
+        {status === "feil" && (
+          <button type="button" className="btn !px-3 !py-1 text-xs" onClick={() => void hent()}>
+            Prøv igjen
+          </button>
+        )}
       </div>
 
       {vist.length > 0 ? (
@@ -91,7 +97,7 @@ export default function AlleSteder({ forste, totalt, kilde }: Props) {
         soker && alle && <p className="text-sm">Ingen steder her matcher «{sok.trim()}».</p>
       )}
 
-      {igjen > 0 && !(soker && !alle) && (
+      {igjen > 0 && status !== "feil" && (
         <button
           type="button"
           className="btn text-sm"
