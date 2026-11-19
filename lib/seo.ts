@@ -37,3 +37,23 @@ export function merkeSnippet(s: Sted): string {
     .replace(/>/g, "&gt;");
   return `<a href="https://smilefjeskartet.no/sted/${s.slug}"><img src="https://smilefjeskartet.no/sted/${s.slug}/merke.png" alt="Se smilefjeset til ${navn} på smilefjeskartet.no" width="220" height="56"></a>`;
 }
+
+/** Samme merke som Markdown, for README-er, Notion og nettsidebyggere som tar Markdown. */
+export function merkeMarkdown(s: Sted): string {
+  const alt = `Se smilefjeset til ${s.navn} på smilefjeskartet.no`.replace(/[\\[\]]/g, "\\$&");
+  return `[![${alt}](${SITE}/sted/${s.slug}/merke.png)](${SITE}/sted/${s.slug})`;
+}
+
+/** Lenke til merke-delen av stedsiden, til å sende til den som driver stedet. */
+export function merkeEierLenke(s: Sted): string {
+  return `${SITE}/sted/${s.slug}#merke`;
+}
+
+/**
+ * Ferdig melding til eieren. Med `siden` (fra renRekke) skryter den av rekka. Lenken (merkeEierLenke)
+ * legges bak av delingsknappen.
+ */
+export function merkeEierTekst(s: Sted, siden: string | null): string {
+  const skryt = siden ? `Hei! ${s.navn} har fått smil på alle tilsyn fra Mattilsynet siden ${siden}. ` : "Hei! ";
+  return `${skryt}Smilefjeskartet.no har et gratis merke ${siden ? "dere" : s.navn} kan vise på nettsiden. Det oppdaterer seg selv etter hvert tilsyn fra Mattilsynet:`;
+}

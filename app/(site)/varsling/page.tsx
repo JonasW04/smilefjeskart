@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Smiley from "@/components/Smiley";
 import VarslingSkjema from "@/components/varsling/VarslingSkjema";
+import { lesVarslingParams } from "@/lib/deling";
 import { getSteder } from "@/lib/server/data";
 import { varslingAktiv } from "@/lib/varsling/config";
 import { sokelister } from "@/lib/varsling/omrade";
@@ -38,7 +39,11 @@ const FAQ = [
   },
 ];
 
-export default function VarslingSide() {
+type SearchParams = Record<string, string | string[] | undefined>;
+
+export default async function VarslingSide({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  // ?lat=&lng=&navn= kommer fra «Varsle meg»-lenkene på stedsider og i kartet: området er da valgt på forhånd.
+  const start = lesVarslingParams(await searchParams);
   const aktiv = varslingAktiv();
   const { kommuner, poststeder } = aktiv ? sokelister(getSteder()) : { kommuner: [], poststeder: [] };
 
@@ -66,7 +71,7 @@ export default function VarslingSide() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
-        {aktiv ? <VarslingSkjema kommuner={kommuner} poststeder={poststeder} /> : <KommerSnart />}
+        {aktiv ? <VarslingSkjema kommuner={kommuner} poststeder={poststeder} start={start} /> : <KommerSnart />}
 
         <aside className="space-y-6">
           <section className="card p-5" aria-labelledby="steg-tittel">

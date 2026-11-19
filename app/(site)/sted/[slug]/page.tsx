@@ -3,15 +3,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import FordelingBar from "@/components/FordelingBar";
 import Smiley from "@/components/Smiley";
+import BildekortKnapp from "@/components/del/BildekortKnapp";
+import DelKnapp from "@/components/del/DelKnapp";
+import KopierKnapp from "@/components/del/KopierKnapp";
 import StedSpaakort from "@/components/prediksjon/StedSpaakort";
 import Tidslinje from "@/components/sted/Tidslinje";
 import { KATEGORI_EMOJI, KATEGORI_NAVN } from "@/lib/classify";
+import { varslingLenke } from "@/lib/deling";
 import { getDatasett, getSted, kjedeFordeling, kjedeSteder, kommuneFordeling, landFordeling, naermeste } from "@/lib/server/data";
 import { fylkeSlugFraNr, getOmrade, kommuneSlug } from "@/lib/server/omrader";
-import { merkeSnippet, stedBrodsmulerLd, stedTittel } from "@/lib/seo";
+import { merkeEierLenke, merkeEierTekst, merkeMarkdown, merkeSnippet, stedBrodsmulerLd, stedTittel } from "@/lib/seo";
 import { KARAKTER_FORKLARING, SMILE_LABEL, TEMAER, isGraded, smileFromKarakter } from "@/lib/smile";
 import { kindFromKarakter } from "@/lib/smiley";
-import { andel, dagerMellom, fordeling, formatDato, ordinaereKarakterer, prosent, sisteTilsyn, stedStats, tidSiden } from "@/lib/stats";
+import { andel, dagerMellom, fordeling, formatDato, ordinaereKarakterer, prosent, renRekke, sisteTilsyn, stedStats, tidSiden } from "@/lib/stats";
 import type { Sted } from "@/lib/types";
 
 type Params = { slug: string };
@@ -90,6 +94,10 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
   const kSlug = kommuneSlug(s.kommunenr);
   const fSlug = fylkeSlugFraNr(s.fylkenr);
   const kjedeSide = s.kjedeSlug ? getOmrade("kjede", s.kjedeSlug) : null;
+  const rekke = renRekke(s);
+  const merkeAlt = `Smilefjes-merke for ${s.navn}: ${kind === "ukjent" ? "ukjent" : SMILE_LABEL[kind].toLowerCase()}`;
+  const smil = smileFromKarakter(siste.karakter);
+  const delTekst = smil ? `${s.navn} fikk ${SMILE_LABEL[smil].toLowerCase()} ved siste tilsyn fra Mattilsynet.` : `Se tilsynene til ${s.navn} fra Mattilsynet.`;
   const kjedeRate = (k: Sted) => {
     const f = fordeling(ordinaereKarakterer(k));
     return f.total ? andel(f, "smil") : -1;
@@ -147,13 +155,54 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
               </p>
             )}
           </div>
-          {s.lat !== null && (
-            <Link href={`/?sted=${encodeURIComponent(s.slug)}`} className="btn btn-primary justify-self-start">
-              🗺️ Vis på kartet
-            </Link>
-          )}
+          <div className="flex flex-col gap-3 sm:items-end">
+            <div className="flex flex-wrap gap-2 sm:justify-end">
+              {s.lat !== null && (
+                <Link href={`/?sted=${encodeURIComponent(s.slug)}`} className="btn btn-primary">
+                  🗺️ Vis på kartet
+                </Link>
+              )}
+              <DelKnapp etikett="🔗 Del resultat" tittel={s.navn} tekst={delTekst} url={`/sted/${s.slug}`} />
+              <BildekortKnapp slug={s.slug} navn={s.navn} />
+            </div>
+            {s.lat !== null && s.lng !== null && (
+              <Link href={varslingLenke({ lat: s.lat, lng: s.lng, navn: s.navn })} className="link text-sm">
+                🔔 Varsle meg ved nytt tilsyn i nærheten →
+              </Link>
+            )}
+          </div>
         </div>
       </section>
+
+      {rekke && (
+        <section className="card flex flex-col gap-4 bg-smil-soft p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-6" aria-labelledby="eier-tittel">
+          <span className="pop-in shrink-0 rotate-3 text-5xl" aria-hidden>🏆</span>
+          <div className="min-w-0 flex-1 space-y-2">
+            <h2 id="eier-tittel" className="font-display text-xl font-extrabold sm:text-2xl">
+              Driver du dette stedet? 100 % smil siden {rekke.siden} – vis merket på nettsiden din
+            </h2>
+            <p className="text-sm text-ink-soft">
+              {rekke.ordinaere} ordinære tilsyn på rad har endt med smil. Merket er gratis, oppdaterer seg selv etter hvert tilsyn
+              og lenker gjestene rett hit.
+            </p>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <a href="#merke" className="btn btn-primary text-sm">
+                🏷️ Hent merket
+              </a>
+              <DelKnapp
+                etikett="📨 Del merke-lenke til eier"
+                className="btn text-sm"
+                tittel={`Smilefjes-merke for ${s.navn}`}
+                tekst={merkeEierTekst(s, rekke.siden)}
+                url={merkeEierLenke(s)}
+                kopierTekst
+              />
+            </div>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="shrink-0 self-start sm:self-center" src={`/sted/${s.slug}/merke.png`} alt={merkeAlt} width={220} height={56} />
+        </section>
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="min-w-0 space-y-6 lg:col-span-2">
@@ -286,16 +335,41 @@ export default async function StedSide({ params }: { params: Promise<Params> }) 
             </section>
           )}
 
-          <section className="card space-y-3 p-5" aria-labelledby="merke-tittel">
+          <section id="merke" className="card scroll-mt-24 space-y-3 p-5" aria-labelledby="merke-tittel">
             <h2 id="merke-tittel" className="font-display text-xl font-extrabold">Vis smilefjeset på nettsiden din</h2>
             <p className="text-sm text-ink-soft">Driver du {s.navn}? Lim inn koden under på nettsiden deres. Merket oppdaterer seg selv når det kommer nye tilsyn.</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/sted/${s.slug}/merke.png`} alt={`Smilefjes-merke for ${s.navn}: ${kind === "ukjent" ? "ukjent" : SMILE_LABEL[kind].toLowerCase()}`} width={220} height={56} loading="lazy" />
-            <pre className="select-all overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-paper p-3 text-xs"><code>{merkeSnippet(s)}</code></pre>
+            <img src={`/sted/${s.slug}/merke.png`} alt={merkeAlt} width={220} height={56} loading="lazy" />
+            <Snutt tittel="HTML" kode={merkeSnippet(s)} />
+            <Snutt tittel="Markdown" kode={merkeMarkdown(s)} />
+            <p className="text-xs text-ink-soft">
+              WordPress: lim inn HTML-koden i en «Egendefinert HTML»-blokk. Squarespace: bruk en «Code»-blokk. Wix: «Bygg inn
+              HTML». Merket lenker til smilefjeskartet.no, så gjestene kan se hele historikken.
+            </p>
+            <DelKnapp
+              etikett="📨 Del merke-lenke til eier"
+              className="btn text-sm"
+              tittel={`Smilefjes-merke for ${s.navn}`}
+              tekst={merkeEierTekst(s, rekke?.siden ?? null)}
+              url={merkeEierLenke(s)}
+              kopierTekst
+            />
           </section>
         </aside>
       </div>
     </article>
+  );
+}
+
+function Snutt({ tittel, kode }: { tittel: string; kode: string }) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{tittel}</p>
+        <KopierKnapp tekst={kode} etikett={`📋 Kopier ${tittel}`} className="px-3 py-1" />
+      </div>
+      <pre className="select-all overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-paper p-3 text-xs"><code>{kode}</code></pre>
+    </div>
   );
 }
 

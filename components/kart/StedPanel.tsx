@@ -5,7 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import type { StedApi } from "@/app/api/sted/[slug]/route";
 import FordelingBar from "@/components/FordelingBar";
 import Smiley from "@/components/Smiley";
-import { SMILE_LABEL, smileFromKarakter } from "@/lib/smile";
+import BildekortKnapp from "@/components/del/BildekortKnapp";
+import DelKnapp from "@/components/del/DelKnapp";
+import { varslingLenke } from "@/lib/deling";
+import { SMILE_LABEL, smileFromKarakter, type Smile } from "@/lib/smile";
 import { kindFromKarakter } from "@/lib/smiley";
 import { andel, formatDato, prosent, tidSiden } from "@/lib/stats";
 
@@ -15,7 +18,6 @@ type Tilstand = { slug: string; data: StedApi | null; feil: boolean };
 
 export default function StedPanel({ slug, onLukk }: Props) {
   const [tilstand, setTilstand] = useState<Tilstand>({ slug, data: null, feil: false });
-  const [kopiert, setKopiert] = useState(false);
   const lukkRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -35,22 +37,6 @@ export default function StedPanel({ slug, onLukk }: Props) {
 
   const gjeldende = tilstand.slug === slug ? tilstand : { slug, data: null, feil: false };
   const d = gjeldende.data;
-
-  const del = async () => {
-    // Del stedssiden: den har eget delingsbilde og mer innhold enn en kartlenke.
-    const url = `${window.location.origin}/sted/${encodeURIComponent(slug)}`;
-    try {
-      if (navigator.share && window.matchMedia("(pointer: coarse)").matches) {
-        await navigator.share({ title: d?.navn ?? "Smilefjeskartet", url });
-        return;
-      }
-      await navigator.clipboard.writeText(url);
-      setKopiert(true);
-      setTimeout(() => setKopiert(false), 1800);
-    } catch {
-      /* deling avbrutt eller utklippstavle ikke tilgjengelig */
-    }
-  };
 
   return (
     <aside
@@ -78,12 +64,12 @@ export default function StedPanel({ slug, onLukk }: Props) {
         </div>
       )}
 
-      {d && <Innhold d={d} del={del} kopiert={kopiert} />}
+      {d && <Innhold d={d} />}
     </aside>
   );
 }
 
-function Innhold({ d, del, kopiert }: { d: StedApi; del: () => void; kopiert: boolean }) {
+function Innhold({ d }: { d: StedApi }) {
   const siste = d.tilsyn[d.tilsyn.length - 1];
   const sisteSmil = smileFromKarakter(siste.karakter);
   const visHistorikk = d.tilsyn.slice(-16);
@@ -146,10 +132,20 @@ function Innhold({ d, del, kopiert }: { d: StedApi; del: () => void; kopiert: bo
         <Link href={`/sted/${d.slug}`} className="btn btn-primary">
           Se hele historikken →
         </Link>
-        <button type="button" onClick={del} className="btn" aria-live="polite">
-          {kopiert ? "✅ Kopiert!" : "🔗 Del"}
-        </button>
+        {/* Del stedssiden: den har eget delingsbilde og mer innhold enn en kartlenke. */}
+        <DelKnapp etikett="🔗 Del resultat" tittel={d.navn} tekst={delTekst(d.navn, sisteSmil)} url={`/sted/${encodeURIComponent(d.slug)}`} />
+        <BildekortKnapp slug={d.slug} navn={d.navn} />
       </div>
+
+      {d.lat !== null && d.lng !== null && (
+        <Link href={varslingLenke({ lat: d.lat, lng: d.lng, navn: d.navn })} className="link inline-block text-sm">
+          🔔 Varsle meg ved nytt tilsyn i nærheten →
+        </Link>
+      )}
     </div>
   );
+}
+
+function delTekst(navn: string, smil: Smile | null): string {
+  return smil ? `${navn} fikk ${SMILE_LABEL[smil].toLowerCase()} ved siste tilsyn fra Mattilsynet.` : `Se tilsynene til ${navn} fra Mattilsynet.`;
 }
