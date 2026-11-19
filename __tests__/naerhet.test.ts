@@ -55,7 +55,8 @@ describe("haversine", () => {
 describe("stederInnen", () => {
   it("tar bare med steder innenfor radiusen, nærmeste først", () => {
     const d = data([rad("langt", 6000, 0, 0), rad("b", 900, 0, 0), rad("a", 100, 0, 0), rad("ost", 0, 0, 0)]);
-    d.steder[3][3] = SENTRUM.lng + 0.04; // ~2,2 km øst
+    // ~3,9 km øst: utenfor en boks som glemmer at lengdegrader er kortere i nord (±0,045°).
+    d.steder[3][3] = SENTRUM.lng + 0.07;
     expect(slugs(stederInnen(d, SENTRUM))).toEqual(["a", "b", "ost"]);
     expect(slugs(stederInnen(d, SENTRUM, 1000))).toEqual(["a", "b"]);
   });

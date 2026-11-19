@@ -66,13 +66,22 @@ export default function NaerMegKort({ dom, punkt, auto, modus, kategori, skjult,
   const [fane, setFane] = useState<Fane>("verst");
   const lukkRef = useRef<HTMLButtonElement>(null);
   const faneRefs = useRef<Record<Fane, HTMLButtonElement | null>>({ verst: null, tryggest: null });
+  const sistValgtRef = useRef<HTMLButtonElement | null>(null);
   const { kind, tittel } = humor(dom);
   const kjent = dom.telling.smil + dom.telling.strek + dom.telling.sur;
   const liste = fane === "verst" ? dom.verst : dom.tryggest;
 
+  // Fokus til kortet når det åpnes, og tilbake til stedet man valgte når stedspanelet lukkes.
   useEffect(() => {
-    lukkRef.current?.focus({ preventScroll: true });
-  }, []);
+    if (skjult) return;
+    const mal = sistValgtRef.current?.isConnected ? sistValgtRef.current : lukkRef.current;
+    mal?.focus({ preventScroll: true });
+  }, [skjult]);
+
+  const velg = (rad: KartRad, knapp: HTMLButtonElement) => {
+    sistValgtRef.current = knapp;
+    onVelg(rad);
+  };
 
   const byttFane = (e: React.KeyboardEvent) => {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
@@ -171,7 +180,7 @@ export default function NaerMegKort({ dom, punkt, auto, modus, kategori, skjult,
             ) : (
               <ol className="space-y-1.5">
                 {liste.map((s) => (
-                  <StedRad key={s.rad[KART.SLUG]} sted={s} modus={modus} onVelg={onVelg} />
+                  <StedRad key={s.rad[KART.SLUG]} sted={s} modus={modus} onVelg={velg} />
                 ))}
               </ol>
             )}
@@ -186,14 +195,16 @@ export default function NaerMegKort({ dom, punkt, auto, modus, kategori, skjult,
   );
 }
 
-function StedRad({ sted, modus, onVelg }: { sted: NaertSted; modus: Modus; onVelg: (rad: KartRad) => void }) {
+type StedRadProps = { sted: NaertSted; modus: Modus; onVelg: (rad: KartRad, knapp: HTMLButtonElement) => void };
+
+function StedRad({ sted, modus, onVelg }: StedRadProps) {
   const g = radGruppe(sted.rad, modus);
   const smil = g < 3 ? SMILES[g] : null;
   return (
     <li>
       <button
         type="button"
-        onClick={() => onVelg(sted.rad)}
+        onClick={(e) => onVelg(sted.rad, e.currentTarget)}
         className="flex w-full items-center gap-2.5 rounded-2xl border-2 border-transparent bg-paper px-2.5 py-2 text-left transition-colors hover:border-line"
       >
         <Smiley kind={smil ?? "ukjent"} size={30} />

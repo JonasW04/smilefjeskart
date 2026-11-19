@@ -311,15 +311,24 @@ export default function KartApp() {
   // Vis hele radiusen rundt brukeren, med plass til nabolagskortet.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !kartKlart || !meg || aktivRadius === null) return;
-    const bred = window.innerWidth >= 640;
-    const plassTilFilter = window.innerWidth >= 1100;
-    // På mobil dekker kortet opptil 58 % av kartet nedenfra (max-h i NaerMegKort).
-    const hoyde = map.getContainer().clientHeight;
+    // Et åpent stedspanel har kartet; flytt det ikke bort fra stedet.
+    if (!map || !kartKlart || !meg || aktivRadius === null || valgtRef.current) return;
+    const kart = map.getContainer().getBoundingClientRect();
+    let padding: maplibregl.PaddingOptions;
+    if (kart.width < 640) {
+      // Kortet dekker opptil 58 % av kartet nedenfra (max-h i NaerMegKort).
+      padding = { top: 100, bottom: kart.height * 0.58 + 10, left: 20, right: 20 };
+    } else if (kart.width - 810 >= 250) {
+      // Filterkolonnen til venstre, kortet til høyre.
+      padding = { top: 40, bottom: 40, left: 400, right: 410 };
+    } else {
+      // Smalt (nettbrett): bruk plassen under filterkolonnen.
+      const filter = document.getElementById("kart-filter")?.getBoundingClientRect();
+      const top = filter ? filter.bottom - kart.top + 20 : 40;
+      padding = { top: Math.min(top, kart.height - 200), bottom: 40, left: 20, right: 410 };
+    }
     map.fitBounds(boksRundt(meg, aktivRadius), {
-      padding: bred
-        ? { top: 40, bottom: 40, left: plassTilFilter ? 400 : 40, right: 410 }
-        : { top: 100, bottom: hoyde * 0.58 + 10, left: 20, right: 20 },
+      padding,
       maxZoom: 16.5,
       duration: 900,
     });
@@ -350,7 +359,7 @@ export default function KartApp() {
     // Sørg for at stedet er synlig selv om filteret ellers skjuler det.
     if (data && !passerFilter(rad, data, modus, filter)) {
       setSmil(new Set(SMILES));
-      setKategori("alle");
+      if (data.kategorier[rad[KART.KATEGORI]] !== kategori) setKategori("alle");
     }
     setValgt(slug);
     flyTil(slug);

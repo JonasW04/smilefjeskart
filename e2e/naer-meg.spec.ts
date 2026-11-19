@@ -46,9 +46,41 @@ test.describe("Sjekk rundt meg", () => {
     await expect(kort).toBeVisible();
     await expect(kort.getByRole("tab", { name: /Tryggest i nærheten/ })).toHaveAttribute("aria-selected", "true");
 
+    // Fokus tilbake til stedet i listen, så Escape lukker kortet.
+    await expect(forste).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(kort).toBeHidden();
   });
+
+  test("varslingslenken fyller ut punkt og radius", async ({ page }) => {
+    await page.goto("/varsling?lat=59.914&lng=10.752&km=5");
+    test.skip(await page.getByText("Varsling kommer snart!").isVisible(), "Varsling er ikke konfigurert (miljøvariabler mangler)");
+    await expect(page.getByText("Der du sjekket på kartet")).toBeVisible();
+    await expect(page.locator('input[name="km"][value="5"]')).toBeChecked();
+  });
+
+  for (const viewport of [
+    { width: 1280, height: 800 },
+    { width: 1024, height: 768 },
+    { width: 820, height: 1180 },
+  ]) {
+    test(`posisjonen er synlig ved siden av filter og kort (${viewport.width} px)`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      const kort = await apneNaerMeg(page);
+      await page.waitForTimeout(1500); // fitBounds-animasjonen
+      if (skjermbilder) await page.screenshot({ path: `${skjermbilder}/bredde-${viewport.width}.png` });
+      const meg = (await page.locator(".kart-meg").boundingBox())!;
+      const filter = (await page.locator("#kart-filter").boundingBox())!;
+      const kortBoks = (await kort.boundingBox())!;
+      const midt = { x: meg.x + meg.width / 2, y: meg.y + meg.height / 2 };
+      const inni = (b: { x: number; y: number; width: number; height: number }) =>
+        midt.x >= b.x && midt.x <= b.x + b.width && midt.y >= b.y && midt.y <= b.y + b.height;
+      expect(inni(filter)).toBe(false);
+      expect(inni(kortBoks)).toBe(false);
+      expect(midt.x).toBeGreaterThan(0);
+      expect(midt.y).toBeLessThan(viewport.height);
+    });
+  }
 
   test("passer på mobil uten å dekke søket", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
