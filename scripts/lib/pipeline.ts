@@ -3,7 +3,7 @@
  * Ingen nettverk eller filsystem her – det ligger i scripts/build-data.ts.
  */
 import Papa from "papaparse";
-import { kategoriForSted, kjedeFraNavn, type Kategori } from "../../lib/classify";
+import { kategoriForSted, kjedeFraNavn, type Kategori, type Kilder } from "../../lib/classify";
 import { fylkeFraKommunenr } from "../../lib/geo";
 import { totalKarakter } from "../../lib/smile";
 import { sisteTilsyn } from "../../lib/stats";
@@ -101,6 +101,8 @@ export function shortHash(s: string): string {
 export type BuildOptions = {
   kommuneForPostnr: (postnr: string) => Kommune | null;
   koordinatFor: (row: TilsynRow) => Koordinat | null;
+  /** Næringskode og OpenStreetMap-data for kategorien (scripts/lib/kilder.ts). Uten den brukes bare navnet. */
+  kilderFor?: (s: Pick<Sted, "navn" | "orgnr" | "lat" | "lng" | "poststed" | "kommune">) => Kilder;
 };
 
 /**
@@ -139,7 +141,7 @@ export function buildSteder(rows: TilsynRow[], opts: BuildOptions): Sted[] {
     const kjede = kjedeFraNavn(navn);
     const koord = opts.koordinatFor(siste);
 
-    steder.push({
+    const sted: Sted = {
       id,
       slug: "",
       navn,
@@ -153,11 +155,13 @@ export function buildSteder(rows: TilsynRow[], opts: BuildOptions): Sted[] {
       fylke: fylke?.navn ?? null,
       kjede: kjede?.navn ?? null,
       kjedeSlug: kjede?.slug ?? null,
-      kategori: kategoriForSted(navn, kjede),
+      kategori: "annet",
       lng: koord ? round(koord.lng, 6) : null,
       lat: koord ? round(koord.lat, 6) : null,
       tilsyn,
-    });
+    };
+    sted.kategori = kategoriForSted(navn, kjede, opts.kilderFor?.(sted));
+    steder.push(sted);
   }
 
   assignSlugs(steder);

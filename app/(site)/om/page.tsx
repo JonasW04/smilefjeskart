@@ -32,7 +32,7 @@ const FAQ = [
   },
   {
     q: "Hvor kommer dataene fra?",
-    a: "Tilsynsdataene er Mattilsynets åpne datasett (NLOD 2.0). Adresser plasseres på kartet med Kartverkets adresse-API, og kommune hentes fra postnummeret. Kjede og kategori gjettes ut fra stedsnavnet, så de kan ta feil for enkeltsteder.",
+    a: "Tilsynsdataene er Mattilsynets åpne datasett (NLOD 2.0). Adresser plasseres på kartet med Kartverkets adresse-API, og kommune hentes fra postnummeret. Typen sted kommer fra næringskoden i Enhetsregisteret (Brønnøysundregistrene, NLOD) og kjøkkentypen i OpenStreetMap (© OpenStreetMap-bidragsytere, ODbL), og fra navnet der de ikke sier noe. Kjeden gjettes ut fra navnet. Begge kan ta feil for enkeltsteder.",
   },
   {
     q: "Er dette Mattilsynets nettside?",

@@ -90,11 +90,14 @@ export function strokForPostnr(kommunenr: string | null, postnr: string): Strok 
   return kommunenr ? (strokOppslag.get(`${kommunenr}:${postnr}`) ?? null) : null;
 }
 
-export type LokalKategori = Exclude<Kategori, "annet">;
+/** «Restaurant» er restauranter uten kjent kjøkken, og «annet» er butikker, museer og ferjer: ingen egne sider. */
+export type LokalKategori = Exclude<Kategori, "annet" | "restaurant">;
+
+export const harLokalSide = (k: Kategori): k is LokalKategori => k !== "annet" && k !== "restaurant";
 
 /** Tekster per kategori: overskrift («Sushi i Oslo») og flertall i løpende tekst («de 50 sushistedene»). */
 export const KATEGORI_TEKST: Record<LokalKategori, { tittel: string; ubestemt: string; bestemt: string }> = {
-  hotell: { tittel: "Hoteller", ubestemt: "hoteller", bestemt: "hotellene" },
+  hotell: { tittel: "Hoteller og overnatting", ubestemt: "hoteller og overnattingssteder", bestemt: "hotellene og overnattingsstedene" },
   bakeri: { tittel: "Bakerier", ubestemt: "bakerier", bestemt: "bakeriene" },
   kafe: { tittel: "Kafeer", ubestemt: "kafeer", bestemt: "kafeene" },
   pizza: { tittel: "Pizza", ubestemt: "pizzasteder", bestemt: "pizzastedene" },
@@ -104,9 +107,12 @@ export const KATEGORI_TEKST: Record<LokalKategori, { tittel: string; ubestemt: s
   asiatisk: { tittel: "Asiatisk mat", ubestemt: "asiatiske restauranter", bestemt: "de asiatiske restaurantene" },
   indisk: { tittel: "Indisk og nepalsk mat", ubestemt: "indiske og nepalske restauranter", bestemt: "de indiske og nepalske restaurantene" },
   meksikansk: { tittel: "Meksikansk mat", ubestemt: "meksikanske restauranter", bestemt: "de meksikanske restaurantene" },
+  italiensk: { tittel: "Italiensk mat", ubestemt: "italienske restauranter", bestemt: "de italienske restaurantene" },
+  midtosten: { tittel: "Mat fra Midtøsten", ubestemt: "restauranter med mat fra Midtøsten", bestemt: "restaurantene med mat fra Midtøsten" },
+  sjomat: { tittel: "Sjømat og fisk", ubestemt: "sjømatrestauranter", bestemt: "sjømatrestaurantene" },
   bar: { tittel: "Barer og puber", ubestemt: "barer og puber", bestemt: "barene og pubene" },
   gatekjokken: { tittel: "Gatekjøkken", ubestemt: "gatekjøkken", bestemt: "gatekjøkkenene" },
-  kantine: { tittel: "Kantiner", ubestemt: "kantiner", bestemt: "kantinene" },
+  kantine: { tittel: "Kantiner og catering", ubestemt: "kantiner og cateringkjøkken", bestemt: "kantinene og cateringkjøkkenene" },
 };
 
 /** Postnumre som korte intervaller: ["0185", …, "0190", "0656"] → «0185–0190 og 0656». */
@@ -153,7 +159,7 @@ export function storNok(g: Pick<LokalGruppe, "steder" | "ordinaer">): boolean {
 }
 
 /**
- * Alle lokale grupper over tersklene: kategori × kommune (uten «annet») og strøk × kommune.
+ * Alle lokale grupper over tersklene: kategori × kommune (uten «annet» og «restaurant») og strøk × kommune.
  * Rekkefølge: kommunenummer, så type (kategori først), så flest steder.
  */
 export function lokaleGrupper(steder: Iterable<Sted>): LokalGruppe[] {
@@ -166,7 +172,7 @@ export function lokaleGrupper(steder: Iterable<Sted>): LokalGruppe[] {
   for (const s of steder) {
     if (!s.kommunenr) continue;
     const nr = s.kommunenr;
-    if (s.kategori !== "annet") {
+    if (harLokalSide(s.kategori)) {
       const kat = s.kategori;
       leggTilSted(hent(`${nr}:k:${kat}`, () => nyGruppe("kategori", nr, kat, KATEGORI_TEKST[kat].tittel, kat, null)), s);
     }

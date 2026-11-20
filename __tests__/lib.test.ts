@@ -63,7 +63,8 @@ describe("classify", () => {
     expect(kategoriFraNavn("Sushi & Pizza Kafé")).toBe("sushi");
     expect(kategoriFraNavn("Thai Orchid")).toBe("asiatisk");
     expect(kategoriFraNavn("Kjelstad Bakeri")).toBe("bakeri");
-    expect(kategoriFraNavn("Restaurant Fjord")).toBe("annet");
+    expect(kategoriFraNavn("Restaurant Fjord")).toBe("restaurant");
+    expect(kategoriFraNavn("Fjord")).toBe("annet");
   });
 
   it("lets chain category win", () => {

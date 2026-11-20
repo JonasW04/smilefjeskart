@@ -8,7 +8,7 @@ if (typeof window !== "undefined") {
   setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
 }
 import Smiley from "@/components/Smiley";
-import { KATEGORI_EMOJI, KATEGORI_NAVN, type Kategori } from "@/lib/classify";
+import { KATEGORI_EMOJI, KATEGORI_NAVN, KJOKKEN_KATEGORIER, STEDTYPE_KATEGORIER, type Kategori } from "@/lib/classify";
 import {
   byggSokIndeks,
   harAktivtFilter,
@@ -35,6 +35,9 @@ import Sok from "./Sok";
 import StedPanel from "./StedPanel";
 
 const KATEGORIER = Object.keys(KATEGORI_NAVN) as Kategori[];
+/** I filteret er «Restaurant» restauranter der ingen kilde oppgir kjøkken, og det må navnet si. */
+const FILTER_NAVN: Partial<Record<Kategori, string>> = { restaurant: "Andre restauranter" };
+const filterNavn = (k: Kategori) => FILTER_NAVN[k] ?? KATEGORI_NAVN[k];
 
 function settValgtFilter(map: maplibregl.Map, slug: string | null) {
   if (map.getLayer("valgt-ring")) {
@@ -440,11 +443,22 @@ export default function KartApp() {
 
   const antallVist = geojson?.features.length ?? 0;
   const filterAktivt = harAktivtFilter(filter, SMILES.length);
-  const antallIKategori = useMemo(() => {
-    if (!data || kategori === "alle") return 0;
-    const ki = data.kategorier.indexOf(kategori);
-    return data.steder.reduce((n, r) => n + (r[KART.KATEGORI] === ki ? 1 : 0), 0);
-  }, [data, kategori]);
+  const antallPerKategori = useMemo(() => {
+    const m = new Map<Kategori, number>();
+    if (!data) return m;
+    for (const r of data.steder) {
+      const k = data.kategorier[r[KART.KATEGORI]];
+      m.set(k, (m.get(k) ?? 0) + 1);
+    }
+    return m;
+  }, [data]);
+  const antallIKategori = kategori === "alle" ? 0 : (antallPerKategori.get(kategori) ?? 0);
+  const kategoriValg = (k: Kategori) => (
+    <option key={k} value={k}>
+      {KATEGORI_EMOJI[k]} {filterNavn(k)}
+      {data ? ` (${(antallPerKategori.get(k) ?? 0).toLocaleString("nb-NO")})` : ""}
+    </option>
+  );
 
   return (
     <div className="absolute inset-0">
@@ -503,7 +517,7 @@ export default function KartApp() {
                 ))}
               {kategori !== "alle" && (
                 <span>
-                  {KATEGORI_EMOJI[kategori]} {KATEGORI_NAVN[kategori]}
+                  {KATEGORI_EMOJI[kategori]} {filterNavn(kategori)}
                 </span>
               )}
               <span className="font-semibold tabular-nums text-ink-soft">· {antallVist.toLocaleString("nb-NO")} steder</span>
@@ -565,24 +579,24 @@ export default function KartApp() {
 
           <div>
             <label className="flex items-center gap-2 text-sm font-semibold">
-              <span className="shrink-0">Type sted</span>
+              <span className="shrink-0">Vis</span>
               <select
                 value={kategori}
                 onChange={(e) => setKategori(e.target.value as Kategori | "alle")}
                 className="min-w-0 flex-1 rounded-full border-2 border-line bg-card px-3 py-1.5 font-semibold text-ink"
               >
-                <option value="alle">🍴 Alle typer</option>
-                {KATEGORIER.map((k) => (
-                  <option key={k} value={k}>
-                    {KATEGORI_EMOJI[k]} {KATEGORI_NAVN[k]}
-                  </option>
-                ))}
+                <option value="alle">🍴 Alle steder</option>
+                <optgroup label="Hva slags mat">{KJOKKEN_KATEGORIER.map(kategoriValg)}</optgroup>
+                <optgroup label="Hva slags sted">{STEDTYPE_KATEGORIER.map(kategoriValg)}</optgroup>
               </select>
             </label>
             {kategori !== "alle" && (
               <p className="mt-1.5 text-xs leading-relaxed text-ink-soft">
-                {antallIKategori.toLocaleString("nb-NO")} steder har denne typen. Mattilsynet oppgir ikke type, så vi
-                gjetter ut fra navnet. Steder med nøytrale navn havner i «{KATEGORI_NAVN.annet}».
+                {antallIKategori.toLocaleString("nb-NO")} steder. Mattilsynet oppgir ikke type, så den kommer fra
+                Enhetsregisteret og OpenStreetMap, og fra navnet der de ikke sier noe.{" "}
+                {kategori === "restaurant"
+                  ? "Dette er restauranter der ingen av kildene sier hva slags mat de lager."
+                  : "Restauranter der ingen kilde sier hva slags mat de lager, ligger under «Andre restauranter»."}
               </p>
             )}
           </div>

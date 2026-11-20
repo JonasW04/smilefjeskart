@@ -109,6 +109,9 @@ const KJOKKEN: Partial<Record<Kategori, string>> = {
   asiatisk: "Asiatisk",
   indisk: "Indisk",
   meksikansk: "Meksikansk",
+  italiensk: "Italiensk",
+  midtosten: "Midtøsten",
+  sjomat: "Sjømat",
 };
 
 /**
