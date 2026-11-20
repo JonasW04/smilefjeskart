@@ -323,6 +323,12 @@ describe("kategoriForSted med kilder", () => {
     expect(kat("Chili Restaurant", { naeringskode: "56.110", registernavn: "CHILI SZEHUAN RESTAURANT" })).toBe("asiatisk");
     expect(kat("Five Rivers", { naeringskode: "56.110", aktivitet: "Serveringsvirksomhet - salg kjøp av indisk mat og takeaway" })).toBe("indisk");
     expect(kat("Casa Bella", { naeringskode: "56.110", aktivitet: "Produksjon og salg av pizza, kebab, hamburger." })).toBe("restaurant");
+    // Aktiviteten er hovedenhetens: den slår ikke et navn som sier hva slags sted det er.
+    expect(kat("Håkon Gjestehus", { naeringskode: "56.110", aktivitet: "Thailandske retter og gjestehus" })).toBe("hotell");
+    expect(kat("Tiramisu Kaffebar", { naeringskode: "56.110", aktivitet: "Drift av pizzarestaurant" })).toBe("kafe");
+    // OSM-kjøkken gjelder bare restauranter og gatekjøkken, og ikke steder med hotellnavn.
+    expect(kat("Flåm", { naeringskode: "56.110", osm: osm("bakery", "pizza") })).toBe("bakeri");
+    expect(kat("Lodge 900", { naeringskode: "56.110", osm: osm("restaurant", "italian") })).toBe("hotell");
     // Registernavnet brukes bare når navnet på døra ikke sier noe: Polka Grill er ikke sjømat.
     expect(kat("Polka Grill & Spiseri", { naeringskode: "56.110", registernavn: "FISH & COW AS" })).toBe("gatekjokken");
   });

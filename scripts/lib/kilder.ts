@@ -155,21 +155,34 @@ export async function oppdaterKilder(
   const { brreg, osm } = lesKilder();
   const unike = [...new Set(orgnr)];
 
-  try {
-    const alle = tving || eldreEnn(brreg.hentet, OPPFRISK_DAGER, naa);
-    const hent = alle ? unike : unike.filter((nr) => !(nr in brreg.enheter));
-    if (hent.length > 0) {
-      const nye = await hentBrregPoster(hent);
-      if (alle && Object.keys(nye).length < unike.length * 0.9) {
+  const manglende = () => unike.filter((nr) => !(nr in brreg.enheter));
+  let fullOppfrisking = tving || eldreEnn(brreg.hentet, OPPFRISK_DAGER, naa);
+  if (fullOppfrisking) {
+    try {
+      const nye = await hentBrregPoster(unike);
+      if (Object.keys(nye).length < unike.length * 0.9) {
         throw new Error(`bare ${Object.keys(nye).length} av ${unike.length} organisasjonsnumre funnet`);
       }
-      brreg.enheter = alle ? nye : { ...brreg.enheter, ...nye };
-      if (alle) brreg.hentet = naa.toISOString();
+      brreg.enheter = nye;
+      brreg.hentet = naa.toISOString();
       skrivBrreg(brreg);
-      console.log(`Enhetsregisteret: ${Object.keys(nye).length} av ${hent.length} organisasjonsnumre hentet`);
+      console.log(`Enhetsregisteret: ${Object.keys(nye).length} av ${unike.length} organisasjonsnumre hentet`);
+    } catch (e) {
+      console.warn(`Enhetsregisteret: full oppfrisking feilet, henter bare nye (${e instanceof Error ? e.message : e})`);
+      fullOppfrisking = false;
     }
-  } catch (e) {
-    console.warn(`Enhetsregisteret: bruker lagret versjon (${e instanceof Error ? e.message : e})`);
+  }
+  // Nye organisasjonsnumre hentes hver dag, også når den fulle oppfriskingen feiler.
+  const hent = fullOppfrisking ? [] : manglende();
+  if (hent.length > 0) {
+    try {
+      const nye = await hentBrregPoster(hent);
+      brreg.enheter = { ...brreg.enheter, ...nye };
+      skrivBrreg(brreg);
+      console.log(`Enhetsregisteret: ${Object.keys(nye).length} av ${hent.length} nye organisasjonsnumre hentet`);
+    } catch (e) {
+      console.warn(`Enhetsregisteret: bruker lagret versjon (${e instanceof Error ? e.message : e})`);
+    }
   }
 
   if (tving || eldreEnn(osm.hentet, OPPFRISK_DAGER, naa)) {
@@ -203,22 +216,28 @@ const FYLLORD = new Set(
   ).split(" "),
 );
 
+/** Ord på minst tre bokstaver uten fyllord og stedsnavn. Korte ord («to», «st») gir for mange tilfeldige treff. */
 const ord = (navn: string, bort: ReadonlySet<string>) =>
   asciiFold(navn)
     .split(" ")
-    .filter((w) => w.length > 1 && !FYLLORD.has(w) && !bort.has(w));
+    .filter((w) => w.length > 2 && !FYLLORD.has(w) && !bort.has(w));
 
 /**
  * Hvor like to navn er, etter at fyllord og stedsnavn er fjernet. `delvis` er andelen av ordene i det korteste
  * navnet som finnes i det andre («Egon» og «Egon Porsgrunn» gir 1), `helt` andelen av alle ordene (0,5).
- * Begge er 0 når ett av navnene bare har fyllord.
+ *
+ * Det første ordet i ett av navnene må være med blant de felles ordene. Ellers kobles to butikker i samme
+ * senter på senternavnet: «Juniper Storo» og «McDonald's Storo» deler bare «storo». Begge tallene er 0 da,
+ * og når ett av navnene bare har fyllord.
  */
 export function navnLikhet(a: string, b: string, bort: ReadonlySet<string> = new Set()): { delvis: number; helt: number } {
-  const A = new Set(ord(a, bort));
-  const B = new Set(ord(b, bort));
-  if (A.size === 0 || B.size === 0) return { delvis: 0, helt: 0 };
-  const felles = [...A].filter((w) => B.has(w)).length;
-  return { delvis: felles / Math.min(A.size, B.size), helt: felles / (A.size + B.size - felles) };
+  const A = ord(a, bort);
+  const B = ord(b, bort);
+  const sa = new Set(A);
+  const sb = new Set(B);
+  if (sa.size === 0 || sb.size === 0 || (!sb.has(A[0]) && !sa.has(B[0]))) return { delvis: 0, helt: 0 };
+  const felles = [...sa].filter((w) => sb.has(w)).length;
+  return { delvis: felles / Math.min(sa.size, sb.size), helt: felles / (sa.size + sb.size - felles) };
 }
 
 const meter = (lat1: number, lon1: number, lat2: number, lon2: number) => {

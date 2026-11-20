@@ -486,6 +486,8 @@ const OSM_TYPE: Record<string, Kategori> = {
   confectionery: "bakeri",
 };
 
+const OSM_SERVERING = new Set(["restaurant", "fast_food", "food_court"]);
+
 const osmVerdier = (kjokken: string | null) =>
   (kjokken ?? "").toLowerCase().split(/\s*[;,]\s*/).filter(Boolean);
 
@@ -495,8 +497,8 @@ const osmVerdier = (kjokken: string | null) =>
  * menyer med litt av alt, og gir ikke kjøkken.
  */
 export function kjokkenFraOsm(osm: Kilder["osm"]): Kategori | null {
-  // En kafé som også selger burger er fortsatt en kafé.
-  if (!osm || osm.type === "cafe") return null;
+  // Bare for restauranter og gatekjøkken: en kafé eller et bakeri som også selger pizza, er fortsatt en kafé.
+  if (!osm || !OSM_SERVERING.has(osm.type)) return null;
   const verdier = osmVerdier(osm.kjokken);
   if (verdier.length === 0 || verdier.length > 3) return null;
   const k = OSM_KJOKKEN[verdier[0]];
@@ -557,11 +559,12 @@ export function kategoriForSted(navn: string, kjede: Kjede | null, kilder: Kilde
   // Registernavnet er ofte selskapets, så det brukes bare når navnet på døra er nøytralt eller bare sier «restaurant».
   const generisk = fraNavn === "annet" || fraNavn === "restaurant";
   const fraRegisternavn = generisk && kilder.registernavn ? kategoriFraNavn(kilder.registernavn) : "annet";
+  // Aktiviteten er hovedenhetens og enda mindre presis. Hotellnavn får ikke kjøkken fra OSM («Lodge 900»).
   const kjokken =
     (erKjokken(fraNavn) ? fraNavn : null) ??
-    kjokkenFraOsm(kilder.osm) ??
+    (fraNavn !== "hotell" ? kjokkenFraOsm(kilder.osm) : null) ??
     (erKjokken(fraRegisternavn) ? fraRegisternavn : null) ??
-    (bransje === "servering" ? kjokkenFraAktivitet(kilder.aktivitet) : null);
+    (generisk && bransje === "servering" ? kjokkenFraAktivitet(kilder.aktivitet) : null);
   if (kjokken) return kjokken;
 
   if (fraNavn !== "annet") return fraNavn;

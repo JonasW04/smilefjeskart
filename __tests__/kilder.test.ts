@@ -48,6 +48,13 @@ describe("lagKildeoppslag", () => {
     expect(oppslag([[...nord(10), "Kebabhuset", "fast_food", "kebab"]])(sted("Milano Pizza")).osm).toBeNull();
   });
 
+  it("kobler ikke to steder i samme senter på senternavnet eller korte ord", () => {
+    expect(oppslag([[...nord(50), "McDonald's Storo", "fast_food", "burger"]])(sted("Juniper Storo")).osm).toBeNull();
+    expect(oppslag([[...nord(30), "Listen to Baljit", "restaurant", "indian"]])(sted("To søstre")).osm).toBeNull();
+    expect(oppslag([[...nord(30), "St. Bar", "bar", null]])(sted("Marco Polo St.Hanshaugen")).osm).toBeNull();
+    expect(oppslag([[...nord(30), "Big Bite", "fast_food", "sandwich"]])(sted("Big Bite Storo")).osm).not.toBeNull();
+  });
+
   it("tåler lengre avstand når navnet er helt likt, men ikke for delvis like navn", () => {
     expect(oppslag([[...nord(250), "Happy Time Pizza", "fast_food", null]])(sted("Happy Time Pizza")).osm).not.toBeNull();
     expect(oppslag([[...nord(250), "Happy Time Pizza", "fast_food", null]])(sted("Happy Time Grill")).osm).toBeNull();
