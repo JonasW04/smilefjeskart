@@ -5,6 +5,7 @@
  *   generated/steder.json   – alle steder med full tilsynshistorikk (brukes på serveren)
  *   public/data/kart.json   – kompakt kartdata for nettleseren
  *   public/tilsyn*.json(geojson) – gammelt format, beholdes til alle sider er flyttet over
+ *   generated/kilder/        – Enhetsregisteret og OpenStreetMap for kategoriene (scripts/lib/kilder.ts)
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -12,6 +13,7 @@ import type * as GeoJSON from "geojson";
 import { KATEGORI_NAVN, type Kategori } from "../lib/classify";
 import { sisteTilsyn } from "../lib/stats";
 import type { Datasett, Sted } from "../lib/types";
+import { lagKildeoppslag, oppdaterKilder } from "./lib/kilder";
 import { lastKommuneregister } from "./lib/kommuneregister";
 import {
   buildGeocodeQuery,
@@ -266,7 +268,10 @@ async function main() {
   // Valider registeret før geokoding og skriving, slik at en kildefeil aldri sletter kommune/fylke.
   const kommuneForPostnr = await lastKommuneregister(kjentePostnumre);
   const koordinatFor = await geokodAlle(rows);
-  const steder = buildSteder(rows, { kommuneForPostnr, koordinatFor });
+  const orgnr = rows.map((r) => (r.orgnummer ?? "").trim()).filter((nr) => /^\d{9}$/.test(nr));
+  const kilder = await oppdaterKilder(orgnr);
+  const kilderFor = lagKildeoppslag(kilder.brreg, kilder.osm);
+  const steder = buildSteder(rows, { kommuneForPostnr, koordinatFor, kilderFor });
 
   const now = new Date().toISOString();
   const antallTilsyn = steder.reduce((n, s) => n + s.tilsyn.length, 0);

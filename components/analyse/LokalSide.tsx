@@ -272,7 +272,7 @@ export default function LokalSide({ side }: { side: Side }) {
         Tall fra Mattilsynets åpne tilsynsdata, oppdatert {formatDato(iDag)}.{" "}
         {side.strok
           ? `Strøket er avgrenset med postnumrene ${postnrTekst(side.strok.postnr)} og følger ikke nøyaktig de offisielle bydelsgrensene.`
-          : "Kategorien gjettes ut fra stedsnavnet og kan ta feil for enkeltsteder."}{" "}
+          : "Kategorien kommer fra Enhetsregisteret, OpenStreetMap og stedsnavnet, og kan ta feil for enkeltsteder."}{" "}
         <Link className="link" href={`/kommune/${k.slug}`}>
           Se hele {k.navn}
         </Link>

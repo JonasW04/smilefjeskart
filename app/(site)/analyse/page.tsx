@@ -545,9 +545,9 @@ export default function AnalyseSide() {
         tittel="Pizza, sushi eller kebab?"
         ingress={
           <>
-            Andel ordinære tilsyn med smil per type sted. Datasettet har ingen bransjekode, så typen er{" "}
-            <strong className="text-ink">gjettet ut fra navnet</strong> («Pizzeria Roma» blir pizza). De fleste havner i «Restaurant og
-            annet». Typer med færre enn {MIN_KATEGORI} ordinære tilsyn er utelatt
+            Andel ordinære tilsyn med smil per type sted. Mattilsynet oppgir ikke type, så den kommer fra{" "}
+            <strong className="text-ink">Enhetsregisteret og OpenStreetMap</strong>, og fra navnet der de ikke sier noe («Pizzeria
+            Roma» blir pizza). Typer med færre enn {MIN_KATEGORI} ordinære tilsyn er utelatt
             {a.kategorierUtelatt.length > 0 && <> ({a.kategorierUtelatt.map((k) => KATEGORI_NAVN[k.key].toLowerCase()).join(", ")})</>}.
           </>
         }
@@ -711,8 +711,9 @@ export default function AnalyseSide() {
         <p className="text-ink-soft">
           Kilde: Mattilsynets åpne tilsynsdata (NLOD 2.0), hentet {formatDato(a.generert.slice(0, 10))}. Smil = karakter 0–1, strekmunn = 2,
           sur munn = 3. Andeler regnes av ordinære tilsyn med gyldig karakter; oppfølgingstilsyn er holdt utenfor. Én løs rad fra 2015 er
-          ikke med i tidsseriene. Kommune er utledet fra postnummer og kan avvike for steder nær kommunegrenser. Kategori og kjede gjettes
-          ut fra stedsnavnet.
+          ikke med i tidsseriene. Kommune er utledet fra postnummer og kan avvike for steder nær kommunegrenser. Kategorien kommer fra
+          næringskoden i Enhetsregisteret, kjøkkentypen i OpenStreetMap (© OpenStreetMap-bidragsytere, ODbL) og stedsnavnet. Kjeden
+          gjettes ut fra stedsnavnet.
         </p>
         <p>
           <Link className="link" href="/om">
