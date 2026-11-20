@@ -13,7 +13,8 @@ test.describe("Sidevekt (#42)", () => {
 
   test("/analyse bruker spritet i stedet for innebygde fjes", async ({ request }) => {
     const html = await (await request.get("/analyse")).text();
-    expect(html.length).toBeLessThan(950_000);
+    // 941 kB før de nye kategoriene (italiensk, Midtøsten, sjømat, restaurant) ga fire rader til, 953 kB etter.
+    expect(html.length).toBeLessThan(975_000);
     expect(html.match(/<symbol id="smiley-/g)).toHaveLength(4);
     // Et innebygd fjes har alltid kinn-ellipsen; i spritet finnes den bare i «smil».
     expect(html.match(/<ellipse cx="15.5"/g)).toHaveLength(1);
